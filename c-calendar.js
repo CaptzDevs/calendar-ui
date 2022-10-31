@@ -40,7 +40,7 @@ setting {
     [✅]     startWith  :         ['']            [any string]
     [ ]     closeOnselect   :    [true]           [bool]
 }
-   dasdasdasd
+   
 
     01/09/2022 [default]
     
