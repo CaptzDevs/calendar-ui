@@ -28,10 +28,10 @@ setting {
     [✅]    lang : ,            [th]            [th,en] 
     [✅]    zoro : ,            [true]          [bool]
     [✅]    yearType :          [AD]            [AD,BE]
-    [✅]    selectable  :       [true]         [bool]
-    [✅]    showDay     :        [full]        [full,small]
-    [ ]     dayPanel :               [full]      [full,small]       // how date display in panel
-    [ ]     monthPanel  :            [full]      [full,small]       // how date display in panel
+    [✅]    selectable  :       [true]          [bool]
+    [✅]    showDay     :       [full]          [full,small]
+    [✅]     monthPanel  :        [full]          [full,small]       // how month display in panel
+    [✅]     yearPanel  :         [full]          [full,small]       // how year display in panel
     [✅]    min  :              [anydate]       [anydate]
     [✅]    max  :              [anydate]       [anydate]
     [✅]    startWith  :         ['']           [any string]
@@ -57,7 +57,7 @@ setting {
 
 const default_setting = {
 
-            format : "dd/mm/yyyy",    
+            format : "dd/MM/yyyy",    
             default :  "now",            
             separation : "",           
             lang : "en",
@@ -71,7 +71,13 @@ const default_setting = {
             max  : 0,
             startWith  : '',
             showDay : 'sm',
-            closeOnSelect : true
+            closeOnSelect : true,
+            dayPanel : 'full',
+            monthPanel : 'full',
+            yearPanel : 'full',
+
+
+
     }
 
     jQuery.fn.Calendar = function(option = default_setting)
@@ -108,7 +114,7 @@ const default_setting = {
 
     $("#date_pay1").Calendar({
         separation : "/",
-        lang : "en",
+        lang : "th",
         showDay : 'small',
         closeOnSelect : true,
 
@@ -157,10 +163,12 @@ function openCalendar(e,setting = default_setting){
     let min_month = min_date[0] != 0 ? min_date[1] : 12
     let min_year = min_date[0] != 0 ? min_date[0] : yearType == 'AD' ? 2100 : 2600
 
+    let lang = setting.lang ? setting.lang : default_setting.lang 
+
 
         let dayHeader  = ''
         
-        if(setting.lang == 'th'){
+        if(lang == 'th'){
             dayHeader = `
  
                                   <div class="date-day-item">อา.</div>
@@ -172,7 +180,7 @@ function openCalendar(e,setting = default_setting){
                                   <div class="date-day-item">ส.</div>
                       `
         }
-        if(setting.lang == 'en'){
+        if(lang == 'en'){
             dayHeader = `
    
                                   <div class="date-day-item">Sun</div>
@@ -407,21 +415,19 @@ const LANG = {
     }
 function set_lang(value,section,lang,type = {day:"full",month:"full"}){
     
-    let m_en = ['','January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+   /*  let m_en = ['','January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     let m_en_sm = ['','Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];       
     let m_th = [ "","มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม", ];
     let m_th_sm = ["", "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค.", ];
     let d_en = ['','Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     let d_en_sm = ['','Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
     let d_th = ["","อาทิตย์","จันทร์","อังคาร","พุธ","พฤหัสบดี","ศุกร์","เสาร์"]
-    let d_th_sm = ["","อา","จ","อ","พ","พฤ","ศ","ส"]
+    let d_th_sm = ["","อา","จ","อ","พ","พฤ","ศ","ส"] */
 
     type.day = type.day || default_setting.day
     type.month = type.month || default_setting.month
 
     let select_lang = `${section}_${lang}_${section == 'd' ? type.day : type.month}`
-
-
 
     //return LANG[lang][section][section == 'd' ? type.day : type.month][select_lang]
     return LANG[select_lang][value]
@@ -452,6 +458,8 @@ function renderCalendar(date = 0,month = 0,year = 0 ,setting = default_setting){
     let selectable = setting.selectable !== undefined ? setting.selectable : default_setting.selectable
 
     let closeOnSelect = setting.closeOnSelect !== undefined ? setting.closeOnSelect : default_setting.closeOnSelect
+
+    let yearPanel = setting.yearPanel ==! undefined ? setting.yearPanel : default_setting.yearPanel
 
 
     let disableSelect = ''
@@ -505,15 +513,17 @@ function renderCalendar(date = 0,month = 0,year = 0 ,setting = default_setting){
       let last_date_of_month = new Date(2022, this_month, 0).getDate();
    
       //set month lable and year label
-      $(".lbl_month").text(set_lang(this_month,'m',lang,{day:setting.day , month : setting.month }))
-      $(".lbl_year").text(this_year) 
-
+      $(".lbl_month").text(set_lang(this_month,'m',lang,{day : setting.day , month : setting.month }))
+      $(".lbl_year").text(yearPanel == 'full' ? this_year : (''+this_year).slice(-2)) 
 
     //render date of previous month
-      for(let i = date_number_before-fdm ; i < date_number_before ; i++){
+    if(fdm != 6){
 
+      for(let i = date_number_before-fdm ; i <= date_number_before ; i++){
           $(".date-body").append(`<div class="date-item date-empty">${i}</div>`)
-      }
+        }
+
+    }
 
     //render for min date
     let startDate = 1
@@ -561,7 +571,7 @@ function renderCalendar(date = 0,month = 0,year = 0 ,setting = default_setting){
 
       let day =  new Date(+y-543, +m-1, +d).getDay();
    
-      let formatter = setting.format ? setting.format.split('/') : "dd/mm/yyyy".split('/')
+      let formatter = setting.format ? setting.format.split('/') : default_setting.format.split('/')
 
       let format_d = formatter[0]
       let format_m = formatter[1]
@@ -663,11 +673,13 @@ yy   = 65 , 22
 
             let check_section = ['d','m','y']
             
-            let section_arr = [check_section[d_select] , check_section[m_select] , check_section[y_select]] // return ordet of date ex. d,m,y or m,d,y depends on format
+            let section_arr = [check_section[d_select] , check_section[m_select] , check_section[y_select]] // return order of date ex. d,m,y or m,d,y depends on format
+
+            console.log(section_arr[0])
 
             let date_arr = {
                 d: date_type == 'z' ? d : +d,
-                m: month_type != 'n' && month_type != 'z' ? LANG[date_lang[section_arr[0]]][+m] :  month_type == 'z' ? m : +m,
+                m: month_type != 'n' && month_type != 'z' ? LANG[date_lang[section_arr[1]]] [+m] :  month_type == 'z' ? m : +m,
                 y: year_type == 'full' ? y : y.slice(-2) 
             }
 
@@ -813,11 +825,24 @@ yy   = 65 , 22
 
     let max_month = max_date[0] != 0 ? max_date[1] : 12
 
+    let monthPanel = setting.monthPanel ==! undefined ? setting.monthPanel : default_setting.monthPanel
+
       $("#month_body").empty()
+
       for (let i = 1 ; i <= max_month; i++){
+
+    let full_month
+        if(lang == 'en' && monthPanel == 'small'){
+            full_month = set_lang(i,'m',lang,{day : 'sm' , month :'sm'})
+        }else if(lang == 'th' && monthPanel == 'small'){
+            full_month = set_lang(i,'m',lang,{day : 'sm' , month :'sm'})
+        }else{
+            full_month = set_lang(i,'m',lang,{day:setting.day , month : setting.month })
+        }
+        
       $("#month_body").append(
           `
-          <div class="month-item" data-fulldate=${this_year+("0"+[i]).slice(-2)}>${set_lang(i,'m',lang,{day:setting.day , month : setting.month })}</div>
+          <div class="month-item" data-fulldate=${this_year+("0"+[i]).slice(-2)}>${full_month}</div>
           `
       )
   }
@@ -838,8 +863,12 @@ yy   = 65 , 22
     let max_year = max_date[0] != 0 ? max_date[0] : yearType == 'AD' ? 2100 : 2600
 
 
-
+    
     let this_year = yearType == 'AD' ? d.getFullYear() : d.getFullYear()+543 ;
+    
+    let yearPanel = setting.yearPanel ==! undefined ? setting.yearPanel : default_setting.yearPanel
+    
+
 
       $("#year_body").empty()
 
@@ -847,7 +876,7 @@ yy   = 65 , 22
 
       $("#year_body").append(
           `
-          <div class="year-item" data-year=${i}>${i}</div>
+          <div class="year-item" data-year=${i}>${yearPanel == 'full' ? i : (''+i).slice(-2)}</div>
           `
       )
   }
