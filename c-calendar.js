@@ -22,23 +22,22 @@ yyyy = 2565 ,2022
 yy   = 65 , 22
 
 setting {
-    [✅]    format :            [dd/mm/yyyy]    [...]
-    [✅]    default :           [now]           [now , ...any date]     
-    [✅]    separation : ,      [""]            [any string] 
-    [✅]    lang : ,            [th]            [th,en] 
-    [✅]    zoro : ,            [true]          [bool]
-    [✅]    yearType :          [AD]            [AD,BE]
-    [✅]    selectable  :       [true]          [bool]
-    [✅]    showDay     :       [full]          [full,small]
-    [✅]     monthPanel  :        [full]          [full,small]       // how month display in panel
-    [✅]     yearPanel  :         [full]          [full,small]       // how year display in panel
-    [✅]    min  :              [anydate]       [anydate]
-    [✅]    max  :              [anydate]       [anydate]
-    [✅]    startWith  :         ['']           [any string]
-    [✅]     closeOnSelect   :    [true]        [bool]
+    [✅]    format :            [dd/mm/yyyy]        [...]
+    [✅]    default :           [now]               [now , ...any date]     
+    [✅]    separation : ,      [""]                [any string] 
+    [✅]    lang : ,            [th]                [th,en] 
+    [✅]    zoro : ,            [true]              [bool]
+    [✅]    yearType :          [AD]                [AD,BE]
+    [✅]    selectable  :       [true]              [bool]
+    [✅]    showDay     :       [full]              [full,small]
+    [✅]    monthPanel  :       [full]              [full,small]       // how month display in panel
+    [✅]    yearPanel  :        [full]              [full,small]       // how year display in panel
+    [✅]    min  :              [anydate]           [anydate]
+    [✅]    max  :              [anydate]           [anydate]
+    [✅]    startWith  :        ['']                [any string]
+    [✅]    closeOnSelect   :   [true]              [bool]
 }
    
-
     01/09/2022 [default]
     
     separation : '',
@@ -61,23 +60,18 @@ const default_setting = {
             default :  "now",            
             separation : "",           
             lang : "en",
-            yearType : "AD",         
+            yearType : "BE",         
             selectable  : true,        
             day : 'full',          
             month : 'full',
-           /*  min  : 20220715,    
-            max  : 20221115, */
-            min  : 0,    
-            max  : 0,
+            min  : 25450715,    
+            max  : 25801215, 
             startWith  : '',
             showDay : 'sm',
             closeOnSelect : true,
             dayPanel : 'full',
             monthPanel : 'full',
             yearPanel : 'full',
-
-
-
     }
 
     jQuery.fn.Calendar = function(option = default_setting)
@@ -856,15 +850,16 @@ yy   = 65 , 22
 
     let yearType = setting.yearType ? setting.yearType : default_setting.yearType 
 
+    let min = setting.min ? ''+setting.min : ''+default_setting.min
+    let min_date = [+min.slice(0,4), +min.slice(4,6),+min.slice(6,8)]
+    let min_year = min_date != 0 ? min_date[0] : yearType == 'AD' ? 2100 : 2600
+
     let max = setting.max ? ''+setting.max : ''+default_setting.max
-
     let max_date = max.length > 0 ? [+max.slice(0,4), +max.slice(4,6),+max.slice(6,8)] : 0
-
     let max_year = max_date[0] != 0 ? max_date[0] : yearType == 'AD' ? 2100 : 2600
 
+    let this_year = yearType == 'AD' ? d.getFullYear() : min_date[0] > 0 ? min_date[0] : d.getFullYear()+543 
 
-    
-    let this_year = yearType == 'AD' ? d.getFullYear() : d.getFullYear()+543 ;
     
     let yearPanel = setting.yearPanel ==! undefined ? setting.yearPanel : default_setting.yearPanel
     
