@@ -28,17 +28,14 @@ setting {
     [✅]    lang : ,            [th]            [th,en] 
     [✅]    zoro : ,            [true]          [bool]
     [✅]    yearType :          [AD]            [AD,BE]
-    [✅]     selectable  :       [true]           [bool]
-    [✅]    showDay     :        [false]        [bool]
-    [ ]     dayPanel :               [full]          [full,small]       // how date display in panel
-    [ ]     monthPanel  :            [full]          [full,small]       // how date display in panel
-
-    [ ]     dayDisplay :           [full]          [full,small]        // how date display in input
-    [ ]     monthDisplay  :         [full]          [full,small]        // how date display in input
+    [✅]    selectable  :       [true]         [bool]
+    [✅]    showDay     :        [full]        [full,small]
+    [ ]     dayPanel :               [full]      [full,small]       // how date display in panel
+    [ ]     monthPanel  :            [full]      [full,small]       // how date display in panel
     [✅]    min  :              [anydate]       [anydate]
     [✅]    max  :              [anydate]       [anydate]
-    [✅]    startWith  :         ['']            [any string]
-    [✅]     closeOnSelect   :    [true]           [bool]
+    [✅]    startWith  :         ['']           [any string]
+    [✅]     closeOnSelect   :    [true]        [bool]
 }
    
 
@@ -112,7 +109,7 @@ const default_setting = {
     $("#date_pay1").Calendar({
         separation : "/",
         lang : "en",
-        showDay : 'sm',
+        showDay : 'small',
         closeOnSelect : true,
 
         /* max : 20231115, 
@@ -452,9 +449,9 @@ function renderCalendar(date = 0,month = 0,year = 0 ,setting = default_setting){
     let min_month = min_date != 0 ? min_date[1] : 12
     let min_year = min_date != 0 ? min_date[0] : yearType == 'AD' ? 2100 : 2600
 
-    let selectable = setting.hasOwnProperty('selectable') ? setting.selectable : default_setting.selectable
+    let selectable = setting.selectable !== undefined ? setting.selectable : default_setting.selectable
 
-    let closeOnSelect = setting.hasOwnProperty('closeOnSelect') ? setting.closeOnSelect : default_setting.closeOnSelect
+    let closeOnSelect = setting.closeOnSelect !== undefined ? setting.closeOnSelect : default_setting.closeOnSelect
 
 
     let disableSelect = ''
@@ -648,6 +645,9 @@ yy   = 65 , 22
             let show_day = setting.showDay  ? setting.showDay : default_setting.showDay ? default_setting.showDay : 'null'
 
 
+            show_day = show_day === 'small' ? 'sm' : show_day
+
+
             let date_lang = {
                 day :`d_${lang}_${show_day}` ,  
                 m : `m_${lang}_${month_type}` ,
@@ -674,6 +674,7 @@ yy   = 65 , 22
 
 
         let FULL_DATE_DISPLAY = [
+
 
             LANG[date_lang.day] [!show_day || show_day != 'null' ? day : 0] ,
             date_arr[section_arr[0]],
