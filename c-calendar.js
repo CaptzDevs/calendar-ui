@@ -38,7 +38,7 @@ setting {
     [✅]    min  :              [anydate]       [anydate]
     [✅]    max  :              [anydate]       [anydate]
     [✅]    startWith  :         ['']            [any string]
-    [ ]     closeOnselect   :    [true]           [bool]
+    [✅]     closeOnSelect   :    [true]           [bool]
 }
    
 
@@ -73,7 +73,8 @@ const default_setting = {
             min  : 0,    
             max  : 0,
             startWith  : '',
-            showDay : 'sm'
+            showDay : 'sm',
+            closeOnSelect : true
     }
 
     jQuery.fn.Calendar = function(option = default_setting)
@@ -112,7 +113,8 @@ const default_setting = {
         separation : "/",
         lang : "en",
         showDay : 'sm',
-        selectable : false,
+        closeOnSelect : true,
+
         /* max : 20231115, 
         min : 20210715,  */
         
@@ -134,12 +136,7 @@ const default_setting = {
            ,'year-body','month-header','date-body','date-header'
            ,'date-day-item','date-item disableSelect date-selected' , 'date-item disableSelect']
 
-      $("body").click((e)=>{
-          /* console.log(e.target.className) */
-          if(!panel_arr.includes(e.target.className)){
-              $(".date-panel").remove()
-          }
-      })
+ 
 
 
 
@@ -447,7 +444,6 @@ function renderCalendar(date = 0,month = 0,year = 0 ,setting = default_setting){
     let max = setting.max ? ''+setting.max : ''+default_setting.max
     let min = setting.min ? ''+setting.min : ''+default_setting.min
 
-    
     let max_date = [+max.slice(0,4), +max.slice(4,6),+max.slice(6,8)]
     let max_month = max_date != 0 ? max_date[1] : 12
     let max_year = max_date != 0 ? max_date[0] : yearType == 'AD' ? 2100 : 2600
@@ -458,14 +454,26 @@ function renderCalendar(date = 0,month = 0,year = 0 ,setting = default_setting){
 
     let selectable = setting.hasOwnProperty('selectable') ? setting.selectable : default_setting.selectable
 
+    let closeOnSelect = setting.hasOwnProperty('closeOnSelect') ? setting.closeOnSelect : default_setting.closeOnSelect
+
+
     let disableSelect = ''
-    console.log(selectable)
     if(!selectable){
         disableSelect = 'disableSelect'
     }
 
 
-    console.log(min_date)
+    $("body").click((e)=>{
+        if(!closeOnSelect){
+           panel_arr.push('date-item date-selected')
+        } 
+
+        if(!panel_arr.includes(e.target.className)){
+
+            $(".date-panel").remove() 
+        }
+    })
+
 
       $(".date-body").empty()
 
@@ -571,16 +579,8 @@ function renderCalendar(date = 0,month = 0,year = 0 ,setting = default_setting){
         let check3 = check_date_arr.includes(arr[2]) || false
 
         return check1 && check2 && check3 
-
     }
 
-    function check_case(value){
-        if(value == value.toLowerCase()){
-            return 'sm'
-        }else{
-            return 'full'
-        }
-    }
 
     /*
          date format 
@@ -750,7 +750,8 @@ yy   = 65 , 22
             e.target.parentElement.parentElement.previousElementSibling.dataset.fulldate = `${y}${m}${d}`
              /*  e.target.parentElement.parentElement.parentElement.parentElement.dataset.fulldate = `${y}${m}${d}` */
 
-              $(".date-panel").remove()
+             /* closeOnSelect ? $(".date-panel").remove() : '' */
+              
 
               $(".date-item").removeClass('date-selected')
               e.target.classList.add('date-selected')
