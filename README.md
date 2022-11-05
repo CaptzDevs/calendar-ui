@@ -60,9 +60,39 @@
         yy = year with 2 digit
         
         
-## option / separation
+## option / separation 
+*format* is how date will separation in input
 
+>default : "/"  
+>type : string
+
+   explanation 
+   
+    defualt : 20020321
+    format : 'dd/mm/yyyy',
+    separation : '-',
+    
+    //display 
+    21-03-2002
+    
 ## option / lang
+   
+*Lang* is how lang type show in input
+
+>default : "en"  
+>type : string
+
+   explanation 
+   
+    defualt : 20020321
+    format : 'dd/MM/yyyy',
+    separation : '-',
+    lang : "en"
+    
+    //display 
+    21-march-2002
+    
+   
 
 ## option / zoro
 
