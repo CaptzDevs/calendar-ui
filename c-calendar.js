@@ -508,8 +508,14 @@ function openCalendar(e,setting = default_setting){
           this_month -= 1
       }
     }
-    
+
+
     renderCalendar(this_date,this_month,this_year,setting)
+
+
+    
+
+
   })
 
   $(".btnNextMonth").click((ev)=>{
@@ -536,7 +542,15 @@ function openCalendar(e,setting = default_setting){
             this_month +=1
         }
     }
+
+
     renderCalendar(this_date,this_month,this_year,setting)
+
+
+     
+
+
+ 
 })
 
 
@@ -725,6 +739,19 @@ function renderCalendar(date = 0,month = 0,year = 0 ,setting = default_setting){
       $(".lbl_month").text(set_lang(this_month,'m',lang,{day : setting.day , month : setting.month }))
       $(".lbl_year").text(yearPanel == 'full' ? this_year : (''+this_year).slice(-2)) 
 
+
+    //render section -------------------------------------
+   /*   let elem_length = 0;
+
+    let eff_count = setInterval(() =>{ 
+
+        $(`.date-item:eq(${elem_length})`).addClass('eff')
+        if(elem_length > $(".date-item").length) clearInterval(eff_count)
+        elem_length++
+      
+      },5)  */
+      
+      
     //render date of previous month
     if(fdm != 7){
       for(let i = date_number_before-fdm+1 ; i <= date_number_before ; i++){
@@ -766,6 +793,23 @@ function renderCalendar(date = 0,month = 0,year = 0 ,setting = default_setting){
     
         }
     }
+
+
+
+  /* setTimeout(() => {
+    elem_length = 0;
+
+    eff_count = setInterval(() =>{ 
+
+       $(`.date-item:eq(${elem_length})`).removeClass('eff')
+       if(elem_length > $(".date-item").length) clearInterval(eff_count)
+       elem_length++
+     
+     },10) 
+  }, 500); */
+   
+
+    //render section -------------------------------------
     
 
     //set dataset 
@@ -802,8 +846,6 @@ function renderCalendar(date = 0,month = 0,year = 0 ,setting = default_setting){
     }
 
 
-
- 
 
       let isValid= checkDateFormat([formatter[0], formatter[1] ,formatter[2]])
 
