@@ -391,7 +391,6 @@ function openCalendar(e,setting = default_setting){
 
         </div>
         `)
-
   renderCalendar(e.target.dataset.fulldate.slice(6,8),+e.target.dataset.fulldate.slice(4,6),e.target.dataset.fulldate.slice(0,4),setting)   
 
   $(".lbl_year").click((ev)=>{
@@ -424,11 +423,11 @@ function openCalendar(e,setting = default_setting){
           //set dataset value and value to input        
          e.target.parentElement.parentElement.parentElement.previousElementSibling.setAttribute("value" ,date_display)
 
-         e.target.parentElement.parentElement.parentElement.previousElementSibling.dataset.fulldate = `${year}${this_month}${this_date}`
+         e.target.parentElement.parentElement.parentElement.previousElementSibling.dataset.fulldate = `${year}${("0"+this_month).slice(-2)}${this_date}`
 
 
 
-            $(".date-panel").attr('data-fulldate',`${year}${this_month}${this_date}`)
+            $(".date-panel").attr('data-fulldate',`${year}${("0"+this_month).slice(-2)}${this_date}`)
             $(".date-panel").attr('data-date',`${this_date}`)
 
           renderCalendar( this_date, this_month , year ,setting)
@@ -472,11 +471,10 @@ function openCalendar(e,setting = default_setting){
 
           e.target.parentElement.parentElement.parentElement.previousElementSibling.setAttribute("value" ,date_display)
 
-          e.target.parentElement.parentElement.parentElement.previousElementSibling.dataset.fulldate = `${this_year}${month}${this_date}`
+          e.target.parentElement.parentElement.parentElement.previousElementSibling.dataset.fulldate = `${this_year}${("0"+month).slice(-2)}${this_date}`
 
 
-
-            $(".date-panel").attr('data-fulldate',`${this_year}${month}${this_date}`)
+            $(".date-panel").attr('data-fulldate',`${this_year}${("0"+month).slice(-2)}${this_date}`)
             $(".date-panel").attr('data-date',`${this_date}`)
 
         renderCalendar( this_date, month ,this_year ,setting)
@@ -735,6 +733,7 @@ function renderCalendar(date = 0,month = 0,year = 0 ,setting = default_setting){
 
       let last_date_of_month = new Date(2022, this_month, 0).getDate();
    
+      console.log(this_month)
       //set month lable and year label
       $(".lbl_month").text(set_lang(this_month,'m',lang,{day : setting.day , month : setting.month }))
       $(".lbl_year").text(yearPanel == 'full' ? this_year : (''+this_year).slice(-2)) 
@@ -879,7 +878,7 @@ function renderCalendar(date = 0,month = 0,year = 0 ,setting = default_setting){
               $(".date-item").removeClass('date-selected')
               e.target.classList.add('date-selected')
 
-              $(".date-panel").attr('data-fulldate',`${y}${m}${d}`)
+              $(".date-panel").attr('data-fulldate',`${y}${("0"+m).slice(-2)}${d}`)
               $(".date-panel").attr('data-date',`${d}`)
 
         }else{
