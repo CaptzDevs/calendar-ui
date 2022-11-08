@@ -437,13 +437,15 @@ function openCalendar(e,setting = default_setting){
   })
 
   $(".lbl_month").click((e)=>{
+
     let this_date = +e.target.parentElement.parentElement.dataset.date
     let this_year = +e.target.parentElement.parentElement.dataset.year
     let month = 0
 
 
-    $(".month-panel").addClass('show-month')
-    renderMonth(this_year,setting)
+        $(".month-panel").addClass('show-month')
+
+        renderMonth(this_year,setting)
 
         $(".month-item").click((e)=>{
 
@@ -477,10 +479,11 @@ function openCalendar(e,setting = default_setting){
             $(".date-panel").attr('data-fulldate',`${this_year}${month}${this_date}`)
             $(".date-panel").attr('data-date',`${this_date}`)
 
-          
         renderCalendar( this_date, month ,this_year ,setting)
+          
+            
+        })
 
-    })
 })
 
   $(".btnPreviousMonth").click((ev)=>{
