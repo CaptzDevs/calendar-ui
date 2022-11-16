@@ -135,7 +135,39 @@ const default_setting = {
 
     
     
-    
+    function autoDate(e,setting){
+        let check_format = checkDateIsValidFormat(e.target.value,setting)
+     /*    e.target.previousElementSibling.setAttribute('value',e.target.value) */
+       if(check_format[0]){
+
+             let full_date_display =  selectDateFormat(check_format[1].d,check_format[1].m,check_format[1].y,setting)
+
+             let slitter = setting.separation  ? setting.separation : default_setting.separation
+             let starter = setting.startWith ? setting.startWith : default_setting.startWith
+
+               day_display = full_date_display[0]
+               d_display = full_date_display[1]
+               m_display = full_date_display[2]
+               y_display = full_date_display[3]
+
+               let date_display  = `${starter}${day_display}, ${d_display}${slitter}${m_display}${slitter}${y_display}`
+
+               //set dataset value and value to input        
+
+               e.target.value = date_display
+               e.target.setAttribute("value" ,date_display)
+
+               e.target.dataset.fulldate = `${check_format[1].y}${("0"+check_format[1].m).slice(-2)}${+check_format[1].d}`
+
+
+                 $(".date-panel").attr('data-fulldate',`${check_format[1].y}${("0"+check_format[1].m).slice(-2)}${+check_format[1].d}`)
+                 $(".date-panel").attr('data-date',`${+check_format[1].d}`)
+
+                 renderCalendar(+check_format[1].d,+check_format[1].m,+check_format[1].y,setting)   
+               /*   e.target.setAttribute("readonly","readonly") */
+
+           }
+    }
     
     
     function checkDateIsValidFormat(date = '',setting = default_setting){
@@ -180,7 +212,6 @@ const default_setting = {
     }
     
     
-    
     const findOverflows = () => {
         if($(".date-panel").length > 0){
         const documentWidth = document.documentElement.offsetWidth;
@@ -208,7 +239,7 @@ const default_setting = {
         findOverflows()
     })
 
-    jQuery.fn.Calendar = function(setting = default_setting)    {
+    jQuery.fn.Calendar = function(setting = default_setting){
 
     this[0].insertAdjacentHTML('afterend', `<div class="date-icon" ><i class="fa-duotone fa-calendar"></i></div>`);
 
@@ -224,186 +255,89 @@ const default_setting = {
         })
         
         this[0].addEventListener("click", (e) => {
-               
-          if(e.detail == 1 && e.target.value == '' ){
+            console.log(e.target.value == '' ,e.target.value != '')
+
+          if(e.target.value == '' ){
                 
                 this[0].addEventListener('change', (e) => {
-                    let check_format = checkDateIsValidFormat(e.target.value,setting)
-                    e.target.previousElementSibling.setAttribute('value',e.target.value)
-                   if(check_format[0]){
-   
-                         let full_date_display =  selectDateFormat(check_format[1].d,check_format[1].m,check_format[1].y,setting)
-   
-                         let slitter = setting.separation  ? setting.separation : default_setting.separation
-                         let starter = setting.startWith ? setting.startWith : default_setting.startWith
-   
-                           day_display = full_date_display[0]
-                           d_display = full_date_display[1]
-                           m_display = full_date_display[2]
-                           y_display = full_date_display[3]
-   
-                           let date_display  = `${starter}${day_display}, ${d_display}${slitter}${m_display}${slitter}${y_display}`
-   
-                           //set dataset value and value to input        
-   
-                           e.target.value = date_display
-                           e.target.setAttribute("value" ,date_display)
-   
-                           e.target.dataset.fulldate = `${check_format[1].y}${("0"+check_format[1].m).slice(-2)}${+check_format[1].d}`
-   
-   
-                             $(".date-panel").attr('data-fulldate',`${check_format[1].y}${("0"+check_format[1].m).slice(-2)}${+check_format[1].d}`)
-                             $(".date-panel").attr('data-date',`${+check_format[1].d}`)
-   
-                             renderCalendar(+check_format[1].d,+check_format[1].m,+check_format[1].y,setting)   
-                           /*   e.target.setAttribute("readonly","readonly") */
-   
-                       }
-                   })
+                    autoDate(e,setting)
+                })
 
-                   this[0].addEventListener('blur', (e) => {
-                    let check_format = checkDateIsValidFormat(e.target.value,setting)
-                    e.target.setAttribute('value',e.target.value)
-              
-                   if(check_format[0]){
-   
-                         let full_date_display =  selectDateFormat(check_format[1].d,check_format[1].m,check_format[1].y,setting)
-   
-                         let slitter = setting.separation  ? setting.separation : default_setting.separation
-                         let starter = setting.startWith ? setting.startWith : default_setting.startWith
-   
-                           day_display = full_date_display[0]
-                           d_display = full_date_display[1]
-                           m_display = full_date_display[2]
-                           y_display = full_date_display[3]
-   
-                           let date_display  = `${starter}${day_display}, ${d_display}${slitter}${m_display}${slitter}${y_display}`
-   
-                           //set dataset value and value to input        
-   
-                           e.target.value = date_display
-                           e.target.setAttribute("value" ,date_display)
-   
-                           e.target.dataset.fulldate = `${check_format[1].y}${("0"+check_format[1].m).slice(-2)}${+check_format[1].d}`
-   
-   
-                             $(".date-panel").attr('data-fulldate',`${check_format[1].y}${("0"+check_format[1].m).slice(-2)}${+check_format[1].d}`)
-                             $(".date-panel").attr('data-date',`${+check_format[1].d}`)
-   
-                             renderCalendar(+check_format[1].d,+check_format[1].m,+check_format[1].y,setting)   
-                           /*   e.target.setAttribute("readonly","readonly") */
-   
-                       }
-                   })
+                this[0].addEventListener('blur', (e) => {
+                    autoDate(e,setting)
+                })
+
+                this[0].addEventListener('keyup',(e)=>{
+                    if(!e.target.dataset.state){
+                        e.target.dataset.state = '1';
+                    }
+
+                    if(e.target.dataset.state == '1'){
+                        console.log('1')
+
+                    let fullDate = e.target.dataset.fulldate
+                    let date = 0
+
+                    Date.prototype.addDays = function(days) {
+
+                        date = new Date(`${+fullDate.slice(0,4)-543}-${fullDate.slice(4,6)}-${fullDate.slice(6,8)}`);
+                        date.setDate(date.getDate() + days);
+                        return date;
+                    }
+                    
+                    let  d = new Date();
+                    
+
+               if(e.keyCode == 38){
+
+                let current = d.addDays(1)
+
+                let curentDate = ("0"+current.getDate()).slice(-2)
+                let curentMonth=  ("0"+(current.getMonth()+1)).slice(-2)
+                let curentYear = current.getFullYear()+543
+
+                        console.log(curentDate,curentMonth,curentYear)
+                        e.target.setAttribute("data-fulldate" ,`${curentYear}${curentMonth}${curentDate}`) 
+                        e.target.setAttribute("value" ,`${ curentDate }/${curentMonth}/${curentYear}`) 
+                    }
+
+            }
+                   
+                })
                 
-            }else if(e.detail == 1 && e.target.value != ''){
+            }else if(e.target.value != ''){
       
-
                 let fullDate = e.target.dataset.fulldate
                 e.target.value = `${fullDate.slice(6,8)}/${fullDate.slice(4,6)}/${fullDate.slice(0,4)}`
                 e.target.setAttribute("value" ,`${fullDate.slice(6,8)}/${fullDate.slice(4,6)}/${fullDate.slice(0,4)}`) 
+                e.target.dataset.state = '2';
 
                 this[0].addEventListener('change', (e) => {
-                    let check_format = checkDateIsValidFormat(e.target.value,setting)
-               
 
-                 setTimeout(() => {
-                      if(check_format[0]){
+                    setTimeout(() => {
+                        autoDate(e,setting)
+                    }, 500);
 
-                       let full_date_display =  selectDateFormat(check_format[1].d,check_format[1].m,check_format[1].y,setting)
-   
-                         let slitter = setting.separation  ? setting.separation : default_setting.separation
-                         let starter = setting.startWith ? setting.startWith : default_setting.startWith
-   
-                           day_display = full_date_display[0]
-                           d_display = full_date_display[1]
-                           m_display = full_date_display[2]
-                           y_display = full_date_display[3]
-   
-                           let date_display  = `${starter}${day_display}, ${d_display}${slitter}${m_display}${slitter}${y_display}`
-   
-                           //set dataset value and value to input        
-   
-                           e.target.value = date_display
-                           e.target.setAttribute("value" ,date_display)
-   
-                           e.target.dataset.fulldate = `${check_format[1].y}${("0"+check_format[1].m).slice(-2)}${+check_format[1].d}`
-   
-                             $(".date-panel").attr('data-fulldate',`${check_format[1].y}${("0"+check_format[1].m).slice(-2)}${+check_format[1].d}`)
-                             $(".date-panel").attr('data-date',`${+check_format[1].d}`)
-   
-                             renderCalendar(+check_format[1].d,+check_format[1].m,+check_format[1].y,setting) 
-   
-                       }/* else{
-                           e.target.value = ''
-                       } */
-        /* e.target.setAttribute("readonly","readonly") */
+                }) 
 
-                 }, 500);
-        }) 
+                this[0].addEventListener('blur', (e) => {
+                
+                    setTimeout(() => {
+                        autoDate(e,setting)
+                    }, 500);
 
+                }) 
 
+              
+                
 
-        this[0].addEventListener('blur', (e) => {
-            let check_format = checkDateIsValidFormat(e.target.value,setting)
-            e.target.setAttribute("value" ,'loading')
-
-         setTimeout(() => {
-              if(check_format[0]){
-            console.log('d2')
-
-               let full_date_display =  selectDateFormat(check_format[1].d,check_format[1].m,check_format[1].y,setting)
-
-                 let slitter = setting.separation  ? setting.separation : default_setting.separation
-                 let starter = setting.startWith ? setting.startWith : default_setting.startWith
-
-                   day_display = full_date_display[0]
-                   d_display = full_date_display[1]
-                   m_display = full_date_display[2]
-                   y_display = full_date_display[3]
-
-                   let date_display  = `${starter}${day_display}, ${d_display}${slitter}${m_display}${slitter}${y_display}`
-
-                   //set dataset value and value to input        
-
-                   e.target.value = date_display
-                   e.target.setAttribute("value" ,date_display)
-
-                   e.target.dataset.fulldate = `${check_format[1].y}${("0"+check_format[1].m).slice(-2)}${+check_format[1].d}`
-
-                     $(".date-panel").attr('data-fulldate',`${check_format[1].y}${("0"+check_format[1].m).slice(-2)}${+check_format[1].d}`)
-                     $(".date-panel").attr('data-date',`${+check_format[1].d}`)
-
-                     renderCalendar(+check_format[1].d,+check_format[1].m,+check_format[1].y,setting) 
-
-               }/* else{
-                   e.target.value = ''
-               } */
-                /* e.target.setAttribute("readonly","readonly") */
-
-         }, 500);
-}) 
                  
-         
-    
-
             }
 
         })
+
     }
-
-     /*    else if (this.length > 1){
-
-        [...this].forEach((item,i)=>{
-
-        item.addEventListener("click",(e)=>{
-            openCalendar(e , setting)
-        })
-
     })
-        }  */
-    })
-
     }
 
     
