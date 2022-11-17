@@ -123,7 +123,7 @@ const default_setting = {
             showDay : 'sm',
             day : 'full',          
             month : 'full',
-            min  : 25450715,    
+            min  : 20000715,    
             max  : 25801215, 
             startWith  : '',
             closeOnSelect : true,
@@ -133,6 +133,17 @@ const default_setting = {
     }
 
 
+    
+   
+    
+
+   let panel_arr = [
+          'date-panel',"datepicker",'lbl_month','lbl_year' ,'btn btn-sm btnNextMonth' ,
+           "btn btn-sm btnNextMonth",'btn btn-sm btnPreviousMonth','month-item','month-body','year-item'
+           ,'year-body','month-header','date-body','date-header'
+           ,'date-day-item','date-item disableSelect date-selected' , 'date-item disableSelect','date-icon']
+
+ 
     
     
     function autoDate(e,setting){
@@ -404,10 +415,6 @@ const default_setting = {
     })
     }
 
-    
-
-    
-
     $("#date_pay1").Calendar({
         separation : "/",
         lang : "th",
@@ -427,15 +434,9 @@ const default_setting = {
         
     })
 
+
     
 
-   let panel_arr = [
-          'date-panel',"datepicker",'lbl_month','lbl_year' ,'btn btn-info btn-sm btnNextMonth' ,
-           "btn btn-info btn-sm btnNextMonth",'btn btn-info btn-sm btnPreviousMonth','month-item','month-body','year-item'
-           ,'year-body','month-header','date-body','date-header'
-           ,'date-day-item','date-item disableSelect date-selected' , 'date-item disableSelect','date-icon']
-
- 
 
     function selectDateFormat(d,m,y,setting){
             let daySelected = new Date(+y-543, +m-1, +d).getDay();
@@ -586,13 +587,15 @@ function openCalendar(e,setting = default_setting){
         <div class="date-panel">
 
             <div class="date-header">
-                <button type="button" class="btn btn-info btn-sm btnPreviousMonth" id="btnPreviousMonth"> <i
-                        class="fas fa-chevron-left"></i> </button>
+              
 
                 <div class="lbl_month" id="header_month">month</div>
                 <div class="lbl_year" id="header_year">year</div>
 
-                <button type="button" class="btn btn-info btn-sm btnNextMonth" id="btnNextMonth"><i
+                <button type="button" class="btn btn-sm btnPreviousMonth" id="btnPreviousMonth"> <i
+                class="fas fa-chevron-left"></i> </button>
+                
+                <button type="button" class="btn btn-sm btnNextMonth" id="btnNextMonth"><i
                         class="fas fa-chevron-right"></i></button>
             </div>
             <div class="month-panel">

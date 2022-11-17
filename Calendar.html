@@ -95,7 +95,9 @@
         align-items: center;
         justify-content: center;
         flex-direction: column;
-        background: rgba(108, 152, 200, 0.95);
+        background: rgb(238,174,202);
+        background: linear-gradient(196deg, rgb(200, 70, 126) 0%, rgb(63, 125, 195) 100%);
+        background: rgb(56, 56, 56);
 
         z-index: 3;
         border-radius: 10px;
@@ -126,13 +128,27 @@
 
 
     }
+    .date-selected{
+    background: rgb(69, 85, 228);
+
+    border-radius: 10px;
+
+  }
+  .date-item:hover{
+      background: rgb(69, 85, 228);
+
+        border-radius: 10px;
+
+    }
+
     .date-header{
         width: 100%;
         font-size: 1.3rem;
         display: flex;
         align-items: center;
-        justify-content: center;
-        gap: 30px;
+        justify-content: flex-start;
+        gap: 10px;
+        padding-left: 15px;
         
     }
     .date-day{
@@ -158,6 +174,9 @@
         justify-content: flex-start;
         flex-wrap: wrap;
         flex-basis: 0;
+      background: rgba(255, 255, 255, 0.24);
+      border-radius: 10px;
+      
     }
 
     .date-item{
@@ -169,23 +188,16 @@
         cursor: pointer;
 
     }
-    .date-item:hover{
-        background: var(--blue6);
-
-    }
+  
     .date-empty{
         pointer-events: none;
-        color: rgba(255, 255, 255, 0.238);
+        color: rgba(255, 255, 255, 0.413);
     }
   
-  .date-selected{
-    background: var(--blue6);
-    background: var(--indigo9);
 
-  }
   #btnPreviousMonth{
     position: absolute;
-    left: 10px;
+    right: 50px;
   }
 
   #btnNextMonth{
