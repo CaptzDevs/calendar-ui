@@ -250,6 +250,107 @@ const default_setting = {
             // Execute findOverflows to find overflows on the page.
       if(this.length == 1){
 
+        this[0].addEventListener('keyup',(e)=>{
+            this[0].nextElementSibling.click()
+
+            let fullDate = e.target.dataset.fulldate
+            let date = 0
+
+            Date.prototype.addDays = function(days) {
+                date = new Date(`${+fullDate.slice(0,4)-543}-${fullDate.slice(4,6)}-${fullDate.slice(6,8)}`);
+                date.setDate(date.getDate() + days);
+                return date;
+            }
+            
+            Date.prototype.removeDays = function(days) {
+                date = new Date(`${+fullDate.slice(0,4)-543}-${fullDate.slice(4,6)}-${fullDate.slice(6,8)}`);
+                date.setDate(date.getDate() - days);
+                return date;
+            }
+
+            Date.prototype.configMonth = function(month,option) {
+                months = new Date(`${+fullDate.slice(0,4)-543}-${fullDate.slice(4,6)}-${fullDate.slice(6,8)}`);
+                if(option == 'add'){
+
+                    months.setMonth(months.getMonth() + month);
+                }else if(option == 'remove'){
+                    months.setMonth(months.getMonth() + month);
+
+                }
+                
+                return months;
+            }
+
+
+            let  d = new Date();
+        //right  
+        if(e.keyCode == 39){
+
+            let current = d.addDays(1)
+    
+            let curentDate = ("0"+current.getDate()).slice(-2)
+            let curentMonth=  ("0"+(current.getMonth()+1)).slice(-2)
+            let curentYear = current.getFullYear()+543
+    
+                    e.target.value =  `${ curentDate }/${curentMonth}/${curentYear}`
+                    e.target.setAttribute("data-fulldate" ,`${curentYear}${curentMonth}${curentDate}`) 
+                    e.target.setAttribute("value" ,`${ curentDate }/${curentMonth}/${curentYear}`)
+    
+                    renderCalendar(curentDate,curentMonth,curentYear,setting)
+            }
+
+        //left 
+
+
+        if(e.keyCode == 37){
+
+            let current = d.removeDays(1)
+    
+            let curentDate = ("0"+current.getDate()).slice(-2)
+            let curentMonth=  ("0"+(current.getMonth()+1)).slice(-2)
+            let curentYear = current.getFullYear()+543
+    
+                    e.target.value =  `${ curentDate }/${curentMonth}/${curentYear}`
+                    e.target.setAttribute("data-fulldate" ,`${curentYear}${curentMonth}${curentDate}`) 
+                    e.target.setAttribute("value" ,`${ curentDate }/${curentMonth}/${curentYear}`)
+                renderCalendar(curentDate,curentMonth,curentYear,setting)
+                    
+            }
+
+        //up
+            if(e.keyCode == 38){
+
+                let current = d.configMonth(1,"add")
+        
+                let curentDate = ("0"+current.getDate()).slice(-2)
+                let curentMonth=  ("0"+(current.getMonth()+1)).slice(-2)
+                let curentYear = current.getFullYear()+543
+        
+                        e.target.value =  `${ curentDate }/${curentMonth}/${curentYear}`
+                        e.target.setAttribute("data-fulldate" ,`${curentYear}${curentMonth}${curentDate}`) 
+                        e.target.setAttribute("value" ,`${ curentDate }/${curentMonth}/${curentYear}`)
+        
+                        renderCalendar(curentDate,curentMonth,curentYear,setting)
+                }
+            //down
+
+            if(e.keyCode == 40){
+
+                let current = d.configMonth(1,"remove")
+        
+                let curentDate = ("0"+current.getDate()).slice(-2)
+                let curentMonth=  ("0"+(current.getMonth()+1)).slice(-2)
+                let curentYear = current.getFullYear()+543
+        
+                        e.target.value =  `${ curentDate }/${curentMonth}/${curentYear}`
+                        e.target.setAttribute("data-fulldate" ,`${curentYear}${curentMonth}${curentDate}`) 
+                        e.target.setAttribute("value" ,`${ curentDate }/${curentMonth}/${curentYear}`)
+        
+                        renderCalendar(curentDate,curentMonth,curentYear,setting)
+                }
+            })
+
+
         this[0].nextElementSibling.addEventListener("click", (e) => {
             openCalendar(e , setting)
         })
@@ -267,50 +368,13 @@ const default_setting = {
                     autoDate(e,setting)
                 })
 
-                this[0].addEventListener('keyup',(e)=>{
-                    if(!e.target.dataset.state){
-                        e.target.dataset.state = '1';
-                    }
-
-                    if(e.target.dataset.state == '1'){
-                        console.log('1')
-
-                    let fullDate = e.target.dataset.fulldate
-                    let date = 0
-
-                    Date.prototype.addDays = function(days) {
-
-                        date = new Date(`${+fullDate.slice(0,4)-543}-${fullDate.slice(4,6)}-${fullDate.slice(6,8)}`);
-                        date.setDate(date.getDate() + days);
-                        return date;
-                    }
-                    
-                    let  d = new Date();
-                    
-
-               if(e.keyCode == 38){
-
-                let current = d.addDays(1)
-
-                let curentDate = ("0"+current.getDate()).slice(-2)
-                let curentMonth=  ("0"+(current.getMonth()+1)).slice(-2)
-                let curentYear = current.getFullYear()+543
-
-                        console.log(curentDate,curentMonth,curentYear)
-                        e.target.setAttribute("data-fulldate" ,`${curentYear}${curentMonth}${curentDate}`) 
-                        e.target.setAttribute("value" ,`${ curentDate }/${curentMonth}/${curentYear}`) 
-                    }
-
-            }
-                   
-                })
+              
                 
             }else if(e.target.value != ''){
       
                 let fullDate = e.target.dataset.fulldate
                 e.target.value = `${fullDate.slice(6,8)}/${fullDate.slice(4,6)}/${fullDate.slice(0,4)}`
                 e.target.setAttribute("value" ,`${fullDate.slice(6,8)}/${fullDate.slice(4,6)}/${fullDate.slice(0,4)}`) 
-                e.target.dataset.state = '2';
 
                 this[0].addEventListener('change', (e) => {
 
@@ -917,7 +981,8 @@ function renderCalendar(date = 0,month = 0,year = 0 ,setting = default_setting){
       let last_date_of_month = new Date(2022, this_month, 0).getDate();
    
       //set month lable and year label
-      $(".lbl_month").text(set_lang(this_month,'m',lang,{day : setting.day , month : setting.month }))
+      $(".lbl_month").text(set_lang(+this_month,'m',lang,{day : setting.day , month : setting.month }))
+
       $(".lbl_year").text(yearPanel == 'full' ? this_year : (''+this_year).slice(-2)) 
 
     //render section -------------------------------------
