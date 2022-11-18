@@ -363,7 +363,12 @@ const default_setting = {
 
 
         this[0].nextElementSibling.addEventListener("click", (e) => {
-            openCalendar(e , setting)
+            if(e.detail == 1){
+                openCalendar(e , setting)
+            }else{
+                e.target.value.select()
+            }
+            
         })
         
         this[0].addEventListener("click", (e) => {
