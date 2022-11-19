@@ -114,7 +114,7 @@ yy   = 65 , 22
 
 const default_setting = {
 
-            format : "yyyy/dd/MM",    
+            format : "mm/dd/yyyy",    
             default :  "now",            
             separation : "",           
             lang : "en",
@@ -162,7 +162,6 @@ const default_setting = {
             for (let i = 0; i <= 2; i++){
                 format_set[ tranform_format[i] ] = date[i]
             }
-    
     
             format_set.y = yearType === "AD" ? ""+(+format_set.y) : ""+(+format_set.y-543)
     
@@ -228,6 +227,28 @@ const default_setting = {
            }
     }
     
+
+    function changeDateByArrow(e,current,setting){
+
+        
+        let yearType = setting.yearType ? setting.yearType : default_setting.yearType 
+
+
+        let curentDate = ("0"+current.getDate()).slice(-2)
+        let curentMonth=  ("0"+(current.getMonth()+1)).slice(-2)
+        let curentYear = current.getFullYear()
+
+        let [curentDateDisplay,curentMonthDisplay,curentYearDisplay] = selectDateFormat(curentDate,curentMonth,curentYear,setting)[1]
+        
+        curentYearDisplay = yearType === "AD" ? curentYear : curentYear+543
+
+        e.target.value =  `${ curentDateDisplay }/${curentMonthDisplay}/${curentYearDisplay}`
+        e.target.setAttribute("value" ,`${ curentDateDisplay }/${curentMonthDisplay}/${curentYearDisplay}`)
+        e.target.setAttribute("data-fulldate" ,`${curentYear}${curentMonth}${curentDate}`) 
+
+
+        renderCalendar(curentDate,curentMonth,curentYear,setting)
+    }
     
     
     
@@ -266,8 +287,7 @@ const default_setting = {
     //bind click to element 
 
     $(document).ready(()=>{
-            // Execute findOverflows to find overflows on the page.
-
+        // Execute findOverflows to find overflows on the page.
       if(this.length === 1){
 
         this[0].addEventListener('keyup',(e)=>{
@@ -275,27 +295,31 @@ const default_setting = {
 
             let fullDate = e.target.dataset.fulldate
             let date = 0
+            let yearType = setting.yearType ? setting.yearType : default_setting.yearType 
 
-            Date.prototype.addDays = function(days) {
-                date = new Date(`${+fullDate.slice(0,4)}-${fullDate.slice(4,6)}-${fullDate.slice(6,8)}`);
-                date.setDate(date.getDate() + days);
-                return date;
-            }
+
+            let [year_s,month_s,date_s] = [fullDate.slice(0,4),fullDate.slice(4,6),fullDate.slice(6,8)]
+
+           /*  year_s = yearType === "AD" ? year_s : year_s-543
+            console.log(year_s) */
             
-            Date.prototype.removeDays = function(days) {
-                date = new Date(`${+fullDate.slice(0,4)}-${fullDate.slice(4,6)}-${fullDate.slice(6,8)}`);
-                date.setDate(date.getDate() - days);
+            Date.prototype.configDate = function(days,option) {
+                date = new Date(`${year_s}-${month_s}-${date_s}`);
+
+                if(option === 'add'){
+                    date.setDate(date.getDate() + days);
+                }else if(option === 'remove'){
+                    date.setDate(date.getDate() - days);
+                }
                 return date;
             }
 
             Date.prototype.configMonth = function(month,option) {
                 months = new Date(`${+fullDate.slice(0,4)}-${fullDate.slice(4,6)}-${fullDate.slice(6,8)}`);
                 if(option === 'add'){
-
                     months.setMonth(months.getMonth() + month);
                 }else if(option === 'remove'){
                     months.setMonth(months.getMonth() - month);
-
                 }
                 
                 return months;
@@ -303,80 +327,33 @@ const default_setting = {
 
 
             let  d = new Date();
-        //right  
-        if(e.keyCode === 39){
-
-            let current = d.addDays(1)
-    
-            let curentDate = ("0"+current.getDate()).slice(-2)
-            let curentMonth=  ("0"+(current.getMonth()+1)).slice(-2)
-            let curentYear = current.getFullYear()
-    
-                    e.target.value =  `${ curentDate }/${curentMonth}/${curentYear}`
-                    e.target.setAttribute("data-fulldate" ,`${curentYear}${curentMonth}${curentDate}`) 
-                    e.target.setAttribute("value" ,`${ curentDate }/${curentMonth}/${curentYear}`)
-    
-                    renderCalendar(curentDate,curentMonth,curentYear,setting)
-            }
-
-        //left 
-
-
-        if(e.keyCode === 37){
-
-            let current = d.removeDays(1)
-    
-            let curentDate = ("0"+current.getDate()).slice(-2)
-            let curentMonth=  ("0"+(current.getMonth()+1)).slice(-2)
-            let curentYear = current.getFullYear()
-    
-                    e.target.value =  `${ curentDate }/${curentMonth}/${curentYear}`
-                    e.target.setAttribute("data-fulldate" ,`${curentYear}${curentMonth}${curentDate}`) 
-                    e.target.setAttribute("value" ,`${ curentDate }/${curentMonth}/${curentYear}`)
-                renderCalendar(curentDate,curentMonth,curentYear,setting)
-                    
-            }
-
-        //up
-            if(e.keyCode === 38){
-
-                let current = d.configMonth(1,"add")
-        
-                let curentDate = ("0"+current.getDate()).slice(-2)
-                let curentMonth=  ("0"+(current.getMonth()+1)).slice(-2)
-                let curentYear = current.getFullYear()
-        
-                        e.target.value =  `${ curentDate }/${curentMonth}/${curentYear}`
-                        e.target.setAttribute("data-fulldate" ,`${curentYear}${curentMonth}${curentDate}`) 
-                        e.target.setAttribute("value" ,`${ curentDate }/${curentMonth}/${curentYear}`)
-        
-                        renderCalendar(curentDate,curentMonth,curentYear,setting)
+                //right  
+                if (e.keyCode === 39) {
+                    let current = d.configDate(1,"add")
+                    changeDateByArrow(e,current,setting)
                 }
-            //down
-
-            if(e.keyCode === 40){
-
-                let current = d.configMonth(1,"remove")
-        
-                let curentDate = ("0"+current.getDate()).slice(-2)
-                let curentMonth=  ("0"+(current.getMonth()+1)).slice(-2)
-                let curentYear = current.getFullYear()
-        
-                        e.target.value =  `${ curentDate }/${curentMonth}/${curentYear}`
-                        e.target.setAttribute("data-fulldate" ,`${curentYear}${curentMonth}${curentDate}`) 
-                        e.target.setAttribute("value" ,`${ curentDate }/${curentMonth}/${curentYear}`)
-        
-                        renderCalendar(curentDate,curentMonth,curentYear,setting)
+                //left 
+                if (e.keyCode === 37) {
+                    let current = d.configDate(1,"remove")
+                    changeDateByArrow(e,current,setting)
                 }
-            })
-
+                //up
+                if (e.keyCode === 38) {
+                    let current = d.configDate(7,"remove")
+                    changeDateByArrow(e,current,setting)
+                }
+                //down
+                if (e.keyCode === 40) {
+                    let current = d.configDate(7,"add")
+                    changeDateByArrow(e,current,setting)
+                }
+        })
 
         //click icon 
         this[0].nextElementSibling.addEventListener("click", (e) => {
 
                 openCalendar(e , setting)
         })
-        
         //click input
         this[0].addEventListener("click", (e) => {
            
@@ -394,8 +371,6 @@ const default_setting = {
                     autoDate(e,setting)
                 })
 
-              
-                
             }else if(e.target.value != ''){
       
                 let yearType = setting.yearType ? setting.yearType : default_setting.yearType 
@@ -404,7 +379,6 @@ const default_setting = {
                 let date = fullDate.slice(6,8)
                 let month = fullDate.slice(4,6)
                 let year = fullDate.slice(0,4)
-
 
                 let checkYearType = yearType === "AD" ? +year : +year+543 
 
