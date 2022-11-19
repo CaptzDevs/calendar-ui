@@ -114,7 +114,7 @@ yy   = 65 , 22
 
 const default_setting = {
 
-            format : "d/MM/yyyy",    
+            format : "yyyy/dd/MM",    
             default :  "now",            
             separation : "",           
             lang : "en",
@@ -145,6 +145,47 @@ const default_setting = {
 
  
     
+
+    function checkDateIsValidFormat(date = '',setting = default_setting){
+            let yearType = setting.yearType ? setting.yearType : default_setting.yearType 
+        
+            let format = setting.format ? setting.format : default_setting.format
+    
+            format = format.split('/')
+    
+            let tranform_format = `${format[0].toLowerCase().slice(-1)}/${format[1].toLowerCase().slice(-1)}/${format[2].toLowerCase().slice(-1)}`
+               
+            tranform_format = tranform_format.split('/')
+            date = date.split('/')
+            let format_set = {}
+    
+            for (let i = 0; i <= 2; i++){
+                format_set[ tranform_format[i] ] = date[i]
+            }
+    
+    
+            format_set.y = yearType === "AD" ? ""+(+format_set.y) : ""+(+format_set.y-543)
+    
+            if(date.length === 3){
+                if((format_set.m.length === 2 && format_set.m < 13) && format_set.y.length === 4){
+    
+                    let date_number = new Date(format_set.y, format_set.m, 0).getDate() 
+    
+                        if(format_set.d.length < 3 && +format_set.d > 0 && +format_set.d <= date_number){
+    
+                            return [true,format_set]
+                        }else{
+                            return false
+                        }
+                }else{
+                    return false
+                }
+            }else{
+                   return false
+            }
+        
+    }
+        
     
     function autoDate(e,setting){
         let check_format = checkDateIsValidFormat(e.target.value,setting)
@@ -152,11 +193,10 @@ const default_setting = {
         let yearType = setting.yearType ? setting.yearType : default_setting.yearType 
       
    
-
      /*    e.target.previousElementSibling.setAttribute('value',e.target.value) */
        if(check_format[0]){
 
-             let full_date_display = selectDateFormat(check_format[1].d,check_format[1].m,check_format[1].y,setting)
+             let full_date_display = selectDateFormat(check_format[1].d,check_format[1].m,check_format[1].y,setting)[0]
 
              let slitter = setting.separation  ? setting.separation : default_setting.separation
              let starter = setting.startWith ? setting.startWith : default_setting.startWith
@@ -189,47 +229,6 @@ const default_setting = {
     }
     
     
-    function checkDateIsValidFormat(date = '',setting = default_setting){
-        let yearType = setting.yearType ? setting.yearType : default_setting.yearType 
-    
-        let format = setting.format ? setting.format : default_setting.format
-
-        format = format.split('/')
-
-        let tranform_format = `${format[0].toLowerCase().slice(-1)}/${format[1].toLowerCase().slice(-1)}/${format[2].toLowerCase().slice(-1)}`
-           
-        tranform_format = tranform_format.split('/')
-        date = date.split('/')
-        let format_set = {}
-
-        for (let i = 0; i <= 2; i++){
-            format_set[ tranform_format[i] ] = date[i]
-        }
-
-
-        format_set.y = yearType === "AD" ? ""+(+format_set.y) : ""+(+format_set.y-543)
-
-        if(date.length === 3){
-            if((format_set.m.length === 2 && format_set.m < 13) && format_set.y.length === 4){
-
-                let date_number = new Date(format_set.y, format_set.m, 0).getDate() 
-
-                    if(format_set.d.length < 3 && +format_set.d > 0 && +format_set.d <= date_number){
-
-                        return [true,format_set]
-                    }else{
-
-                        return false
-                    }
-            }else{
-                return false
-
-            }
-            
-        }else{
-               return false
-        }
-    }
     
     
     const findOverflows = () => {
@@ -402,11 +401,20 @@ const default_setting = {
                 let yearType = setting.yearType ? setting.yearType : default_setting.yearType 
                 let fullDate = e.target.dataset.fulldate
 
+                let date = fullDate.slice(6,8)
+                let month = fullDate.slice(4,6)
                 let year = fullDate.slice(0,4)
+
+
                 let checkYearType = yearType === "AD" ? +year : +year+543 
 
-                e.target.value = `${fullDate.slice(6,8)}/${fullDate.slice(4,6)}/${checkYearType}`
-                e.target.setAttribute("value" ,`${fullDate.slice(6,8)}/${fullDate.slice(4,6)}/${checkYearType}`) 
+                let checkFormat = selectDateFormat(date,month,checkYearType,setting)[1]
+
+                console.log(checkFormat)
+
+                e.target.value = `${checkFormat[0]}/${checkFormat[1]}/${checkFormat[2]}`
+                
+                e.target.setAttribute("value" ,`${checkFormat[0]}/${checkFormat[1]}/${checkFormat[2]}`) 
 
                 this[0].addEventListener('change', (e) => {
 
@@ -505,9 +513,8 @@ const default_setting = {
     
                 show_day = show_day === 'small' ? 'sm' : show_day
     
-    
                 let date_lang = {
-                    day :`d_${lang}_${show_day}` ,  
+                    d :`d_${lang}_${show_day}` ,  
                     m : `m_${lang}_${month_type}` ,
                 }
                 
@@ -523,28 +530,36 @@ const default_setting = {
                 
                 let section_arr = [check_section[d_select] , check_section[m_select] , check_section[y_select]] // return order of date ex. d,m,y or m,d,y depends on format
     
-    
                 let date_arr = {
                     d: date_type === 'z' ? d : +d,
-                    m: month_type != 'n' && month_type != 'z' ? LANG[date_lang[section_arr[1]]] [+m] :  month_type === 'z' ? m : +m,
+                    m: month_type != 'n' && month_type != 'z' ? LANG[date_lang[section_arr[section_arr.indexOf('m')]]] [+m] :  month_type === 'z' ? m : +m,
                     y: year_type === 'full' ? y : y.slice(-2) 
                 }
     
-    
-    
+
+                let date_arr2 = {
+                    d: date_type === 'z' ? d : +d,
+                    m: month_type != 'n' && month_type != 'z' ?  m :  month_type === 'z' ? m : m,
+                    y: year_type === 'full' ? ''+y : ''+(y.slice(-2)) 
+                }
+             
             let FULL_DATE_DISPLAY = [
     
-    
-                LANG[date_lang.day] [!show_day || show_day != 'null' ? daySelected : 0] ,
+                LANG[date_lang.d] [!show_day || show_day != 'null' ? daySelected : 0] ,
                 date_arr[section_arr[0]],
                 date_arr[section_arr[1]],
                 date_arr[section_arr[2]],
             ]
-                
+
+            let FULL_DATE_DISPLAY_NUMBER = [
+    
+                date_arr2[section_arr[0]],
+                date_arr2[section_arr[1]],
+                date_arr2[section_arr[2]],
+            ]
     
              //    console.log(date_arr[d_select],date_arr[m_select],date_arr[y_select])
-                
-                return FULL_DATE_DISPLAY
+                return [FULL_DATE_DISPLAY,FULL_DATE_DISPLAY_NUMBER]
     
           }
 
@@ -672,7 +687,7 @@ function openCalendar(e,setting = default_setting){
         
         year = e.target.dataset.year 
 
-        let full_date_display =  selectDateFormat(this_date,this_month,year,setting)
+        let full_date_display =  selectDateFormat(this_date,this_month,year,setting)[0]
 
         let slitter = setting.separation  ? setting.separation : default_setting.separation
         let starter = setting.startWith ? setting.startWith : default_setting.startWith
@@ -720,7 +735,7 @@ function openCalendar(e,setting = default_setting){
 
         $(".month-panel").removeClass('show-month')
 
-        let full_date_display = selectDateFormat(this_date,month,this_year,setting)
+        let full_date_display = selectDateFormat(this_date,month,this_year,setting)[0]
 
         let slitter = setting.separation  ? setting.separation : default_setting.separation
         let starter = setting.startWith ? setting.startWith : default_setting.startWith
@@ -1114,7 +1129,7 @@ function renderCalendar(date = 0,month = 0,year = 0 ,setting = default_setting){
 
       if( isValid ){
             
-       let full_date_display = selectDateFormat(d,m,y,setting)
+       let full_date_display = selectDateFormat(d,m,y,setting)[0]
 
       // console.log(date_formated , date_lang )
 
