@@ -114,7 +114,7 @@ yy   = 65 , 22
 
 const default_setting = {
 
-            format : "mm/dd/yyyy",    
+            format : "dd/mm/yyyy",    
             default :  "now",            
             separation : "",           
             lang : "en",
@@ -213,12 +213,13 @@ const default_setting = {
 
                e.target.value = date_display
                e.target.setAttribute("value" ,date_display)
+               e.target.setAttribute('data-value',`${y_display}${("0"+check_format[1].m).slice(-2)}${+check_format[1].d}`) 
 
-        
                e.target.dataset.fulldate = `${check_format[1].y}${("0"+check_format[1].m).slice(-2)}${+check_format[1].d}`
 
-            $(".date-panel").attr('data-fulldate',`${check_format[1].y}${("0"+check_format[1].m).slice(-2)}${+check_format[1].d}`)
-            $(".date-panel").attr('data-date',`${+check_format[1].d}`)
+                $(".date-panel").attr('data-fulldate',`${check_format[1].y}${("0"+check_format[1].m).slice(-2)}${+check_format[1].d}`)
+                $(".date-panel").attr('data-date',`${+check_format[1].d}`)
+
 
 
                  renderCalendar(+check_format[1].d,+check_format[1].m,+check_format[1].y,setting)   
@@ -244,7 +245,11 @@ const default_setting = {
 
         e.target.value =  `${ curentDateDisplay }/${curentMonthDisplay}/${curentYearDisplay}`
         e.target.setAttribute("value" ,`${ curentDateDisplay }/${curentMonthDisplay}/${curentYearDisplay}`)
+        e.target.setAttribute("data-value" ,`${curentYearDisplay}${curentMonth}${curentDate}`) 
+
         e.target.setAttribute("data-fulldate" ,`${curentYear}${curentMonth}${curentDate}`) 
+
+
 
 
         renderCalendar(curentDate,curentMonth,curentYear,setting)
@@ -390,6 +395,8 @@ const default_setting = {
                 
                 e.target.setAttribute("value" ,`${checkFormat[0]}/${checkFormat[1]}/${checkFormat[2]}`) 
 
+
+
                 this[0].addEventListener('change', (e) => {
 
                         autoDate(e,setting)
@@ -401,18 +408,12 @@ const default_setting = {
                         autoDate(e,setting)
 
                 }) 
-
-              
-                
-
-                 
             }
-
         })
 
     }
     })
-    }
+}
 
     $("#date_pay1").Calendar({
         separation : "/",
@@ -438,13 +439,19 @@ const default_setting = {
     
 
 
-    function selectDateFormat(d,m,y,setting){
+    function selectDateFormat(d,m,y,setting,tranform_year){
 
             let yearType = setting.yearType ? setting.yearType : default_setting.yearType 
             let lang = setting.lang ? setting.lang : default_setting.lang 
             let formatter = setting.format ? setting.format.split('/') : default_setting.format.split('/')
-            
-            let daySelected = new Date(+y, +m-1, +d).getDay();
+            let daySelected = 0
+            if(tranform_year){
+                 daySelected = new Date(+y-543, +m-1, +d).getDay();
+            }else{
+                daySelected = new Date(+y, +m-1, +d).getDay();
+            }
+
+
 
                 let d_select = 0
                 let m_select = 0
@@ -649,8 +656,8 @@ function openCalendar(e,setting = default_setting){
 
   $(".lbl_year").click((ev)=>{
       renderYear(setting)
-      let this_date = +ev.target.parentElement.parentElement.dataset.date
-      let this_month = +ev.target.parentElement.parentElement.dataset.month
+      let this_date = ev.target.parentElement.parentElement.dataset.date
+      let this_month = ev.target.parentElement.parentElement.dataset.month
       let year = 0
 
       $(".year-panel").addClass('show-month')
@@ -659,9 +666,11 @@ function openCalendar(e,setting = default_setting){
         
         $(".year-panel").removeClass('show-month')
         
-        year = e.target.dataset.year 
+        year = yearType === "AD" ? +e.target.dataset.year  : +e.target.dataset.year-543 
 
-        let full_date_display =  selectDateFormat(this_date,this_month,year,setting)[0]
+        let checkYearType = yearType === "AD" ? +year : +year+543
+
+        let full_date_display = selectDateFormat(this_date,this_month,checkYearType,setting,true)[0]
 
         let slitter = setting.separation  ? setting.separation : default_setting.separation
         let starter = setting.startWith ? setting.startWith : default_setting.startWith
@@ -679,12 +688,15 @@ function openCalendar(e,setting = default_setting){
 
          e.target.parentElement.parentElement.parentElement.previousElementSibling.previousElementSibling.setAttribute("value" ,date_display)
 
+         e.target.parentElement.parentElement.parentElement.previousElementSibling.previousElementSibling.setAttribute("data-value" ,`${checkYearType}${("0"+this_month).slice(-2)}${this_date}`)
+
          e.target.parentElement.parentElement.parentElement.previousElementSibling.previousElementSibling.dataset.fulldate = `${year}${("0"+this_month).slice(-2)}${this_date}`
 
 
 
             $(".date-panel").attr('data-fulldate',`${year}${("0"+this_month).slice(-2)}${this_date}`)
             $(".date-panel").attr('data-date',`${this_date}`)
+
 
           renderCalendar( this_date, this_month , year ,setting)
 
@@ -693,8 +705,8 @@ function openCalendar(e,setting = default_setting){
 
   $(".lbl_month").click((e)=>{
 
-    let this_date = +e.target.parentElement.parentElement.dataset.date
-    let this_year = +e.target.parentElement.parentElement.dataset.year
+    let this_date = e.target.parentElement.parentElement.dataset.date
+    let this_year = yearType === "AD" ? e.target.parentElement.parentElement.dataset.year : +e.target.parentElement.parentElement.dataset.year+543 
     let month = 0
 
 
@@ -705,34 +717,40 @@ function openCalendar(e,setting = default_setting){
         $(".month-item").click((e)=>{
 
         let fullDate = e.target.dataset.fulldate 
-        month = +fullDate.slice(4,6)
+        month = fullDate.slice(4,6)
 
         $(".month-panel").removeClass('show-month')
 
-        let full_date_display = selectDateFormat(this_date,month,this_year,setting)[0]
+
+        let full_date_display = selectDateFormat(this_date,month,this_year,setting,true)[0]
 
         let slitter = setting.separation  ? setting.separation : default_setting.separation
         let starter = setting.startWith ? setting.startWith : default_setting.startWith
-
+        
           day_display = full_date_display[0]
           d_display = full_date_display[1]
           m_display = full_date_display[2]
           y_display = full_date_display[3]
 
+          let checkYearType = yearType === 'AD' ? this_year : this_year-543
+
+          console.log(checkYearType)
 
           let date_display  = `${starter}${day_display}, ${d_display}${slitter}${m_display}${slitter}${y_display}`
 
           //set dataset value and value to input        
           e.target.parentElement.parentElement.parentElement.previousElementSibling.previousElementSibling.value = date_display
           e.target.parentElement.parentElement.parentElement.previousElementSibling.previousElementSibling.setAttribute("value" ,date_display)
+          e.target.parentElement.parentElement.parentElement.previousElementSibling.previousElementSibling.setAttribute("data-value" ,`${checkYearType}${("0"+month).slice(-2)}${this_date}`)
 
-          e.target.parentElement.parentElement.parentElement.previousElementSibling.previousElementSibling.dataset.fulldate = `${this_year}${("0"+month).slice(-2)}${this_date}`
+
+          e.target.parentElement.parentElement.parentElement.previousElementSibling.previousElementSibling.dataset.fulldate = `${checkYearType}${("0"+month).slice(-2)}${this_date}`
 
 
-            $(".date-panel").attr('data-fulldate',`${this_year}${("0"+month).slice(-2)}${this_date}`)
+            $(".date-panel").attr('data-fulldate',`${checkYearType}${("0"+month).slice(-2)}${this_date}`)
             $(".date-panel").attr('data-date',`${this_date}`)
 
-        renderCalendar( this_date, month ,this_year ,setting)
+        renderCalendar( this_date, month ,checkYearType ,setting)
           
             
         })
@@ -994,7 +1012,7 @@ function renderCalendar(date = 0,month = 0,year = 0 ,setting = default_setting){
       //set month lable and year label
       $(".lbl_month").text(set_lang(+this_month,'m',lang,{day : setting.day , month : setting.month }))
 
-      let displayYear = yearType === 'AD' ? this_year : this_year+543
+     let displayYear = yearType === 'AD' ? this_year : this_year+543 
 
       $(".lbl_year").text(yearPanel === 'full' ? displayYear : (''+displayYear).slice(-2)) 
 
@@ -1124,6 +1142,9 @@ function renderCalendar(date = 0,month = 0,year = 0 ,setting = default_setting){
 
             e.target.parentElement.parentElement.previousElementSibling.previousElementSibling.value = date_display
             e.target.parentElement.parentElement.previousElementSibling.previousElementSibling.setAttribute("value" ,date_display)
+
+             e.target.parentElement.parentElement.previousElementSibling.previousElementSibling.setAttribute("data-value" ,`${checkYearType}${m}${d}`) 
+
 
             e.target.parentElement.parentElement.previousElementSibling.previousElementSibling.dataset.fulldate = `${y}${m}${d}`
              /*  e.target.parentElement.parentElement.parentElement.parentElement.dataset.fulldate = `${y}${m}${d}` */
