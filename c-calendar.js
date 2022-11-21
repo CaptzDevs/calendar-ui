@@ -743,15 +743,12 @@ function openCalendar(e,setting = default_setting){
           e.target.parentElement.parentElement.parentElement.previousElementSibling.previousElementSibling.setAttribute("value" ,date_display)
           e.target.parentElement.parentElement.parentElement.previousElementSibling.previousElementSibling.setAttribute("data-value" ,`${checkYearType}${("0"+month).slice(-2)}${this_date}`)
 
-
           e.target.parentElement.parentElement.parentElement.previousElementSibling.previousElementSibling.dataset.fulldate = `${checkYearType}${("0"+month).slice(-2)}${this_date}`
-
 
             $(".date-panel").attr('data-fulldate',`${checkYearType}${("0"+month).slice(-2)}${this_date}`)
             $(".date-panel").attr('data-date',`${this_date}`)
 
-        renderCalendar( this_date, month ,checkYearType ,setting)
-          
+            renderCalendar( this_date, month ,checkYearType ,setting)
             
         })
 
@@ -788,7 +785,6 @@ function openCalendar(e,setting = default_setting){
 
 
   })
-
   $(".btnNextMonth").click((ev)=>{
 
 
@@ -1095,7 +1091,6 @@ function renderCalendar(date = 0,month = 0,year = 0 ,setting = default_setting){
 
     //select date 
     $(".date-item").click((e)=>{
-
     if(selectable){
       let fulldate = e.target.dataset.fulldate
 

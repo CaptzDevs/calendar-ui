@@ -58,6 +58,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        flex-direction: column;
     }
     label{
         color: white;
@@ -343,11 +344,20 @@
 <body>
 
         <main>
-              <div class="form-group"  >
-                <label for="date_pay">Default</label>
+            <div class="row">
+              <div class="form-group col-6">
+                <label for="date_pay" id="test">Default</label>
                   <input class="datepicker" type="text" id="date_pay1" name="date_pay" data-fulldate="20221115" autocomplete="off">
                 
               </div>
+
+
+              <div class="form-group col-6" >
+                <label for="date_pay">Default</label>
+                <input class="datepicker" type="text" id="date_pay2" name="date_pay" data-fulldate="20221115" autocomplete="off">
+
+              </div>
+            </div>
 
 
               <div class="form-group" >
