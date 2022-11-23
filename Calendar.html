@@ -194,7 +194,7 @@
   
     .date-empty{
         pointer-events: none;
-        color: rgba(255, 255, 255, 0.413);
+        color: rgba(255, 255, 255, 0.25);
     }
   
 
@@ -219,16 +219,18 @@
     color: black;
         transform: translateY(100%);
         transition: .5s;
+        overflow: auto;
+
   }
   .month-item{
-        width: 120px;
-        height: 70px;
+        width: 30%;
+        height: 80px;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
         background: var(--gray-500);
-    background: rgba(108, 152, 200, 0);
+        background: rgba(108, 152, 200, 0);
 
         cursor: pointer;
     color: white;
