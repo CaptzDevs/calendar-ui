@@ -133,6 +133,9 @@ const default_setting = {
     }
 
 
+ 
+
+
    let panel_arr = [
           'date-panel',"datepicker",'lbl_month','lbl_year' ,'btn btn-sm btnNextMonth' ,
            "btn btn-sm btnNextMonth",'btn btn-sm btnPreviousMonth','month-item','month-body','year-item'
@@ -167,41 +170,44 @@ const default_setting = {
         })
     
     function checkDateIsValidFormat(date = '',setting = default_setting){
+
             let yearType = setting.yearType ? setting.yearType : default_setting.yearType 
         
             let format = setting.format ? setting.format : default_setting.format
     
-            format = format.split('/')
+                format = format.split('/')
     
             let tranform_format = `${format[0].toLowerCase().slice(-1)}/${format[1].toLowerCase().slice(-1)}/${format[2].toLowerCase().slice(-1)}`
                
-            tranform_format = tranform_format.split('/')
-            date = date.split('/')
-            let format_set = {}
-    
-            for (let i = 0; i <= 2; i++){
-                format_set[ tranform_format[i] ] = date[i]
-            }
-    
-            format_set.y = yearType === "AD" ? ""+(+format_set.y) : ""+(+format_set.y-543)
-    
-            if(date.length === 3){
-                if((format_set.m.length === 2 && format_set.m < 13) && format_set.y.length === 4){
-    
-                    let date_number = new Date(format_set.y, format_set.m, 0).getDate() 
-    
-                        if(format_set.d.length < 3 && +format_set.d > 0 && +format_set.d <= date_number){
-    
-                            return [true,format_set]
-                        }else{
-                            return false
-                        }
-                }else{
-                    return false
+                tranform_format = tranform_format.split('/')
+
+                date = date.split('/')
+
+                let format_set = {}
+        
+                for (let i = 0; i <= 2; i++){
+                    format_set[ tranform_format[i] ] = date[i]
                 }
-            }else{
-                   return false
-            }
+            
+                format_set.y = yearType === "AD" ? ""+(+format_set.y) : ""+(+format_set.y-543)
+            
+                if(date.length === 3){
+                    if((format_set.m.length === 2 && format_set.m < 13) && format_set.y.length === 4){
+                    
+                        let date_number = new Date(format_set.y, format_set.m, 0).getDate() 
+                    
+                            if(format_set.d.length < 3 && +format_set.d > 0 && +format_set.d <= date_number){
+                            
+                                return [true,format_set]
+                            }else{
+                                return false
+                            }
+                    }else{
+                        return false
+                    }
+                }else{
+                       return false
+                }
         
     }
         
@@ -211,7 +217,7 @@ const default_setting = {
 
         let yearType = setting.yearType ? setting.yearType : default_setting.yearType 
       
-     /*    e.target.previousElementSibling.setAttribute('value',e.target.value) */
+        /* e.target.previousElementSibling.setAttribute('value',e.target.value) */
        if(check_format[0]){
 
             let full_date_display = selectDateFormat(check_format[1].d,check_format[1].m,check_format[1].y,setting)[0]
@@ -230,16 +236,13 @@ const default_setting = {
 
                //set dataset value and value to input        
 
-               e.target.value = date_display
-               e.target.setAttribute("value" ,date_display)
-               e.target.setAttribute('data-value',`${y_display}${("0"+check_format[1].m).slice(-2)}${check_format[1].d}`) 
-
-               e.target.dataset.fulldate = `${check_format[1].y}${("0"+check_format[1].m).slice(-2)}${check_format[1].d}`
+                e.target.value = date_display
+                e.target.setAttribute("value" ,date_display)
+                e.target.setAttribute('data-value',`${y_display}${("0"+check_format[1].m).slice(-2)}${check_format[1].d}`) 
+                e.target.setAttribute('data-fulldate',`${check_format[1].y}${("0"+check_format[1].m).slice(-2)}${check_format[1].d}`)
 
                 $(".date-panel").attr('data-fulldate',`${check_format[1].y}${("0"+check_format[1].m).slice(-2)}${check_format[1].d}`)
                 $(".date-panel").attr('data-date',`${check_format[1].d}`)
-
-
 
                  renderCalendar(+check_format[1].d,+check_format[1].m,+check_format[1].y,setting)   
                /*   e.target.setAttribute("readonly","readonly") */
@@ -274,7 +277,6 @@ const default_setting = {
             (min_date[2] <= +curentDate || +curentMonth != min_month  || +curentYear != min_year )
         )
         {
-    
             e.target.value =  `${ curentDateDisplay }/${curentMonthDisplay}/${curentYearDisplay}`
             e.target.setAttribute("value" ,`${ curentDateDisplay }/${curentMonthDisplay}/${curentYearDisplay}`)
             e.target.setAttribute("data-value" ,`${curentYearDisplay}${curentMonth}${curentDate}`) 
@@ -285,10 +287,6 @@ const default_setting = {
          }
 
     }
-    
-    
-    
-
 
     jQuery.fn.Calendar = function(setting = default_setting){
 
@@ -315,85 +313,85 @@ const default_setting = {
 
 
         this[0].addEventListener('keyup',(e)=>{
-            this[0].nextElementSibling.click()
+                this[0].nextElementSibling.click()
 
-            let fullDate = e.target.dataset.fulldate
-            let date = 0
-            let yearType = setting.yearType ? setting.yearType : default_setting.yearType 
-
-
-            let [year_s,month_s,date_s] = [fullDate.slice(0,4),fullDate.slice(4,6),fullDate.slice(6,8)]
-
-           /*  year_s = yearType === "AD" ? year_s : year_s-543
-            console.log(year_s) */
-            
-            Date.prototype.configDate = function(days,option) {
-                date = new Date(`${year_s}-${month_s}-${date_s}`);
-
-                if(option === 'add'){
-                    date.setDate(date.getDate() + days);
-                }else if(option === 'remove'){
-                    date.setDate(date.getDate() - days);
-                }
-                return date;
-            }
-
-            Date.prototype.configMonth = function(month,option) {
-                months = new Date(`${+fullDate.slice(0,4)}-${fullDate.slice(4,6)}-${fullDate.slice(6,8)}`);
-                if(option === 'add'){
-                    months.setMonth(months.getMonth() + month);
-                }else if(option === 'remove'){
-                    months.setMonth(months.getMonth() - month);
-                }
-                
-                return months;
-            }
+                let fullDate = e.target.dataset.fulldate
+                let date = 0
+                let yearType = setting.yearType ? setting.yearType : default_setting.yearType 
 
 
-            let  d = new Date();
-                //right  
-                if (e.keyCode === 39) {
+                let [year_s,month_s,date_s] = [fullDate.slice(0,4),fullDate.slice(4,6),fullDate.slice(6,8)]
 
-                    let fulldate = e.target.dataset.fulldate
-                    let [this_date, this_month, this_year] = [+fulldate.slice(6,8),+fulldate.slice(4,6),+fulldate.slice(0,4)]
+                /*  year_s = yearType === "AD" ? year_s : year_s-543
+                console.log(year_s) */
 
-                    if((max_date[2] != this_date || max_month != this_month  || max_year != this_year  )){
-                        let current = d.configDate(1,"add")
-                        changeDateByArrow(e,current,setting)
+                Date.prototype.configDate = function(days,option) {
+                    date = new Date(`${year_s}-${month_s}-${date_s}`);
+
+                    if(option === 'add'){
+                        date.setDate(date.getDate() + days);
+                    }else if(option === 'remove'){
+                        date.setDate(date.getDate() - days);
                     }
+                    return date;
                 }
-                //left 
-                if (e.keyCode === 37) {
 
-                    let fulldate = e.target.dataset.fulldate
-                    let [this_date, this_month, this_year] = [+fulldate.slice(6,8),+fulldate.slice(4,6),+fulldate.slice(0,4)]
-
-                    if(min_date[2] != this_date || this_month != min_month  || this_year != min_year ){
-
-                        let current = d.configDate(1,"remove")
-                        changeDateByArrow(e,current,setting)
+                Date.prototype.configMonth = function(month,option) {
+                    months = new Date(`${+fullDate.slice(0,4)}-${fullDate.slice(4,6)}-${fullDate.slice(6,8)}`);
+                    if(option === 'add'){
+                        months.setMonth(months.getMonth() + month);
+                    }else if(option === 'remove'){
+                        months.setMonth(months.getMonth() - month);
                     }
-                }
-                //up
-                if (e.keyCode === 38) {
-           
-                        let current = d.configDate(7,"remove")
-                        changeDateByArrow(e,current,setting)
-                }
-                //down
-                if (e.keyCode === 40) {
 
-                        let current = d.configDate(7,"add")
-                        changeDateByArrow(e,current,setting)
-                        
+                    return months;
                 }
-        })
+
+
+                let  d = new Date();
+                    //right  
+                    if (e.keyCode === 39) {
+
+                        let fulldate = e.target.dataset.fulldate
+                        let [this_date, this_month, this_year] = [+fulldate.slice(6,8),+fulldate.slice(4,6),+fulldate.slice(0,4)]
+
+                        if((max_date[2] != this_date || max_month != this_month  || max_year != this_year  )){
+                            let current = d.configDate(1,"add")
+                            changeDateByArrow(e,current,setting)
+                        }
+                    }
+                    //left 
+                    if (e.keyCode === 37) {
+
+                        let fulldate = e.target.dataset.fulldate
+                        let [this_date, this_month, this_year] = [+fulldate.slice(6,8),+fulldate.slice(4,6),+fulldate.slice(0,4)]
+
+                        if(min_date[2] != this_date || this_month != min_month  || this_year != min_year ){
+
+                            let current = d.configDate(1,"remove")
+                            changeDateByArrow(e,current,setting)
+                        }
+                    }
+                    //up
+                    if (e.keyCode === 38) {
+                    
+                            let current = d.configDate(7,"remove")
+                            changeDateByArrow(e,current,setting)
+                    }
+                    //down
+                    if (e.keyCode === 40) {
+
+                            let current = d.configDate(7,"add")
+                            changeDateByArrow(e,current,setting)
+
+                    }
+            })
 
         //click icon 
         this[0].nextElementSibling.addEventListener("click", (e) => {
 
                 openCalendar(e , setting)
-        })
+            })
         //click input
         this[0].addEventListener("click", (e) => {
            
@@ -425,7 +423,6 @@ const default_setting = {
                 let checkFormat = selectDateFormat(date,month,checkYearType,setting)[1]
 
                 e.target.value = `${checkFormat[0]}/${checkFormat[1]}/${checkFormat[2]}`
-                
                 e.target.setAttribute("value" ,`${checkFormat[0]}/${checkFormat[1]}/${checkFormat[2]}`) 
 
 
@@ -443,7 +440,7 @@ const default_setting = {
             }
         })
 
-    }
+        }
     })
 }
 
@@ -471,9 +468,7 @@ const default_setting = {
     
 
 
-    function selectDateFormat(d,m,y,setting,tranform_year){
-
-            let yearType = setting.yearType ? setting.yearType : default_setting.yearType 
+function selectDateFormat(d,m,y,setting,tranform_year){
             let lang = setting.lang ? setting.lang : default_setting.lang 
             let formatter = setting.format ? setting.format.split('/') : default_setting.format.split('/')
             let daySelected = 0
@@ -574,16 +569,14 @@ const default_setting = {
              //    console.log(date_arr[d_select],date_arr[m_select],date_arr[y_select])
                 return [FULL_DATE_DISPLAY,FULL_DATE_DISPLAY_NUMBER]
     
-          }
+}
 
 
 function openCalendar(e,setting = default_setting){
 
-    
     if($(".date-panel").length === 0){
 
-        e.target.previousElementSibling.parentElement.style.position = "relative" 
-
+    e.target.previousElementSibling.parentElement.style.position = "relative" 
 
     let yearType = setting.yearType ? setting.yearType : default_setting.yearType 
 
@@ -695,7 +688,7 @@ function openCalendar(e,setting = default_setting){
 
             e.target.previousElementSibling.setAttribute("data-fulldate",`${max_date[0]}${('0'+max_date[1]).slice(-2)}${('0'+max_date[2]).slice(-2)}`)    
             renderCalendar(max_date[2], max_date[1], max_date[0], setting)
-            
+
         }
 
          else if((min_date[2] > +curentDate && +curentMonth >= min_month  &&  +curentYear >= min_year )){
@@ -734,18 +727,18 @@ function openCalendar(e,setting = default_setting){
           let date_display  = `${starter}${day_display}, ${d_display}${slitter}${m_display}${slitter}${y_display}`
 
           //set dataset value and value to input        
-         e.target.parentElement.parentElement.parentElement.previousElementSibling.previousElementSibling.value = date_display
+        let parent = e.target.parentElement.parentElement.parentElement.previousElementSibling.previousElementSibling
 
-         e.target.parentElement.parentElement.parentElement.previousElementSibling.previousElementSibling.setAttribute("value" ,date_display)
+        parent.value = date_display
 
-         e.target.parentElement.parentElement.parentElement.previousElementSibling.previousElementSibling.setAttribute("data-value" ,`${checkYearType}${("0"+this_month).slice(-2)}${this_date}`)
+        parent.setAttribute("value" ,date_display)
 
-         e.target.parentElement.parentElement.parentElement.previousElementSibling.previousElementSibling.dataset.fulldate = `${year}${("0"+this_month).slice(-2)}${this_date}`
+        parent.setAttribute("data-value" ,`${checkYearType}${("0"+this_month).slice(-2)}${this_date}`)
 
+        parent.setAttribute("data-fulldate" , `${year}${("0"+this_month).slice(-2)}${this_date}`)
 
-
-            $(".date-panel").attr('data-fulldate',`${year}${("0"+this_month).slice(-2)}${this_date}`)
-            $(".date-panel").attr('data-date',`${this_date}`)
+        $(".date-panel").attr('data-fulldate',`${year}${("0"+this_month).slice(-2)}${this_date}`)
+        $(".date-panel").attr('data-date',`${this_date}`)
 
 
           renderCalendar( this_date, this_month , year ,setting)
@@ -784,16 +777,15 @@ function openCalendar(e,setting = default_setting){
 
           let checkYearType = yearType === 'AD' ? this_year : this_year-543
 
-          console.log(checkYearType)
 
           let date_display  = `${starter}${day_display}, ${d_display}${slitter}${m_display}${slitter}${y_display}`
 
           //set dataset value and value to input        
-          e.target.parentElement.parentElement.parentElement.previousElementSibling.previousElementSibling.value = date_display
-          e.target.parentElement.parentElement.parentElement.previousElementSibling.previousElementSibling.setAttribute("value" ,date_display)
-          e.target.parentElement.parentElement.parentElement.previousElementSibling.previousElementSibling.setAttribute("data-value" ,`${checkYearType}${("0"+month).slice(-2)}${this_date}`)
-
-          e.target.parentElement.parentElement.parentElement.previousElementSibling.previousElementSibling.dataset.fulldate = `${checkYearType}${("0"+month).slice(-2)}${this_date}`
+         let parent =  e.target.parentElement.parentElement.parentElement.previousElementSibling.previousElementSibling
+            parent.value = date_display
+            parent.setAttribute("value" ,date_display)
+            parent.setAttribute("data-value" ,`${checkYearType}${("0"+month).slice(-2)}${this_date}`)
+            parent.setAttribute("data-fulldate" ,`${checkYearType}${("0"+month).slice(-2)}${this_date}`)
 
             $(".date-panel").attr('data-fulldate',`${checkYearType}${("0"+month).slice(-2)}${this_date}`)
             $(".date-panel").attr('data-date',`${this_date}`)
@@ -817,17 +809,8 @@ function openCalendar(e,setting = default_setting){
       }else{
           this_month -= 1
       }
-      
         renderCalendar(this_date,this_month,this_year,setting)
-    }/* else{
-        
-      if(this_month == 1){
-          this_month = 12
-          this_year -= 1
-      }else{
-          this_month -= 1
-      }
-    } */
+    }
 
 
 
@@ -848,15 +831,9 @@ function openCalendar(e,setting = default_setting){
         }else{
             this_month +=1
         }
+
         renderCalendar(this_date,this_month,this_year,setting)
-    }/* else{
-        if(this_month == 12){
-            this_month = 1
-            this_year += 1
-        }else{
-            this_month +=1
-        }
-    } */
+    }
 
 
  
@@ -864,8 +841,7 @@ function openCalendar(e,setting = default_setting){
 
 
 findOverflows();
-
-   
+ 
 }
 }
 
@@ -946,8 +922,6 @@ const LANG = {
     }
 
 
-
-    
 function set_lang(value,section,lang,type = {day:"full",month:"full"}){
     type.day = type.day || default_setting.day
     type.month = type.month || default_setting.month
@@ -963,6 +937,7 @@ function set_lang(value,section,lang,type = {day:"full",month:"full"}){
 
 
 function renderCalendar(date = 0,month = 0,year = 0 ,setting = default_setting){
+
     let lang = setting.lang ? setting.lang : default_setting.lang 
     let yearType = setting.yearType ? setting.yearType : default_setting.yearType 
     let max = setting.max ? ''+setting.max : ''+default_setting.max
@@ -977,11 +952,8 @@ function renderCalendar(date = 0,month = 0,year = 0 ,setting = default_setting){
     let min_year = min_date != 0 ? min_date[0] : yearType == 'AD' ? 2100 : 2600
 
     let selectable = setting.selectable != undefined ? setting.selectable : default_setting.selectable
-
     let closeOnSelect = setting.closeOnSelect != undefined ? setting.closeOnSelect : default_setting.closeOnSelect
-
     let yearPanel = setting.yearPanel != undefined ? setting.yearPanel : default_setting.yearPanel
-
 
     let disableSelect = ''
     if(!selectable){
@@ -1030,11 +1002,11 @@ function renderCalendar(date = 0,month = 0,year = 0 ,setting = default_setting){
       let last_date_of_month = new Date(this_year, this_month, 0).getDate();
    
       //set month lable and year label
-      $(".lbl_month").text(set_lang(+this_month,'m',lang,{day : setting.day , month : setting.month }))
+        $(".lbl_month").text(set_lang(+this_month,'m',lang,{day : setting.day , month : setting.month }))
 
-     let displayYear = yearType == 'AD' ? this_year : this_year+543 
+        let displayYear = yearType == 'AD' ? this_year : this_year+543 
 
-      $(".lbl_year").text(yearPanel == 'full' ? displayYear : (''+displayYear).slice(-2)) 
+        $(".lbl_year").text(yearPanel == 'full' ? displayYear : (''+displayYear).slice(-2)) 
 
     //render section -------------------------------------
    /*   let elem_length = 0;
@@ -1139,8 +1111,6 @@ function renderCalendar(date = 0,month = 0,year = 0 ,setting = default_setting){
             
        let full_date_display = selectDateFormat(d,m,y,setting)[0]
 
-      // console.log(date_formated , date_lang )
-
             let slitter = setting.separation  ? setting.separation : default_setting.separation
             let starter = setting.startWith ? setting.startWith : default_setting.startWith
 
@@ -1150,24 +1120,26 @@ function renderCalendar(date = 0,month = 0,year = 0 ,setting = default_setting){
             y_display = full_date_display[3]
 
 
-            let checkYearType = yearType === "AD" ? y_display :+y_display+543
+            let checkYearType = yearType === "AD" ? y_display : +y_display+543
 
             let date_display  = `${starter}${day_display}, ${d_display}${slitter}${m_display}${slitter}${checkYearType}`
 
             //set dataset value and value to input        
 
-            e.target.parentElement.parentElement.previousElementSibling.previousElementSibling.value = date_display
+            let parent = e.target.parentElement.parentElement.previousElementSibling.previousElementSibling
 
-            e.target.parentElement.parentElement.previousElementSibling.previousElementSibling.setAttribute("value" ,date_display)
+            parent.value = date_display
 
-            e.target.parentElement.parentElement.previousElementSibling.previousElementSibling.setAttribute("data-value" ,`${checkYearType}${m}${d}`) 
+            parent.setAttribute("value" ,date_display)
 
-            e.target.parentElement.parentElement.previousElementSibling.previousElementSibling.dataset.fulldate = `${y}${m}${d}`
+            parent.setAttribute("data-value" ,`${checkYearType}${m}${d}`) 
+
+            parent.dataset.fulldate = `${y}${m}${d}`
+
              /*  e.target.parentElement.parentElement.parentElement.parentElement.dataset.fulldate = `${y}${m}${d}` */
 
              /* closeOnSelect ? $(".date-panel").remove() : '' */
               
-
               $(".date-item").removeClass('date-selected')
               e.target.classList.add('date-selected')
 
@@ -1175,7 +1147,7 @@ function renderCalendar(date = 0,month = 0,year = 0 ,setting = default_setting){
               $(".date-panel").attr('data-date',`${d}`)
 
         }else{
-            console.log("Invalid date Format")
+            console.error("Invalid date Format")
         }
     }
    })
@@ -1199,9 +1171,7 @@ function renderCalendar(date = 0,month = 0,year = 0 ,setting = default_setting){
     let lang = setting.lang ? setting.lang : default_setting.lang 
 
     let max = setting.max ? ''+setting.max : ''+default_setting.max
-
     let max_date = max.length > 0 ? [+max.slice(0,4), +max.slice(4,6),+max.slice(6,8)] : 0
-
     let max_month = max_date[0] != 0 ? max_date[1] : 12
 
     let monthPanel = setting.monthPanel !== undefined ? setting.monthPanel : default_setting.monthPanel
