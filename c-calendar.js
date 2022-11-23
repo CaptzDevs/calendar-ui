@@ -232,12 +232,12 @@ const default_setting = {
 
                e.target.value = date_display
                e.target.setAttribute("value" ,date_display)
-               e.target.setAttribute('data-value',`${y_display}${("0"+check_format[1].m).slice(-2)}${+check_format[1].d}`) 
+               e.target.setAttribute('data-value',`${y_display}${("0"+check_format[1].m).slice(-2)}${check_format[1].d}`) 
 
-               e.target.dataset.fulldate = `${check_format[1].y}${("0"+check_format[1].m).slice(-2)}${+check_format[1].d}`
+               e.target.dataset.fulldate = `${check_format[1].y}${("0"+check_format[1].m).slice(-2)}${check_format[1].d}`
 
-                $(".date-panel").attr('data-fulldate',`${check_format[1].y}${("0"+check_format[1].m).slice(-2)}${+check_format[1].d}`)
-                $(".date-panel").attr('data-date',`${+check_format[1].d}`)
+                $(".date-panel").attr('data-fulldate',`${check_format[1].y}${("0"+check_format[1].m).slice(-2)}${check_format[1].d}`)
+                $(".date-panel").attr('data-date',`${check_format[1].d}`)
 
 
 
@@ -682,9 +682,27 @@ function openCalendar(e,setting = default_setting){
         </div>
         `)
 
+        let fulldate = ''+e.target.previousElementSibling.dataset.fulldate
+        let [curentDate,curentMonth,curentYear] = [fulldate.slice(6,8), fulldate.slice(4,6),fulldate.slice(0,4)]
 
+        if(
+            (max_date[2] >= +curentDate || max_month != +curentMonth  || max_year != +curentYear) &&
+            (min_date[2] <= +curentDate || +curentMonth != min_month  || +curentYear != min_year )
+        ){
+            renderCalendar(curentDate, curentMonth, curentYear, setting)   
 
-        renderCalendar(+e.target.previousElementSibling.dataset.fulldate.slice(6,8),+e.target.previousElementSibling.dataset.fulldate.slice(4,6),+e.target.previousElementSibling.dataset.fulldate.slice(0,4),setting)   
+        }else if((max_date[2] < +curentDate &&  max_month <= +curentMonth  &&  max_year <= +curentYear)){
+
+            e.target.previousElementSibling.setAttribute("data-fulldate",`${max_date[0]}${('0'+max_date[1]).slice(-2)}${('0'+max_date[2]).slice(-2)}`)    
+            renderCalendar(max_date[2], max_date[1], max_date[0], setting)
+            
+        }
+
+         else if((min_date[2] > +curentDate && +curentMonth >= min_month  &&  +curentYear >= min_year )){
+
+                renderCalendar(min_date[2], min_date[1], min_date[0], setting)
+                e.target.previousElementSibling.setAttribute("data-fulldate",`${min_date[0]}${('0'+min_date[1]).slice(-2)}${('0'+min_date[2]).slice(-2)}`)    
+        } 
 
   $(".lbl_year").click((ev)=>{
       renderYear(setting)
