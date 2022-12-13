@@ -40,37 +40,18 @@
     margin-top: 3px;
   }
 
-           *{
-    margin: 0;
-    padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    box-sizing: border-box;
 
-    transition: 0.5s;
-    }
-        body{
-      background-color: rgb(43, 43, 43);
-      overflow-x: hidden;
-      
-    }
-    main{
-        height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-    }
     label{
         color: white;
 
     }
     .form-group{
+      width: 70%;
         display: flex;
         align-items: flex-start;
         justify-content: center;
-        /* flex-direction: column; */
+        flex-direction: column; 
         position: relative;
-        width: 80%;
         gap: 10px;
         margin: 10px;
 
@@ -81,6 +62,7 @@
       cursor: pointer;
       position: absolute;
       right: 20px;
+      bottom: 2px;
     }
 
     .date-icon svg{
@@ -334,39 +316,126 @@
       color: rgba(255, 255, 255, 0);
       /* transform: translate(10px,10px); */
     }
-    .disableSelect{
- /*      user-select: none;
-      pointer-events: none; */
-    }
+    /* .disableSelect{
+       user-select: none;
+      pointer-events: none; 
+    } */
     .datepicker{
       border-radius: 10px;
       padding-left: 10px;
+    }
+
+</style>
+<style>
+             *{
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    box-sizing: border-box;
+
+    transition: 0.5s;
+    }
+        body{
+      background-color: rgb(43, 43, 43);
+      overflow-x: hidden;
+      
+    }
+    main{
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        padding: 20px;
+        overflow: auto;
+    }
+    .containner{
+      width: 80%;
+      border: 1px solid white;
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    .calendar-dropdown{
+      width: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .dropdown-section{
+      width: 100%;
+      border-radius: 10px;
+      text-align: right;
+      padding-right: 10px;
+    }
+    .dropdown-wraper{
+      position: relative;
+    }
+    .dropdown-body{
+      width: 80%;
+      height: 180px;
+      position: absolute;
+      background: rgb(141, 141, 141);
+      top: 40px;
+      right: 10px;
+      border-radius: 5px;
+      overflow: auto;
+    
+    }
+   
+
+    .dropdown-items{
+      width: 100%;
+      cursor: pointer;
+      text-align: center !important;
+      padding: 10px;
+    }
+    
+    .dropdown-items:hover{
+      background: rgb(56, 56, 56);
     }
 </style>
 <body>
 
         <main>
-            <div class="row">
-              <div class="form-group col-6">
-                <label for="date_pay" id="test">Default</label>
-                  <input class="datepicker" type="text" id="date_pay1" name="date_pay" data-fulldate="20221115" autocomplete="off">
-                
+         <!--  <div class="containner">
+            <h2>Full Calendar</h2>
+              <div class="form-group">
+                <label for="date_pay" id="test">Default (AD)</label>
+                <input class="datepicker" type="text" id="date_pay1" name="date_pay" autocomplete="off">
               </div>
 
 
-              <div class="form-group col-6" >
-                <label for="date_pay">Default</label>
+              <div class="form-group" >
+                <label for="date_pay">Default (BE)</label>
                 <input class="datepicker" type="text" id="date_pay2" name="date_pay" data-fulldate="20221115" autocomplete="off">
 
               </div>
-            </div>
+          </div>
+ -->
+          <div class="containner">
+
+            <h2>Dropdown Calendar</h2>
+              <div class="form-group">
+                <label for="date_pay" id="test">Default (AD)</label>
+
+                  <input class="datepicker dropdown" type="text" id="datepicker_dropdown1" name="datepicker_dropdown" autocomplete="off">
+
+              </div>
 
 
+            
+          </div>
+
+
+<!-- 
               <div class="form-group" >
                 <label for="date_pay">Default</label>
                 <input class="datepicker" type="text" id="date_pay2" name="date_pay" data-fulldate="20221115" autocomplete="off">
 
-              </div>
+              </div> -->
 
             
 
@@ -375,13 +444,9 @@
         <script src="/Calendar/assets/plugin/jquery/jquery-3.6.0.min.js"></script>
         <script src="/Calendar/assets/plugin/fontawesome/all.min.js"></script>
 
-        <script src="/Calendar/c-calendar.js">
+        <script src="/Calendar/c-calendar.js"> </script>
+        <script src="/Calendar/c-calendar-dropdown.js"></script>
 
-   
-
-
-
-        </script>
      
 </body>
 </html>
