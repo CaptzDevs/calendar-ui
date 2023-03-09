@@ -117,7 +117,6 @@
     background: rgb(69, 85, 228);
 
     border-radius: 10px;
-
   }
   .date-item:hover{
       background: rgb(69, 85, 228);
@@ -292,7 +291,10 @@
         gap: 10px;
         padding: 10px;
     }
-
+    ._selected{
+    background: rgb(69, 85, 228) !important;
+    border-radius: 10px;
+  }
     .show-month{
         transform: translateY(0%);
         transition: .5s;
@@ -409,8 +411,16 @@
 
               <div class="form-group" >
                 <label for="date_pay">Default (BE)</label>
-                <input class="datepicker" type="text" id="date_pay2" name="date_pay"autocomplete="off">
+                <input class="datepicker1" type="text" id="date_pay2" name="date_pay"autocomplete="off">
 
+              </div>
+
+              <div class="form-group" >
+                <input class="datepicker" type="text" id="ctest" name="date_pay"autocomplete="off">
+              </div>
+
+              <div class="form-group" >
+                <input class="datepicker" type="text" id="ctest" name="date_pay"autocomplete="off">
               </div>
           </div>
 
@@ -443,7 +453,9 @@
         <script src="/Calendar/assets/plugin/jquery/jquery-3.6.0.min.js"></script>
         <script src="/Calendar/assets/plugin/fontawesome/all.min.js"></script>
 
-        <script src="/Calendar/c-calendar.js"> </script>
+        <!-- <script src="/Calendar/c-calendar.js"> </script> -->
+        <script src="/Calendar/calendar.js"> </script>
+
    <!--      <script src="/Calendar/c-calendar-dropdown.js"></script>
  -->
      
