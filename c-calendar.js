@@ -155,8 +155,8 @@ const default_setting = {
     
                 if (box.left < 0 || box.right > documentWidth) {
                     element.style.right = 1*box.left-20+"px"
-                    console.log(element);
-                    element.style.border = '1px solid red';
+                    /* console.log(element);
+                    element.style.border = '1px solid red'; */
                 }
                 if(box.bottom < 0 || box.bottom > documentHeight){
                      element.style.top = (-1*(fullHeight+10))+"px" 
@@ -217,7 +217,21 @@ const default_setting = {
         let check_format = checkDateIsValidFormat(e.target.value,setting)
 
         let yearType = setting.yearType ? setting.yearType : default_setting.yearType 
+
+        let max = setting.max ? ''+setting.max : ''+default_setting.max
+        let max_date = max.length > 0 ? [+max.slice(0,4), +max.slice(4,6),+max.slice(6,8)] : 0
+        let max_month = max_date[0] != 0 ? max_date[1] : 12
+        let max_year = max_date[0] != 0 ? max_date[0] : yearType === 'AD' ? 2100 : 2600
+    
+    
+        let min = setting.min ? ''+setting.min : ''+default_setting.min
+        let min_date = min.length > 0 ? [+min.slice(0,4), +min.slice(4,6),+min.slice(6,8)] : 0
+        let min_month = min_date[0] != 0 ? min_date[1] : 12
+        let min_year = min_date[0] != 0 ? min_date[0] : yearType === 'AD' ? 2100 : 2600
       
+
+     
+
         /* e.target.previousElementSibling.setAttribute('value',e.target.value) */
        if(check_format[0]){
 
@@ -235,7 +249,11 @@ const default_setting = {
 
                let date_display  = `${starter}${day_display}, ${d_display}${slitter}${m_display}${slitter}${y_display}`
 
-               //set dataset value and value to input        
+               //set dataset value and value to input     
+               
+               let selectedDate = +`${y_display}${m_display}${d_display}`
+    
+               if( selectedDate >= +min && selectedDate <= +max ){
 
                 e.target.value = date_display
                 e.target.setAttribute("value" ,date_display)
@@ -248,7 +266,9 @@ const default_setting = {
                  renderCalendar(+check_format[1].d,+check_format[1].m,+check_format[1].y,setting)   
                /*   e.target.setAttribute("readonly","readonly") */
 
-           }
+               }
+        }
+
     }
     
 
@@ -421,6 +441,7 @@ const default_setting = {
 
             }else if(e.target.value != ''){
       
+
                 let yearType = setting.yearType ? setting.yearType : default_setting.yearType 
                 let fullDate = e.target.dataset.fulldate
 
@@ -635,17 +656,19 @@ const default_setting = {
         max : 20230105, 
         
     })
+*/
 
+    let md = new Date()
+    
     $("#date_pay2").Calendar('calendar',{
         separation : "/",
         lang : "th",
         showDay : 'small',
-        yearType : "BE",
-
-        min : 25000101,  
-        max : 25660110, 
+        yearType : "AD",
+        default : `${md.getFullYear()}${md.getMonth()+1}${md.getDate()}`,
+        max : `${md.getFullYear()}${md.getMonth()+1}${md.getDate()}`,
     })
- */
+ 
 
     
 
@@ -1055,8 +1078,7 @@ function openCalendar(e,setting = default_setting){
       let this_year = +ev.target.parentElement.parentElement.dataset.year
 
       let checkYearType =  yearType == "AD" ? this_year : this_year+543
-    console.log(this_date,this_month,this_year)
-
+   
       if(max_date[0] != 0 && max_month - this_month > 0 || max_year - checkYearType > 0 ){
 
         if(this_month == 12){
@@ -1069,9 +1091,9 @@ function openCalendar(e,setting = default_setting){
         renderCalendar(this_date,this_month,this_year,setting)
         
 
-    }else{
-        renderCalendar(max_date[2],max_month,max_year,setting)
-    }
+    }/* else{
+         renderCalendar(max_date[2],max_month,max_year,setting) 
+    } */
 
 })
 
