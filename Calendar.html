@@ -39,7 +39,9 @@
     cursor: pointer;
     margin-top: 3px;
   }
-
+  body{
+    position: relative;
+  }
 
     label{
         color: white;
@@ -53,15 +55,20 @@
         flex-direction: column; 
         position: relative;
         gap: 10px;
-
     }
 
     .date-icon{
+      width: 50px;
+      height: 100%;
       color: rgb(0, 0, 0);
       cursor: pointer;
       position: absolute;
-      right: 20px;
-      bottom: 2px;
+      right: 0px;
+      top: 0px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
     }
 
     .date-icon svg{
@@ -72,7 +79,7 @@
 
     
 .date-panel{
-        width: 410px;
+     /*    width: 410px;
         height: auto;
         position:absolute;
         display: flex;
@@ -87,7 +94,7 @@
         border-radius: 10px;
         padding: 10px;
         color: rgb(255, 255, 255);
-        overflow: hidden;
+        overflow: hidden; */
         /*center*/
 
        /*  top: 50%;
@@ -106,12 +113,44 @@
         /*right*/
 
         
-       top: 50%;
+      /*  top: 50%;
         right: 10%;
-        transform: scale(.6,.6) translate(30%, -20%); 
-
-
+        transform: scale(.6,.6) translate(30%, -20%);  */
     }
+
+    .date-panel{
+        width: 410px;
+        height: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        background: rgb(238,174,202);
+        background: linear-gradient(196deg, rgb(200, 70, 126) 0%, rgb(63, 125, 195) 100%);
+        background: rgb(56, 56, 56);
+
+        z-index: 3;
+        border-radius: 10px;
+        padding: 10px;
+        color: rgb(255, 255, 255);
+        overflow: hidden;
+        position: fixed;
+       
+        animation: slideup .5s 0s forwards;
+    }
+    @keyframes slideup {
+      from {
+        bottom: -100%;
+        left: 50%;
+        transform: translate(-50%, 100%);
+      }
+      to {
+        bottom: 0%;
+        left: 50%;
+        transform: translate(-50%, 0%);
+      }
+    }
+
     .date-selected{
     background: rgb(69, 85, 228);
 
@@ -178,15 +217,33 @@
     }
   
 
+    .button_group{
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 5px;
+    }
+
   #btnPreviousMonth{
-    position: absolute;
-    right: 50px;
+    width: 20%;
+    min-width: 60px;
+    touch-action: manipulation;
   }
 
   #btnNextMonth{
-    position: absolute;
-    right: 10px;
+    width: 20%;
+    min-width: 60px;
+    touch-action: manipulation;
   }
+  #btnPreviousMonth svg ,   #btnNextMonth svg {
+    user-select: none;
+      pointer-events: none;
+  }
+
+
 
   .month-panel{
     width: 100%;
@@ -332,6 +389,45 @@
       padding-left: 10px;
     }
 
+    
+    
+@media (max-width: 575.98px) { 
+  .date-header{
+    height: 60px;
+  }
+  #btnPreviousMonth , #btnNextMonth{
+    min-width: 100px;
+    height: 100%;
+    border: 1px solid white;
+  }
+ 
+}
+
+/* // Small devices (landscape phones, less than 768px) */
+@media (max-width: 767.98px) { 
+
+
+}
+
+/* // Medium devices (tablets, less than 992px) */
+@media (max-width: 991.98px) { 
+
+  
+}
+
+/* // Large devices (desktops, less than 1200px) */
+@media (max-width: 1199.98px) { 
+
+
+}
+
+/* // X-Large devices (large desktops, less than 1400px) */
+@media (max-width: 1399.98px) { 
+
+
+}
+
+
 </style>
 <style>
              *{
@@ -367,7 +463,7 @@
       align-items: flex-start;
       justify-content: center;
       flex-direction: column;
-      
+      gap: 20px;
     }
     .calendar-dropdown{
       width: 50%;
@@ -428,6 +524,9 @@
               <div class="form-group" >
                 <input class="datepicker" type="text" id="ctest2" name="date_pay"autocomplete="off">
               </div>
+              <span id="sp1"></span>
+              <span id="sp2"></span>
+
           </div>
 
          <!--  <div class="containner">
@@ -461,9 +560,13 @@
 
         <!-- <script src="/Calendar/c-calendar.js"> </script> -->
         <script src="/Calendar/calendar.js"> </script>
-
+        
    <!--      <script src="/Calendar/c-calendar-dropdown.js"></script>
  -->
+    <script>
+  
+
+    </script>
      
 </body>
 </html>

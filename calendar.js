@@ -1,3 +1,13 @@
+//Calendar [DEV]
+//Version 0.1
+
+
+//error code 
+/* 
+    code 1 error in date pannel
+    code 2 error in input 
+*/
+
 const LANG = {
     th: {
         d: {
@@ -94,7 +104,7 @@ class Calendar {
             default: "now",
             separation: "/",
             lang: "th",
-            yearType: "AD",
+            yearType: "BE",
             showDay: 'none', // full,small ,none
             day: 'full',
             month: 'full',
@@ -130,6 +140,8 @@ class Calendar {
         } 
      
         this.todayInt = +`${this.option.yearType === 'AD' ? DATE.getFullYear() : DATE.getFullYear()+543}${('0'+(DATE.getMonth()+1)).slice(-2)}${('0'+DATE.getDate()).slice(-2)}`
+        
+        this.value = this.todayInt
         this.exceptionDate = [ 20230301,20230305, 20230321,20230325, 20230327,20230425]
 
         this.exceptionDate2 = [{start : 20230301,end :20230305},{start : 20230321,end :20230325},{start : 20230327,end :20230425}]
@@ -141,6 +153,15 @@ class Calendar {
 
     //Utility Method
 
+    checkDisableDate(selectedDate){
+        let max = String(this.option.max)
+        let min = String(this.option.min)
+        
+        if( (selectedDate >= +min && selectedDate <= +max ) && !(this.exceptionDateAll.includes(''+selectedDate))){
+                return false
+        }
+        return true
+    }
     getAllDate(start , end){
 
         const startDate = new Date(start.slice(0, 4), start.slice(4, 6) - 1, start.slice(6));
@@ -171,6 +192,23 @@ class Calendar {
         let select_lang = `${section}_${lang}_${section === 'd' ? type.day : type.month}`
 
         return LANG[select_lang][value]
+    }
+
+    extractFulldate(fulldate){
+        
+        let tranformedDate = {}
+        fulldate = String(fulldate)
+        if(fulldate.length == 8){
+                tranformedDate = {d:fulldate.slice(6), m:fulldate.slice(4,6),y:fulldate.slice(0,4)}
+        }
+        
+        return tranformedDate
+
+    }
+
+    combineDate(d,m,y){
+
+      return `${y}${('0'+(m)).slice(-2)}${('0'+d).slice(-2)}`
     }
 
     selectDateFormat(d, m, y, tranform_year) {
@@ -287,6 +325,7 @@ class Calendar {
 
     changeDateByArrow(e,current){
 
+     
         let max = String(this.option.max)
         let min = String(this.option.min)
         let yearType = this.option.yearType
@@ -298,13 +337,14 @@ class Calendar {
         curentYearDisplay = yearType === "AD" ? curentYear : curentYear+543
 
         let selectedDate = +`${curentYearDisplay}${curentMonth}${curentDate}`
-    
-        if( selectedDate >= +min && selectedDate <= +max ){
+        this.openCalendar(e)
+        if( (selectedDate >= +min && selectedDate <= +max ) && !(this.exceptionDateAll.includes(''+selectedDate))){
     
             e.target.value = `${curentDateDisplay}/${curentMonthDisplay}/${curentYearDisplay}`
             e.target.setAttribute("value", `${curentDateDisplay}/${curentMonthDisplay}/${curentYearDisplay}`)
-            e.target.setAttribute("data-value", `${curentYearDisplay}${curentMonth}${curentDate}`)
+            /* e.target.setAttribute("data-value", `${curentYearDisplay}${curentMonth}${curentDate}`) */
             e.target.setAttribute("data-fulldate", `${curentYear}${curentMonth}${curentDate}`)
+            this.value = +this.elem.dataset.fulldate
 
             this.render(curentDate,curentMonth,curentYear)
 
@@ -313,6 +353,10 @@ class Calendar {
 
     checkDateIsValidFormat(date = ''){
         //check format form date that valid
+
+         
+          /*    */
+
         let yearType = this.option.yearType
         let format = this.option.format.split('/')
 
@@ -335,10 +379,10 @@ class Calendar {
             }
 
             format_set.y = yearType === "AD" ? ""+(+format_set.y) : ""+(+format_set.y-543)
-        
+            
             if(date.length === 3){
 
-                if((format_set.m.length === 2 && format_set.m < 13) && format_set.y.length === 4){
+              if((format_set.m.length === 2 && format_set.m < 13) && format_set.y.length === 4){
                 
                     let date_number = new Date(format_set.y, format_set.m, 0).getDate() 
                 
@@ -349,18 +393,28 @@ class Calendar {
                             return false
                         }
                 }else{
-                    return false
+                    let tmax = this.extractFulldate(this.option.max)
+                    let tmin = this.extractFulldate(this.option.min)
+                    setTimeout(() => {
+                        this.initDate()
+                    }, 2000);
+                   
+                    throw new Error(`CODE 2 | the input is outbound of min and max limit ${tmin.d}/${tmin.m}/${tmin.y} and ${tmax.d}/${tmax.m}/${tmax.y}`)
+
                 }
-                
             }else{
-                return false
+            
+                setTimeout(() => {
+                    this.initDate()
+                }, 2000);
+
+                throw new Error('CODE 2 | Date value shoude be valid format Format :' + this.option.format)
             }
+
     }
 
     autoDate(e){
-
         let check_format = this.checkDateIsValidFormat(e.target.value)
-
         let yearType = this.option.yearType
 
         let max = String(this.option.max)
@@ -374,6 +428,7 @@ class Calendar {
         let min_year = min_date[0] != 0 ? min_date[0] : yearType === 'AD' ? 2100 : 2600
 
         /* e.target.previousElementSibling.setAttribute('value',e.target.value) */
+
        if(check_format[0]){
             let full_date_display = this.selectDateFormat(check_format[1].d,check_format[1].m,check_format[1].y)[0]
    
@@ -393,11 +448,16 @@ class Calendar {
                //set dataset value and value to input     
                
                let selectedDate = +`${y_display}${m_display}${d_display}`
-               if( selectedDate >= +min && selectedDate <= +max ){
 
+               if(this.checkDisableDate(selectedDate)){
+                this.initDate('today')
+                this.value = +this.elem.dataset.fulldate
+
+            }else if( selectedDate >= +min && selectedDate <= +max ){
+       
                 e.target.value = date_display
                 e.target.setAttribute("value" ,date_display)
-                e.target.setAttribute('data-value',`${y_display}${("0"+check_format[1].m).slice(-2)}${check_format[1].d}`) 
+                /* e.target.setAttribute('data-value',`${y_display}${("0"+check_format[1].m).slice(-2)}${check_format[1].d}`)  */
                 e.target.setAttribute('data-fulldate',`${check_format[1].y}${("0"+check_format[1].m).slice(-2)}${check_format[1].d}`)
 
                 $(".date-panel").attr('data-fulldate',`${check_format[1].y}${("0"+check_format[1].m).slice(-2)}${check_format[1].d}`)
@@ -406,21 +466,29 @@ class Calendar {
                  this.render(+check_format[1].d,+check_format[1].m,+check_format[1].y)   
                /*   e.target.setAttribute("readonly","readonly") */
                 }else{
-                    console.log("the input is outbound of max or min limit")
-                    this.render()
+                    let tmax = this.extractFulldate(this.option.max)
+                    let tmin = this.extractFulldate(this.option.min)
+
+                    this.elem.value = 'input must between : '+`${tmax.d}/${tmax.m}/${tmax.y} and ${tmin.d}/${tmin.m}/${tmin.y}`
+                    console.error(`the input is outbound of min and max limit ${tmin.d}/${tmin.m}/${tmin.y} and ${tmax.d}/${tmax.m}/${tmax.y}`)
+
+                    setTimeout(() => {
+                        this.initDate()
+                    }, 3000);
 
                 }
         }
 
     }
 
-    initDate(){
+    initDate(option = 'today'){
          //-----------------------------
-       
 
          let checkDefaultDate = this.option.default == "now" ? String(this.todayInt) : this.option.default
 
          let fulldate = '' + ( this.elem.dataset.fulldate || checkDefaultDate)
+         if(option === 'today') fulldate = String(this.todayInt)
+
          let [curentDate, curentMonth, curentYear] = [fulldate.slice(6, 8), fulldate.slice(4, 6), fulldate.slice(0, 4)]
  
           this.elem.setAttribute("data-fulldate", `${curentYear}${curentMonth}${curentDate}`)
@@ -472,7 +540,7 @@ class Calendar {
  
              parent.setAttribute("value", date_display)
  
-             parent.setAttribute("data-value", `${checkYearType}${m}${d}`)
+             /* parent.setAttribute("data-value", `${checkYearType}${m}${d}`) */
  
              parent.dataset.fulldate = `${y}${m}${d}`
  
@@ -485,7 +553,7 @@ class Calendar {
  
          //----------------------------
     }
-    //Event
+
     
     //MAIN---------------------------------------
 
@@ -524,28 +592,32 @@ class Calendar {
  
 
     init() {
-      
+
         let c = 0
         for (let i = 0 ; c < this.exceptionDate.length-1; i++){
             this.getAllDate(''+this.exceptionDate[c],''+this.exceptionDate[c+1])
             c += 2
         } 
 
+       
+
         /* this.exceptionDate.map((item)=>{
             this.getAllDate(''+item.start,''+item.end)
         }) */
         
-        
+     
 
 
-        this.elem.addEventListener('click', (e) => {
+   /*      this.elem.addEventListener('click', (e) => {
             this.openCalendar(e)
             this.findOverflows()
 
         })
+ */
 
+        //eventLBL 
         addEventListener('resize',(e)=>{
-            this.findOverflows()
+            /* this.findOverflows() */
         })
 
         let formatter = this.option.format
@@ -591,7 +663,7 @@ class Calendar {
                     let date = 0
                     let yearType = this.option.yearType
     
-    
+
                     let [year_s,month_s,date_s] = [fullDate.slice(0,4),fullDate.slice(4,6),fullDate.slice(6,8)]
 
     
@@ -630,6 +702,7 @@ class Calendar {
                                 let current = d.configDate(1,"add")
                                 this.changeDateByArrow(e,current)
                             }
+
                         }
                         //left 
                         if (e.keyCode === 37) {
@@ -644,6 +717,7 @@ class Calendar {
                                 let current = d.configDate(1,"remove")
                                 this.changeDateByArrow(e,current)
                             }
+
                         }
                         //up
                         if (e.keyCode === 38) {
@@ -662,14 +736,52 @@ class Calendar {
                             e.target.value =  `${('0'+DATE.getDate()).slice(-2) }${this.option.separation}${('0'+(DATE.getMonth()+1)).slice(-2)}${this.option.separation}${this.option.yearType === 'AD' ? DATE.getFullYear() : DATE.getFullYear()+543}`
                             this.autoDate(e)
                         }
+
+                        setTimeout(() => {
+                            $('.date-panel').length = 0
+                        }, 1000);
+
+                        if(e.key === 'Enter'){
+                            $('.date-panel').remove()
+                        }
                 })
     
             //click icon 
             this.elem.nextElementSibling.addEventListener("click", (e) => {
 
                 this.openCalendar(e)
-                this.findOverflows()
+                /* this.findOverflows() */
             })
+
+            this.elem.addEventListener('focus',(e)=>{
+                let yearType = this.option.yearType
+                let fullDate = this.elem.dataset.fulldate
+               
+                if(this.checkDisableDate(fullDate)){
+                    this.initDate('today')
+                    this.value = +this.elem.dataset.fulldate
+                }else{
+                    let date = fullDate.slice(6,8)
+                    let month = fullDate.slice(4,6)
+                    let year = fullDate.slice(0,4)
+
+                    let checkYearType = yearType === "AD" ? +year : +year+543 
+
+                    let checkFormat = this.selectDateFormat(date,month,checkYearType)[1]
+
+                    e.target.value = `${checkFormat[0]}/${checkFormat[1]}/${checkFormat[2]}`
+                    e.target.setAttribute("value" ,`${checkFormat[0]}/${checkFormat[1]}/${checkFormat[2]}`) 
+                }
+
+            })
+
+            this.elem.addEventListener('change', (e) => {
+                    this.autoDate(e)
+                })  
+
+            this.elem.addEventListener('blur', (e) => {
+                    this.autoDate(e)
+            }) 
 
             //click input
             this.elem.addEventListener("click", (e) => {
@@ -677,11 +789,10 @@ class Calendar {
                 if(e.detail === 2){
                     e.target.select()
                 }
-    
                 if(e.target.value === ''){
                     
                     this.elem.addEventListener('keydown', (e) => {
-                        if(e.keyCode == 13){
+                        if(e.key === 'Enter'){
                             this.autoDate(e)
                             $('.date-panel').remove()
                         }
@@ -693,40 +804,18 @@ class Calendar {
         
                     this.elem.addEventListener('blur', (e) => {
                             this.autoDate(e)
+
                     })
     
-                }else if(e.target.value != ''){
-          
-                    let yearType = this.option.yearType
-                    let fullDate = e.target.dataset.fulldate
-    
-                    let date = fullDate.slice(6,8)
-                    let month = fullDate.slice(4,6)
-                    let year = fullDate.slice(0,4)
-    
-                    let checkYearType = yearType === "AD" ? +year : +year+543 
-    
-                    let checkFormat = this.selectDateFormat(date,month,checkYearType)[1]
-    
-                    e.target.value = `${checkFormat[0]}/${checkFormat[1]}/${checkFormat[2]}`
-                    e.target.setAttribute("value" ,`${checkFormat[0]}/${checkFormat[1]}/${checkFormat[2]}`) 
-    
-    
-                    this.elem.addEventListener('change', (e) => {
-                            this.autoDate(e)
-                    }) 
-    
-                    this.elem.addEventListener('blur', (e) => {
-                            this.autoDate(e)
-                    }) 
                 }
             })
-
     }
 
 
 
     openCalendar(e) {
+      
+
         if ($(".date-panel").length === 0) {
             //e.target.previousElementSibling.parentElement.style.position = "relative" 
             let defaultDate = this.option.default
@@ -746,7 +835,6 @@ class Calendar {
 
 
             let dayHeader = ''
-            
 
             if (lang === 'th') {
                 dayHeader = `
@@ -771,17 +859,19 @@ class Calendar {
                               `
             }
 
-            e.target.insertAdjacentHTML('afterend', `
+            $("body")[0].insertAdjacentHTML('beforeend', `
                 <div class="date-panel">
                     <div class="date-header">
                         <div class="lbl_month" id="header_month">month</div>
                         <div class="lbl_year" id="header_year">year</div>
         
-                        <button type="button" class="btn btn-sm btnPreviousMonth" id="btnPreviousMonth"> <i
-                        class="fas fa-chevron-left"></i> </button>
-                        
-                        <button type="button" class="btn btn-sm btnNextMonth" id="btnNextMonth"><i
-                                class="fas fa-chevron-right"></i></button>
+                        <div class="button_group">
+                            <button type="button" class="btn btn-sm btnPreviousMonth" id="btnPreviousMonth"> <i
+                            class="fas fa-chevron-left"></i> </button>
+                            
+                            <button type="button" class="btn btn-sm btnNextMonth" id="btnNextMonth"><i
+                                    class="fas fa-chevron-right"></i></button>
+                        </div>
                     </div>
                     <div class="month-panel">
                         <div class="month-header">
@@ -885,7 +975,7 @@ class Calendar {
 
                     parent.setAttribute("value", date_display)
 
-                    parent.setAttribute("data-value", `${checkYearType}${("0"+this_month).slice(-2)}${this_date}`)
+                    /* parent.setAttribute("data-value", `${checkYearType}${("0"+this_month).slice(-2)}${this_date}`) */
 
                     parent.setAttribute("data-fulldate", `${year}${("0"+this_month).slice(-2)}${this_date}`)
 
@@ -922,7 +1012,7 @@ class Calendar {
                         let parent = this.elem
                         parent.value = date_display
                         parent.setAttribute("value", date_display)
-                        parent.setAttribute("data-value", `${checkYearType}${("0"+month).slice(-2)}${this_date}`)
+                        /* parent.setAttribute("data-value", `${checkYearType}${("0"+month).slice(-2)}${this_date}`) */
                         parent.setAttribute("data-fulldate", `${checkYearType}${("0"+month).slice(-2)}${this_date}`)
 
                         $(".date-panel").attr('data-fulldate', `${checkYearType}${("0"+month).slice(-2)}${this_date}`)
@@ -971,7 +1061,7 @@ class Calendar {
                     let parent = this.elem
                     parent.value = date_display
                     parent.setAttribute("value", date_display)
-                    parent.setAttribute("data-value", `${checkYearType}${("0"+month).slice(-2)}${this_date}`)
+                    /* parent.setAttribute("data-value", `${checkYearType}${("0"+month).slice(-2)}${this_date}`) */
                     parent.setAttribute("data-fulldate", `${checkYearType}${("0"+month).slice(-2)}${this_date}`)
 
                     $(".date-panel").attr('data-fulldate', `${checkYearType}${("0"+month).slice(-2)}${this_date}`)
@@ -983,10 +1073,10 @@ class Calendar {
 
             })
 
-            $(".btnPreviousMonth").click((ev) => {
-                let this_date = +ev.target.parentElement.parentElement.dataset.date
-                let this_month = +ev.target.parentElement.parentElement.dataset.month
-                let this_year = +ev.target.parentElement.parentElement.dataset.year
+            $("#btnPreviousMonth").click((ev) => {
+                let this_date = +ev.target.parentElement.parentElement.parentElement.dataset.date
+                let this_month = +ev.target.parentElement.parentElement.parentElement.dataset.month
+                let this_year = +ev.target.parentElement.parentElement.parentElement.dataset.year
 
                 let checkYearType = this.option.yearType == "AD" ? this_year : this_year + 543
 
@@ -1004,10 +1094,10 @@ class Calendar {
 
             })
 
-            $(".btnNextMonth").click((ev) => {
-                let this_date = +ev.target.parentElement.parentElement.dataset.date
-                let this_month = +ev.target.parentElement.parentElement.dataset.month
-                let this_year = +ev.target.parentElement.parentElement.dataset.year
+            $("#btnNextMonth").click((ev) => {
+                let this_date = +ev.target.parentElement.parentElement.parentElement.dataset.date
+                let this_month = +ev.target.parentElement.parentElement.parentElement.dataset.month
+                let this_year = +ev.target.parentElement.parentElement.parentElement.dataset.year
 
                 let checkYearType = this.option.yearType == "AD" ? this_year : this_year + 543
 
@@ -1070,9 +1160,21 @@ class Calendar {
             }
 
             if (!panel_arr.includes(e.target.className)) {
-                $(".date-panel").remove()
+                    $(".date-panel").remove()
             }
+
         })
+        addEventListener('touchend',e=>{
+            if (!closeOnSelect) {
+                panel_arr.push('date-item date-selected')
+            }
+
+            if (!panel_arr.includes(e.target.className)) {
+                    $(".date-panel").remove()
+            }
+
+        })
+
 
         $(".date-body").empty()
 
@@ -1113,6 +1215,7 @@ class Calendar {
         }))
 
         let displayYear = yearType == 'AD' ? this_year : this_year + 543
+        console.log(displayYear)
 
         $(".lbl_year").text(yearPanel == 'full' ? displayYear : ('' + displayYear).slice(-2))
 
@@ -1172,6 +1275,8 @@ class Calendar {
                 disableSelect = ''
             }
 
+ 
+
         
        
 
@@ -1221,6 +1326,78 @@ class Calendar {
 
 
         //select date 
+        $(".date-item").each((i,item)=>{
+            item.addEventListener('touchend',(e)=>{
+                if (selectable) {
+                    let fulldate = e.target.dataset.fulldate
+    
+                    let y = fulldate.slice(0, 4)
+                    let m = fulldate.slice(4, 6)
+                    let d = fulldate.slice(6, 8)
+    
+                    let formatter = this.option.format.split('/')
+    
+                    function checkDateFormat(arr = []) {
+    
+                        let check_date_arr = ['d', 'dd', "D", "DD", 'm', 'mm', 'M', 'MM', "yy", 'yyyy']
+    
+                        let check1 = check_date_arr.includes(arr[0]) || false
+                        let check2 = check_date_arr.includes(arr[1]) || false
+                        let check3 = check_date_arr.includes(arr[2]) || false
+    
+                        return check1 && check2 && check3
+                    }
+    
+    
+                    let isValid = checkDateFormat([formatter[0], formatter[1], formatter[2]])
+    
+                    if (isValid) {
+    
+                        let full_date_display = this.selectDateFormat(d, m, y)[0]
+                        let separation = this.option.separation
+                        let starter = this.option.startWith
+    
+    
+                        let day_display = full_date_display[0]
+                        let d_display = full_date_display[1]
+                        let m_display = full_date_display[2]
+                        let y_display = full_date_display[3]
+    
+                        //la
+                        let checkYearType = yearType === "AD" ? y_display : +y_display + 543
+    
+                        let showDay = this.option.showDay === 'none' ? '' :`${starter}${day_display}, `
+                        let date_display = `${showDay}${d_display}${separation}${m_display}${separation}${y_display}`
+    
+                        //set dataset value and value to input        
+    
+                        let parent = this.elem
+    
+                        parent.value = date_display
+    
+                        parent.setAttribute("value", date_display)
+    
+                        /* parent.setAttribute("data-value", `${checkYearType}${m}${d}`) */
+    
+                        parent.dataset.fulldate = `${y}${m}${d}`
+    
+                        /*  e.target.parentElement.parentElement.parentElement.parentElement.dataset.fulldate = `${y}${m}${d}` */
+    
+                        /* closeOnSelect ? $(".date-panel").remove() : '' */
+    
+                        $(".date-item").removeClass('date-selected')
+                        e.target.classList.add('date-selected')
+    
+                        $(".date-panel").attr('data-fulldate', `${y}${("0"+m).slice(-2)}${d}`)
+                        $(".date-panel").attr('data-date', `${d}`)
+    
+                    } else {
+                        console.error("Invalid date Format")
+                    }
+                }
+            })
+        })
+        
         $(".date-item").click((e) => {
             if (selectable) {
                 let fulldate = e.target.dataset.fulldate
@@ -1271,7 +1448,7 @@ class Calendar {
 
                     parent.setAttribute("value", date_display)
 
-                    parent.setAttribute("data-value", `${checkYearType}${m}${d}`)
+                    /* parent.setAttribute("data-value", `${checkYearType}${m}${d}`) */
 
                     parent.dataset.fulldate = `${y}${m}${d}`
 
@@ -1288,20 +1465,23 @@ class Calendar {
                 } else {
                     console.error("Invalid date Format")
                 }
+                this.value = +this.elem.dataset.fulldate
             }
+
+
         })
 
         //set selected date color
 
         $(".date-item").each((i, item) => {
-
-            if (item.dataset.fulldate === $(".date-panel").attr('data-fulldate')) {
+            let selectedData = this.extractFulldate(this.elem.dataset.fulldate)
+            if (item.dataset.fulldate === `${selectedData.y}${selectedData.m}${selectedData.d}`) {
                 item.classList.add('date-selected')
             } else {
                 item.classList.remove('date-selected')
-
             }
         })
+
     }
 
     renderMonth(this_year) {
@@ -1447,19 +1627,30 @@ class Calendar {
     }
 }
 
+    Element.prototype.Calendar = function (option) {
+        let d
+        [this].forEach((item, i) => {
+            d =  new Calendar(item,option)
+        })
+        return d
 
-Element.prototype.Calendar = function (option) {
-    [this].forEach((item, i) => {
-        new Calendar(item,option)
-    })
-}
-Object.prototype.Calendar = function(option) {
-    this.forEach((item,i)=>{
-        new Calendar(item,option)
-    })
-}
+    }
+    Object.prototype.Calendar = function(option) {
+        let d
+
+        this.forEach((item,i)=>{
+             d =  new Calendar(item,option)
+        })
+        return d
+    }
 
 
+//test
+let d = document.querySelectorAll('.datepicker#ctest1').Calendar({showDay:'full'})
+let d2 = document.querySelectorAll('.datepicker#ctest2').Calendar({showDay:'small'})
 
-document.querySelectorAll('.datepicker#ctest1').Calendar({showDay:'full'})
-document.querySelectorAll('.datepicker#ctest2').Calendar({showDay:'small'})
+/* setInterval(() => {
+  console.log(d.value , d2.value)
+  document.querySelector('#sp1').innerHTML = d.value
+  document.querySelector('#sp2').innerHTML = d2.value
+}, 10); */
