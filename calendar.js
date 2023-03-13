@@ -77,6 +77,7 @@ let panel_arr = [
 const DATE = new Date()
 
 class Calendar {
+
     constructor(elem, option = {
         format: String(),
         default: String() ,
@@ -114,9 +115,13 @@ class Calendar {
             yearPanel: 'full',
             max: 21000101,
             min: 20001112,
+           /*  max: 25700101,
+            min: 20001112, */
             selectable: true,
             closeOnSelect: true,
-            autoAdjustMaxMin: false,
+            autoAdjustMaxMin: true,
+            autoValue: true,
+
         }
 
         this.option = {
@@ -137,16 +142,26 @@ class Calendar {
             selectable:             option.selectable           || this.defaultOption.selectable,
             closeOnSelect:          option.closeOnSelect        || this.defaultOption.closeOnSelect,
             autoAdjustMaxMin:       option.autoAdjustMaxMin     || this.defaultOption.autoAdjustMaxMin,
+            autoValue:              option.autoValue            || this.defaultOption.autoValue,
+
         } 
      
-        this.todayInt = +`${this.option.yearType === 'AD' ? DATE.getFullYear() : DATE.getFullYear()+543}${('0'+(DATE.getMonth()+1)).slice(-2)}${('0'+DATE.getDate()).slice(-2)}`
-        
-        this.value = this.todayInt
+        this.BEYear = 543*10**4
+        this.todayInt = +`${DATE.getFullYear()}${('0'+(DATE.getMonth()+1)).slice(-2)}${('0'+DATE.getDate()).slice(-2)}`
+        this.value =  this.option.yearType === "AD" ? this.todayInt : +this.todayInt+543*10**4
         this.exceptionDate = [ 20230301,20230305, 20230321,20230325, 20230327,20230425]
-
         this.exceptionDate2 = [{start : 20230301,end :20230305},{start : 20230321,end :20230325},{start : 20230327,end :20230425}]
-
         this.exceptionDateAll  = []
+
+
+
+        this.option.max = this.value > this.option.max ? +(String(this.value).slice(0,4)+'1231')+10*10**4 : this.option.max
+        this.option.min = this.value > this.option.min ? +(String(this.value).slice(0,4)+'1231')-50*10**4 : this.option.min
+
+    
+
+        console.log(this.option.max,this.option.min)
+
         this.init()
 
     }
@@ -156,10 +171,19 @@ class Calendar {
     checkDisableDate(selectedDate){
         let max = String(this.option.max)
         let min = String(this.option.min)
+    
+        selectedDate = this.option.yearType === 'AD' ? selectedDate : +selectedDate+this.BEYear
+        console.log(selectedDate)
         
-        if( (selectedDate >= +min && selectedDate <= +max ) && !(this.exceptionDateAll.includes(''+selectedDate))){
-                return false
+        //selectedDate is greater than min and lesser than max 
+        if( (+selectedDate >= +min && +selectedDate <= +max ) && !(this.exceptionDateAll.includes(''+selectedDate))){
+            //avalible date
+            console.log(+selectedDate,"avalible")
+            return false
         }
+        //disable date 
+        console.log(selectedDate,"disable")
+
         return true
     }
     getAllDate(start , end){
@@ -325,7 +349,6 @@ class Calendar {
 
     changeDateByArrow(e,current){
 
-     
         let max = String(this.option.max)
         let min = String(this.option.min)
         let yearType = this.option.yearType
@@ -334,17 +357,16 @@ class Calendar {
 
         let [curentDateDisplay, curentMonthDisplay, curentYearDisplay] = this.selectDateFormat(curentDate,curentMonth,curentYear)[1]
 
-        curentYearDisplay = yearType === "AD" ? curentYear : curentYear+543
+        let curentYearDisplayCheckYear = yearType === "AD" ? curentYear : curentYear+543
 
         let selectedDate = +`${curentYearDisplay}${curentMonth}${curentDate}`
         this.openCalendar(e)
-        if( (selectedDate >= +min && selectedDate <= +max ) && !(this.exceptionDateAll.includes(''+selectedDate))){
-    
-            e.target.value = `${curentDateDisplay}/${curentMonthDisplay}/${curentYearDisplay}`
-            e.target.setAttribute("value", `${curentDateDisplay}/${curentMonthDisplay}/${curentYearDisplay}`)
+        if( !this.checkDisableDate(selectedDate)){
+            e.target.value = `${curentDateDisplay}/${curentMonthDisplay}/${curentYearDisplayCheckYear}`
+            e.target.setAttribute("value", `${curentDateDisplay}/${curentMonthDisplay}/${curentYearDisplayCheckYear}`)
             /* e.target.setAttribute("data-value", `${curentYearDisplay}${curentMonth}${curentDate}`) */
             e.target.setAttribute("data-fulldate", `${curentYear}${curentMonth}${curentDate}`)
-            this.value = +this.elem.dataset.fulldate
+            this.value = yearType === "AD" ? +this.elem.dataset.fulldate : +this.elem.dataset.fulldate+this.BEYear
 
             this.render(curentDate,curentMonth,curentYear)
 
@@ -416,7 +438,7 @@ class Calendar {
     autoDate(e){
         let check_format = this.checkDateIsValidFormat(e.target.value)
         let yearType = this.option.yearType
-
+ 
         let max = String(this.option.max)
         let max_date = max.length > 0 ? [+max.slice(0,4), +max.slice(4,6),+max.slice(6,8)] : 0
         let max_month = max_date[0] != 0 ? max_date[1] : 12
@@ -431,7 +453,6 @@ class Calendar {
 
        if(check_format[0]){
             let full_date_display = this.selectDateFormat(check_format[1].d,check_format[1].m,check_format[1].y)[0]
-   
             let separation = this.option.separation
             let starter = this.option.startWith
 
@@ -449,14 +470,16 @@ class Calendar {
                
                let selectedDate = +`${y_display}${m_display}${d_display}`
 
-               if(this.checkDisableDate(selectedDate)){
+            if(this.checkDisableDate(selectedDate)){
                 this.initDate('today')
-                this.value = +this.elem.dataset.fulldate
+                this.value = yearType === "AD" ? +this.elem.dataset.fulldate : +this.elem.dataset.fulldate+this.BEYear
 
             }else if( selectedDate >= +min && selectedDate <= +max ){
-       
+
+
                 e.target.value = date_display
                 e.target.setAttribute("value" ,date_display)
+
                 /* e.target.setAttribute('data-value',`${y_display}${("0"+check_format[1].m).slice(-2)}${check_format[1].d}`)  */
                 e.target.setAttribute('data-fulldate',`${check_format[1].y}${("0"+check_format[1].m).slice(-2)}${check_format[1].d}`)
 
@@ -464,6 +487,9 @@ class Calendar {
                 $(".date-panel").attr('data-date',`${check_format[1].d}`)
 
                  this.render(+check_format[1].d,+check_format[1].m,+check_format[1].y)   
+
+                this.value = yearType === "AD" ? +this.elem.dataset.fulldate : +this.elem.dataset.fulldate+this.BEYear
+
                /*   e.target.setAttribute("readonly","readonly") */
                 }else{
                     let tmax = this.extractFulldate(this.option.max)
@@ -526,11 +552,10 @@ class Calendar {
              let m_display = full_date_display[2]
              let y_display = full_date_display[3]
  
-             //la
              let checkYearType = this.option.yearType === "AD" ? y_display : +y_display + 543
  
              let showDay = this.option.showDay === 'none' ? '' :`${starter}${day_display}, `
-             let date_display = `${showDay}${d_display}${separation}${m_display}${separation}${y_display}`
+             let date_display = `${showDay}${d_display}${separation}${m_display}${separation}${checkYearType}`
  
              //set dataset value and value to input        
  
@@ -543,7 +568,7 @@ class Calendar {
              /* parent.setAttribute("data-value", `${checkYearType}${m}${d}`) */
  
              parent.dataset.fulldate = `${y}${m}${d}`
- 
+             
              $(".date-panel").attr('data-fulldate', `${y}${("0"+m).slice(-2)}${d}`)
              $(".date-panel").attr('data-date', `${d}`)
  
@@ -593,13 +618,13 @@ class Calendar {
 
     init() {
 
+        let checkYearType = this.option.yearType === 'AD' ? 0 : 543*10**4
         let c = 0
         for (let i = 0 ; c < this.exceptionDate.length-1; i++){
-            this.getAllDate(''+this.exceptionDate[c],''+this.exceptionDate[c+1])
+            this.getAllDate(''+(this.exceptionDate[c]-checkYearType),''+(this.exceptionDate[c+1]-checkYearType))
             c += 2
         } 
-
-       
+   
 
         /* this.exceptionDate.map((item)=>{
             this.getAllDate(''+item.start,''+item.end)
@@ -630,9 +655,10 @@ class Calendar {
         // if max date is lower than current date change max date to currentdate +100
         // if min date is greater than current date change max date to currentdate -100
 
-        if (this.option.autoAdjustMaxMin) {
+      /*   if (this.option.autoAdjustMaxMin) {
             let current = this.todayInt
 
+            current = this.option.yearType === 'AD' ? current : this.todayInt+(543*10**4)
             if (this.option.max < current) {
                 this.option.max = current + 10 ** 5 // max is 7
             }
@@ -640,7 +666,8 @@ class Calendar {
             if (this.option.min > current) {
                 this.option.min = current - 10 ** 5 // max is 7
             }
-        }
+            
+        } */
     
       
         let max = String(this.option.max)
@@ -759,27 +786,34 @@ class Calendar {
                
                 if(this.checkDisableDate(fullDate)){
                     this.initDate('today')
-                    this.value = +this.elem.dataset.fulldate
+                    this.value = yearType === "AD" ? +this.elem.dataset.fulldate : +this.elem.dataset.fulldate+this.BEYear
+                    console.log('adsa')
+
                 }else{
+
                     let date = fullDate.slice(6,8)
                     let month = fullDate.slice(4,6)
                     let year = fullDate.slice(0,4)
 
                     let checkYearType = yearType === "AD" ? +year : +year+543 
 
+
                     let checkFormat = this.selectDateFormat(date,month,checkYearType)[1]
 
                     e.target.value = `${checkFormat[0]}/${checkFormat[1]}/${checkFormat[2]}`
                     e.target.setAttribute("value" ,`${checkFormat[0]}/${checkFormat[1]}/${checkFormat[2]}`) 
+
                 }
 
             })
 
             this.elem.addEventListener('change', (e) => {
+
                     this.autoDate(e)
                 })  
 
             this.elem.addEventListener('blur', (e) => {
+
                     this.autoDate(e)
             }) 
 
@@ -1131,7 +1165,6 @@ class Calendar {
 
     render(date = 0, month = 0, year = 0) {
        
-
         let lang = this.option.lang
         let yearType = this.option.yearType
         let max = String(this.option.max)
@@ -1197,6 +1230,7 @@ class Calendar {
 
 
         let checkYearType = yearType == "AD" ? +this_year : +this_year + 543
+        let checkYearTypeN = yearType == "AD" ? 0:  543*10**4
 
         //get first day of the month and first day of the year
         let fdm = new Date(this_year, this_month - 1, 1).getDay(); //first day of month
@@ -1215,7 +1249,6 @@ class Calendar {
         }))
 
         let displayYear = yearType == 'AD' ? this_year : this_year + 543
-        console.log(displayYear)
 
         $(".lbl_year").text(yearPanel == 'full' ? displayYear : ('' + displayYear).slice(-2))
 
@@ -1267,12 +1300,12 @@ class Calendar {
                      disableSelect = ''
                  }
             } */
-
-            if(this.exceptionDateAll.includes(fulldateData)){
+           
+            if(this.exceptionDateAll.includes(String(+fulldateData))){
                 disableSelect = 'disableSelect'
-
             }else{
                 disableSelect = ''
+            
             }
 
  
@@ -1367,7 +1400,7 @@ class Calendar {
                         let checkYearType = yearType === "AD" ? y_display : +y_display + 543
     
                         let showDay = this.option.showDay === 'none' ? '' :`${starter}${day_display}, `
-                        let date_display = `${showDay}${d_display}${separation}${m_display}${separation}${y_display}`
+                        let date_display = `${showDay}${d_display}${separation}${m_display}${separation}${checkYearType}`
     
                         //set dataset value and value to input        
     
@@ -1438,7 +1471,7 @@ class Calendar {
                     let checkYearType = yearType === "AD" ? y_display : +y_display + 543
 
                     let showDay = this.option.showDay === 'none' ? '' :`${starter}${day_display}, `
-                    let date_display = `${showDay}${d_display}${separation}${m_display}${separation}${y_display}`
+                    let date_display = `${showDay}${d_display}${separation}${m_display}${separation}${checkYearType}`
 
                     //set dataset value and value to input        
 
@@ -1465,7 +1498,7 @@ class Calendar {
                 } else {
                     console.error("Invalid date Format")
                 }
-                this.value = +this.elem.dataset.fulldate
+                this.value = yearType === "AD" ? +this.elem.dataset.fulldate : +this.elem.dataset.fulldate+this.BEYear
             }
 
 
@@ -1647,10 +1680,9 @@ class Calendar {
 
 //test
 let d = document.querySelectorAll('.datepicker#ctest1').Calendar({showDay:'full'})
-let d2 = document.querySelectorAll('.datepicker#ctest2').Calendar({showDay:'small'})
+let d2 = document.querySelectorAll('.datepicker#ctest2').Calendar({showDay:'small',yearType:'AD'})
 
-/* setInterval(() => {
-  console.log(d.value , d2.value)
+setInterval(() => {
   document.querySelector('#sp1').innerHTML = d.value
   document.querySelector('#sp2').innerHTML = d2.value
-}, 10); */
+}, 100);
