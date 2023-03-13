@@ -96,6 +96,8 @@ class Calendar {
         selectable: Boolean(),
         closeOnSelect: Boolean(),
         autoAdjustMaxMin: Boolean(),
+        autoValue: Boolean(),
+
     }) {
 
         this.elem = elem
@@ -125,24 +127,24 @@ class Calendar {
         }
 
         this.option = {
-            format:                 option.format               || this.defaultOption.format,
-            default:                option.default              || this.defaultOption.default,
-            separation:             option.separation           || this.defaultOption.separation,
-            lang:                   option.lang                 || this.defaultOption.lang,
-            yearType:               option.yearType             || this.defaultOption.yearType,
-            showDay:                option.showDay              || this.defaultOption.showDay,
-            day:                    option.day                  || this.defaultOption.day,
-            month:                  option.month                || this.defaultOption.month,
-            min:                    option.min                  || this.defaultOption.min,
-            max:                    option.max                  || this.defaultOption.max,
-            startWith:              option.startWith            || this.defaultOption.startWith,
-            dayPanel:               option.dayPanel             || this.defaultOption.dayPanel,
-            monthPanel:             option.monthPanel           || this.defaultOption.monthPanel,
-            yearPanel:              option.yearPanel            || this.defaultOption.yearPanel,
-            selectable:             option.selectable           || this.defaultOption.selectable,
-            closeOnSelect:          option.closeOnSelect        || this.defaultOption.closeOnSelect,
-            autoAdjustMaxMin:       option.autoAdjustMaxMin     || this.defaultOption.autoAdjustMaxMin,
-            autoValue:              option.autoValue            || this.defaultOption.autoValue,
+            format:                 option.format            !== undefined  ? option.format : this.defaultOption.format,
+            default:                option.default           !== undefined  ? option.default : this.defaultOption.default,
+            separation:             option.separation        !== undefined  ? option.separation : this.defaultOption.separation,
+            lang:                   option.lang              !== undefined  ? option.lang : this.defaultOption.lang,
+            yearType:               option.yearType          !== undefined  ? option.yearType : this.defaultOption.yearType,
+            showDay:                option.showDay           !== undefined  ? option.showDay : this.defaultOption.showDay,
+            day:                    option.day               !== undefined  ? option.day : this.defaultOption.day,
+            month:                  option.month             !== undefined  ? option.month : this.defaultOption.month,
+            min:                    option.min               !== undefined  ? option.min : this.defaultOption.min,
+            max:                    option.max               !== undefined  ? option.max : this.defaultOption.max,
+            startWith:              option.startWith         !== undefined  ? option.startWith : this.defaultOption.startWith,
+            dayPanel:               option.dayPanel          !== undefined  ? option.dayPanel : this.defaultOption.dayPanel,
+            monthPanel:             option.monthPanel        !== undefined  ? option.monthPanel : this.defaultOption.monthPanel,
+            yearPanel:              option.yearPanel         !== undefined  ? option.yearPanel : this.defaultOption.yearPanel,
+            selectable:             option.selectable        !== undefined  ? option.selectable : this.defaultOption.selectable,
+            closeOnSelect:          option.closeOnSelect     !== undefined  ? option.closeOnSelect : this.defaultOption.closeOnSelect,
+            autoAdjustMaxMin:       option.autoAdjustMaxMin  !== undefined  ? option.autoAdjustMaxMin : this.defaultOption.autoAdjustMaxMin,
+            autoValue:              option.autoValue         !== undefined  ? option.autoValue : this.defaultOption.autoValue,
 
         } 
      
@@ -153,14 +155,8 @@ class Calendar {
         this.exceptionDate2 = [{start : 20230301,end :20230305},{start : 20230321,end :20230325},{start : 20230327,end :20230425}]
         this.exceptionDateAll  = []
 
-
-
         this.option.max = this.value > this.option.max ? +(String(this.value).slice(0,4)+'1231')+10*10**4 : this.option.max
-        this.option.min = this.value > this.option.min ? +(String(this.value).slice(0,4)+'1231')-50*10**4 : this.option.min
-
-    
-
-        console.log(this.option.max,this.option.min)
+        this.option.min = this.value > this.option.min ? +(String(this.value).slice(0,4)+'0101')-50*10**4 : this.option.min
 
         this.init()
 
@@ -173,7 +169,6 @@ class Calendar {
         let min = String(this.option.min)
     
         selectedDate = this.option.yearType === 'AD' ? selectedDate : +selectedDate+this.BEYear
-        console.log(selectedDate)
         
         //selectedDate is greater than min and lesser than max 
         if( (+selectedDate >= +min && +selectedDate <= +max ) && !(this.exceptionDateAll.includes(''+selectedDate))){
@@ -430,13 +425,14 @@ class Calendar {
                     this.initDate()
                 }, 2000);
 
-                throw new Error('CODE 2 | Date value shoude be valid format Format :' + this.option.format)
+                throw new Error('CODE 2 | Date value should be valid format Format :' + this.option.format)
             }
 
     }
 
     autoDate(e){
-        let check_format = this.checkDateIsValidFormat(e.target.value)
+        if(e.target.value != ''){
+        let check_format = this.checkDateIsValidFormat(e.target.value) 
         let yearType = this.option.yearType
  
         let max = String(this.option.max)
@@ -469,12 +465,13 @@ class Calendar {
                //set dataset value and value to input     
                
                let selectedDate = +`${y_display}${m_display}${d_display}`
+               let checkSelectDate = yearType === 'AD' ? selectedDate : selectedDate-this.BEYear
 
-            if(this.checkDisableDate(selectedDate)){
+            if(this.checkDisableDate(checkSelectDate)){
                 this.initDate('today')
                 this.value = yearType === "AD" ? +this.elem.dataset.fulldate : +this.elem.dataset.fulldate+this.BEYear
 
-            }else if( selectedDate >= +min && selectedDate <= +max ){
+            }else if(!this.checkDisableDate(checkSelectDate)){
 
 
                 e.target.value = date_display
@@ -491,7 +488,7 @@ class Calendar {
                 this.value = yearType === "AD" ? +this.elem.dataset.fulldate : +this.elem.dataset.fulldate+this.BEYear
 
                /*   e.target.setAttribute("readonly","readonly") */
-                }else{
+            }else{
                     let tmax = this.extractFulldate(this.option.max)
                     let tmin = this.extractFulldate(this.option.min)
 
@@ -503,8 +500,8 @@ class Calendar {
                     }, 3000);
 
                 }
+            }
         }
-
     }
 
     initDate(option = 'today'){
@@ -625,6 +622,7 @@ class Calendar {
             c += 2
         } 
    
+        console.log(this.elem,this.option.autoValue)
 
         /* this.exceptionDate.map((item)=>{
             this.getAllDate(''+item.start,''+item.end)
@@ -648,7 +646,7 @@ class Calendar {
         let formatter = this.option.format
         this.elem.setAttribute("placeholder", formatter)
 
-        this.initDate()
+        if(this.option.autoValue) this.initDate()
        
         this.elem.insertAdjacentHTML('afterend', `<div class="date-icon" ><i class="fa-duotone fa-calendar"></i></div>`);
         //check if today date is lower or greater max min date 
@@ -772,23 +770,34 @@ class Calendar {
                             $('.date-panel').remove()
                         }
                 })
-    
+
+            this.elem.addEventListener('click',(e)=>{
+                e.target.setSelectionRange(0,2)
+
+            })
             //click icon 
             this.elem.nextElementSibling.addEventListener("click", (e) => {
 
                 this.openCalendar(e)
                 /* this.findOverflows() */
             })
+         /*    this.elem.addEventListener(('mouseup'),(e)=>{
+               
+
+                console.log(`Selected text: ${this.elem.value.substring(e.target.selectionStart, e.target.selectionEnd)}`);
+
+            }) */
 
             this.elem.addEventListener('focus',(e)=>{
                 let yearType = this.option.yearType
                 let fullDate = this.elem.dataset.fulldate
+                e.target.setSelectionRange(0,2)
                
                 if(this.checkDisableDate(fullDate)){
-                    this.initDate('today')
-                    this.value = yearType === "AD" ? +this.elem.dataset.fulldate : +this.elem.dataset.fulldate+this.BEYear
-                    console.log('adsa')
-
+                    if(this.option.autoValue){
+                        this.initDate('today')
+                        this.value = yearType === "AD" ? +this.elem.dataset.fulldate : +this.elem.dataset.fulldate+this.BEYear
+                    }
                 }else{
 
                     let date = fullDate.slice(6,8)
@@ -821,7 +830,7 @@ class Calendar {
             this.elem.addEventListener("click", (e) => {
                
                 if(e.detail === 2){
-                    e.target.select()
+                    /* e.target.setSelectionRange(0,2) */
                 }
                 if(e.target.value === ''){
                     
@@ -1668,9 +1677,9 @@ class Calendar {
         return d
 
     }
+
     Object.prototype.Calendar = function(option) {
         let d
-
         this.forEach((item,i)=>{
              d =  new Calendar(item,option)
         })
@@ -1679,7 +1688,7 @@ class Calendar {
 
 
 //test
-let d = document.querySelectorAll('.datepicker#ctest1').Calendar({showDay:'full'})
+let d = document.querySelectorAll('.datepicker#ctest1').Calendar({showDay:'full',autoValue:true})
 let d2 = document.querySelectorAll('.datepicker#ctest2').Calendar({showDay:'small',yearType:'AD'})
 
 setInterval(() => {
