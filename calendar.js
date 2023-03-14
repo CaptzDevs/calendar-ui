@@ -1,6 +1,5 @@
 //Calendar [DEV]
-//Version 0.1
-
+//Version beta 1.0 
 
 //error code 
 /* 
@@ -91,6 +90,7 @@ class Calendar {
         dayPanel: String(),
         monthPanel: String(),
         yearPanel: String(),
+
         min: Number(),
         max: Number(),
         selectable: Boolean(),
@@ -101,6 +101,7 @@ class Calendar {
     }) {
 
         this.elem = elem
+        this.panel = ''
         this.elems = [] // set of parent element ex. input 
         this.defaultOption = {
             format: "dd/mm/yyyy",
@@ -115,6 +116,7 @@ class Calendar {
             dayPanel: 'full',
             monthPanel: 'full',
             yearPanel: 'full',
+
             max: 21000101,
             min: 20001112,
            /*  max: 25700101,
@@ -141,6 +143,7 @@ class Calendar {
             dayPanel:               option.dayPanel          !== undefined  ? option.dayPanel : this.defaultOption.dayPanel,
             monthPanel:             option.monthPanel        !== undefined  ? option.monthPanel : this.defaultOption.monthPanel,
             yearPanel:              option.yearPanel         !== undefined  ? option.yearPanel : this.defaultOption.yearPanel,
+
             selectable:             option.selectable        !== undefined  ? option.selectable : this.defaultOption.selectable,
             closeOnSelect:          option.closeOnSelect     !== undefined  ? option.closeOnSelect : this.defaultOption.closeOnSelect,
             autoAdjustMaxMin:       option.autoAdjustMaxMin  !== undefined  ? option.autoAdjustMaxMin : this.defaultOption.autoAdjustMaxMin,
@@ -159,10 +162,37 @@ class Calendar {
         this.option.min = this.value > this.option.min ? +(String(this.value).slice(0,4)+'0101')-50*10**4 : this.option.min
 
         this.init()
+        console.log(  this.exportValue('dmy','/') )
 
     }
 
     //Utility Method
+
+
+    exportValue(option = 'dmy',separator = '' ){
+        let date = this.extractFulldate(this.value)
+        
+        if(option === 'dmy'){
+            return `${date.d}${separator}${date.m}${separator}${date.y}`
+        }
+        if(option === 'dym'){
+            return `${date.d}${separator}${date.m}${separator}${date.y}`
+        }
+        if(option === 'mdy'){
+            return `${date.y}${separator}${date.m}${separator}${date.d}`
+        }
+        if(option === 'myd'){
+            return `${date.y}${separator}${date.m}${separator}${date.d}`
+        }
+        if(option === 'ymd'){
+            return `${date.y}${separator}${date.m}${separator}${date.d}`
+        }
+        if(option === 'ydm'){
+            return `${date.y}${separator}${date.m}${separator}${date.d}`
+        }
+    }
+    
+ 
 
     checkDisableDate(selectedDate){
         let max = String(this.option.max)
@@ -622,7 +652,6 @@ class Calendar {
             c += 2
         } 
    
-        console.log(this.elem,this.option.autoValue)
 
         /* this.exceptionDate.map((item)=>{
             this.getAllDate(''+item.start,''+item.end)
@@ -1168,6 +1197,7 @@ class Calendar {
             /* findOverflows(); */
 
         }
+        this.panel =    document.querySelector('.date-panel')
     }
 
 
@@ -1436,6 +1466,8 @@ class Calendar {
                     } else {
                         console.error("Invalid date Format")
                     }
+            this.value = yearType === "AD" ? +this.elem.dataset.fulldate : +this.elem.dataset.fulldate+this.BEYear
+
                 }
             })
         })
@@ -1529,7 +1561,6 @@ class Calendar {
     renderMonth(this_year) {
 
         let lang = this.option.lang
-
         let min = String(this.option.min)
         let min_date = [+min.slice(0, 4), +min.slice(4, 6), +min.slice(6, 8)]
         let min_year = min_date[0] != 0 ? min_date[0] : yearType === 'AD' ? 2100 : 2600
@@ -1539,6 +1570,8 @@ class Calendar {
         let max_month = max_date[0] != 0 ? max_date[1] : 12
 
         let monthPanel = this.option.monthPanel
+        let monthSelected = ''
+        let this_month = +this.extractFulldate(this.elem.dataset.fulldate).m
 
         $("#month_body").empty()
 
@@ -1566,9 +1599,11 @@ class Calendar {
                     })
                 }
 
+                monthSelected = this_month === i ? ' _selected' : ''
+
                 $("#month_body").append(
                     `
-                  <div class="month-item" data-fulldate=${this_year+("0"+[i]).slice(-2)}>${full_month}</div>
+                  <div class="month-item ${monthSelected}" data-fulldate=${this_year+("0"+[i]).slice(-2)}>${full_month}</div>
                   `
                 )
             }
@@ -1595,9 +1630,11 @@ class Calendar {
                     })
                 }
 
+                monthSelected = this_month === i ? ' _selected' : ''
+
                 $("#month_body").append(
                     `
-                    <div class="month-item" data-fulldate=${this_year+("0"+[i]).slice(-2)}>${full_month}</div>
+                    <div class="month-item ${monthSelected}" data-fulldate=${this_year+("0"+[i]).slice(-2)}>${full_month}</div>
                     `
                 )
             }
@@ -1622,10 +1659,11 @@ class Calendar {
                         month: this.option.month
                     })
                 }
+                monthSelected = this_month === i ? ' _selected' : ''
 
                 $("#month_body").append(
                     `
-                    <div class="month-item" data-fulldate=${this_year+("0"+[i]).slice(-2)}>${full_month}</div>
+                    <div class="month-item ${monthSelected}" data-fulldate=${this_year+("0"+[i]).slice(-2)}>${full_month}</div>
                     `
                 )
             }
@@ -1695,3 +1733,23 @@ setInterval(() => {
   document.querySelector('#sp1').innerHTML = d.value
   document.querySelector('#sp2').innerHTML = d2.value
 }, 100);
+
+
+function fac(n){
+    let l = n
+    let i = 1
+        for (i ; i < Math.abs(l) ; i++){
+            n *= i 
+        }
+        return n
+    }
+
+console.log(fac(-5))
+
+/*  
+1 = 1
+2 = 2
+3 = 6 
+4 = 24
+5 = 120
+*/
