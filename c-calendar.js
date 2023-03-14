@@ -1,4 +1,5 @@
-
+//Calendar [DEV]
+//Version 0.1
 
 /* 
 date format 
@@ -842,11 +843,13 @@ function openCalendar(e,setting = default_setting){
                 <div class="lbl_month" id="header_month">month</div>
                 <div class="lbl_year" id="header_year">year</div>
 
+                <div class="button_group">
                 <button type="button" class="btn btn-sm btnPreviousMonth" id="btnPreviousMonth"> <i
                 class="fas fa-chevron-left"></i> </button>
                 
                 <button type="button" class="btn btn-sm btnNextMonth" id="btnNextMonth"><i
                         class="fas fa-chevron-right"></i></button>
+                        </div>
             </div>
             <div class="month-panel">
                 <div class="month-header">
