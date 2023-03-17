@@ -1,11 +1,11 @@
 //Calendar [DEV]
 //Version beta 1.0 
-
 //error code 
 /* 
     code 1 error in date pannel
     code 2 error in input 
 */
+/* console.log = function() {} */
 
 const LANG = {
     th: {
@@ -67,6 +67,31 @@ const LANG = {
 
 }
 
+const defaultOptionCalendar = {
+    format: "dd/mm/yyyy",
+    default: "now",
+    separation: "/",
+    lang: "th",
+    yearType: "BE",
+    showDay: 'none', // full,small ,none
+    day: 'full',
+    month: 'full',
+    startWith: '',
+    dayPanel: 'full',
+    monthPanel: 'full',
+    yearPanel: 'full',
+
+    max: 21001231,
+    min: 20000101,
+   /*  max: 25700101,
+    min: 20001112, */
+    selectable: true,
+    closeOnSelect: true,
+    autoAdjustMaxMin: true,
+    autoValue: true,
+
+}
+
 let panel_arr = [
     'date-panel', "datepicker", 'lbl_month', 'lbl_year', 'btn btn-sm btnNextMonth',
     "btn btn-sm btnNextMonth", 'btn btn-sm btnPreviousMonth', 'month-item', 'month-body', 
@@ -99,55 +124,31 @@ class Calendar {
         autoValue: Boolean(),
 
     }) {
-
         this.elem = elem
         this.panel = ''
         this.elems = [] // set of parent element ex. input 
-        this.defaultOption = {
-            format: "dd/mm/yyyy",
-            default: "now",
-            separation: "/",
-            lang: "th",
-            yearType: "BE",
-            showDay: 'none', // full,small ,none
-            day: 'full',
-            month: 'full',
-            startWith: '',
-            dayPanel: 'full',
-            monthPanel: 'full',
-            yearPanel: 'full',
-
-            max: 21000101,
-            min: 20001112,
-           /*  max: 25700101,
-            min: 20001112, */
-            selectable: true,
-            closeOnSelect: true,
-            autoAdjustMaxMin: true,
-            autoValue: true,
-
-        }
+        
 
         this.option = {
-            format:                 option.format            !== undefined  ? option.format : this.defaultOption.format,
-            default:                option.default           !== undefined  ? option.default : this.defaultOption.default,
-            separation:             option.separation        !== undefined  ? option.separation : this.defaultOption.separation,
-            lang:                   option.lang              !== undefined  ? option.lang : this.defaultOption.lang,
-            yearType:               option.yearType          !== undefined  ? option.yearType : this.defaultOption.yearType,
-            showDay:                option.showDay           !== undefined  ? option.showDay : this.defaultOption.showDay,
-            day:                    option.day               !== undefined  ? option.day : this.defaultOption.day,
-            month:                  option.month             !== undefined  ? option.month : this.defaultOption.month,
-            min:                    option.min               !== undefined  ? option.min : this.defaultOption.min,
-            max:                    option.max               !== undefined  ? option.max : this.defaultOption.max,
-            startWith:              option.startWith         !== undefined  ? option.startWith : this.defaultOption.startWith,
-            dayPanel:               option.dayPanel          !== undefined  ? option.dayPanel : this.defaultOption.dayPanel,
-            monthPanel:             option.monthPanel        !== undefined  ? option.monthPanel : this.defaultOption.monthPanel,
-            yearPanel:              option.yearPanel         !== undefined  ? option.yearPanel : this.defaultOption.yearPanel,
+            format:                 option.format            !== undefined  ? option.format : defaultOptionCalendar.format,
+            default:                option.default           !== undefined  ? option.default : defaultOptionCalendar.default,
+            separation:             option.separation        !== undefined  ? option.separation : defaultOptionCalendar.separation,
+            lang:                   option.lang              !== undefined  ? option.lang : defaultOptionCalendar.lang,
+            yearType:               option.yearType          !== undefined  ? option.yearType : defaultOptionCalendar.yearType,
+            showDay:                option.showDay           !== undefined  ? option.showDay : defaultOptionCalendar.showDay,
+            day:                    option.day               !== undefined  ? option.day : defaultOptionCalendar.day,
+            month:                  option.month             !== undefined  ? option.month : defaultOptionCalendar.month,
+            min:                    option.min               !== undefined  ? option.min : defaultOptionCalendar.min,
+            max:                    option.max               !== undefined  ? option.max : defaultOptionCalendar.max,
+            startWith:              option.startWith         !== undefined  ? option.startWith : defaultOptionCalendar.startWith,
+            dayPanel:               option.dayPanel          !== undefined  ? option.dayPanel : defaultOptionCalendar.dayPanel,
+            monthPanel:             option.monthPanel        !== undefined  ? option.monthPanel : defaultOptionCalendar.monthPanel,
+            yearPanel:              option.yearPanel         !== undefined  ? option.yearPanel : defaultOptionCalendar.yearPanel,
 
-            selectable:             option.selectable        !== undefined  ? option.selectable : this.defaultOption.selectable,
-            closeOnSelect:          option.closeOnSelect     !== undefined  ? option.closeOnSelect : this.defaultOption.closeOnSelect,
-            autoAdjustMaxMin:       option.autoAdjustMaxMin  !== undefined  ? option.autoAdjustMaxMin : this.defaultOption.autoAdjustMaxMin,
-            autoValue:              option.autoValue         !== undefined  ? option.autoValue : this.defaultOption.autoValue,
+            selectable:             option.selectable        !== undefined  ? option.selectable : defaultOptionCalendar.selectable,
+            closeOnSelect:          option.closeOnSelect     !== undefined  ? option.closeOnSelect : defaultOptionCalendar.closeOnSelect,
+            autoAdjustMaxMin:       option.autoAdjustMaxMin  !== undefined  ? option.autoAdjustMaxMin : defaultOptionCalendar.autoAdjustMaxMin,
+            autoValue:              option.autoValue         !== undefined  ? option.autoValue : defaultOptionCalendar.autoValue,
 
         } 
      
@@ -162,7 +163,6 @@ class Calendar {
         this.option.min = this.value > this.option.min ? +(String(this.value).slice(0,4)+'0101')-50*10**4 : this.option.min
 
         this.init()
-        console.log(  this.exportValue('dmy','/') )
 
     }
 
@@ -464,7 +464,6 @@ class Calendar {
         if(e.target.value != ''){
         let check_format = this.checkDateIsValidFormat(e.target.value) 
         let yearType = this.option.yearType
- 
         let max = String(this.option.max)
         let max_date = max.length > 0 ? [+max.slice(0,4), +max.slice(4,6),+max.slice(6,8)] : 0
         let max_month = max_date[0] != 0 ? max_date[1] : 12
@@ -607,7 +606,6 @@ class Calendar {
     }
 
     
-    //MAIN---------------------------------------
 
     findOverflows(){
         if($(".date-panel").length > 0){
@@ -641,6 +639,7 @@ class Calendar {
     };
 
   
+    //MAIN---------------------------------------
  
 
     init() {
@@ -821,7 +820,7 @@ class Calendar {
                 let yearType = this.option.yearType
                 let fullDate = this.elem.dataset.fulldate
                 e.target.setSelectionRange(0,2)
-               
+
                 if(this.checkDisableDate(fullDate)){
                     if(this.option.autoValue){
                         this.initDate('today')
@@ -835,7 +834,7 @@ class Calendar {
 
                     let checkYearType = yearType === "AD" ? +year : +year+543 
 
-
+                    
                     let checkFormat = this.selectDateFormat(date,month,checkYearType)[1]
 
                     e.target.value = `${checkFormat[0]}/${checkFormat[1]}/${checkFormat[2]}`
@@ -1209,6 +1208,7 @@ class Calendar {
         let max = String(this.option.max)
         let min = String(this.option.min)
 
+
         let max_date = [+max.slice(0, 4), +max.slice(4, 6), +max.slice(6, 8)]
         let max_month = max_date != 0 ? max_date[1] : 12
         let max_year = max_date != 0 ? max_date[0] : yearType == 'AD' ? 2100 : 2600
@@ -1268,8 +1268,8 @@ class Calendar {
         }
 
 
-        let checkYearType = yearType == "AD" ? +this_year : +this_year + 543
-        let checkYearTypeN = yearType == "AD" ? 0:  543*10**4
+        let checkYearType = yearType === "AD" ? +this_year : +this_year + 543
+        let checkYearTypeN = yearType === "AD" ? 0:  543*10**4
 
         //get first day of the month and first day of the year
         let fdm = new Date(this_year, this_month - 1, 1).getDay(); //first day of month
@@ -1287,9 +1287,10 @@ class Calendar {
             month: this.option.month
         }))
 
-        let displayYear = yearType == 'AD' ? this_year : this_year + 543
+        let displayYear = yearType === 'AD' ? this_year : this_year + 543
 
-        $(".lbl_year").text(yearPanel == 'full' ? displayYear : ('' + displayYear).slice(-2))
+
+        $(".lbl_year").text(yearPanel === 'full' ? displayYear : ('' + displayYear).slice(-2))
 
         //render section -------------------------------------
         /*   let elem_length = 0;
@@ -1708,6 +1709,8 @@ class Calendar {
 }
 
     Element.prototype.Calendar = function (option) {
+        option = option ? option : defaultOptionCalendar
+
         let d
         [this].forEach((item, i) => {
             d =  new Calendar(item,option)
@@ -1717,6 +1720,8 @@ class Calendar {
     }
 
     Object.prototype.Calendar = function(option) {
+        option = option ? option : defaultOptionCalendar
+
         let d
         this.forEach((item,i)=>{
              d =  new Calendar(item,option)
@@ -1726,16 +1731,17 @@ class Calendar {
 
 
 //test
-let d = document.querySelectorAll('.datepicker#ctest1').Calendar({showDay:'full',autoValue:true})
-let d2 = document.querySelectorAll('.datepicker#ctest2').Calendar({showDay:'small',yearType:'AD'})
+let d = document.querySelectorAll('.datepicker.calendar#ctest1').Calendar({showDay:'full',autoValue:true})
+let d2 = document.querySelectorAll('.datepicker.calendar#ctest2').Calendar({showDay:'small',yearType:'AD'})
 
-setInterval(() => {
+
+/* setInterval(() => {
   document.querySelector('#sp1').innerHTML = d.value
   document.querySelector('#sp2').innerHTML = d2.value
 }, 100);
+ */
 
-
-function fac(n){
+/* function fac(n){
     let l = n
     let i = 1
         for (i ; i < Math.abs(l) ; i++){
@@ -1745,7 +1751,7 @@ function fac(n){
     }
 
 console.log(fac(-5))
-
+ */
 /*  
 1 = 1
 2 = 2
