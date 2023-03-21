@@ -72,6 +72,9 @@ let dropdown_arr = [
 }
 
 
+function isNumber(n){
+    return !isNaN(n) ? true : false
+}
 
 
 const defaultOption = {
@@ -134,6 +137,12 @@ class CalendarDropdown{
 
             this.elems = [] // set of parent element ex. input 
 
+            this.value = 'd'
+            this.valueText = 'd'
+            this.fulldate = '00000000'
+
+            this.dateValid = false
+
             
     
             this.option = {
@@ -181,7 +190,6 @@ class CalendarDropdown{
 
 
         addEventListener('click',(e)=>{
-            console.log(e.target.className)
             if(!dropdown_arr.includes(e.target.className)){
 
             }
@@ -247,16 +255,23 @@ class CalendarDropdown{
         return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
       };
       
-
+    isValidDate(dateStr) {
+        const date = new Date(dateStr);
+        if (isNaN(date.getTime()) || dateStr.slice(5, 7) != date.getMonth() + 1 || dateStr.slice(0, 4) != date.getFullYear()) {
+          return false;
+        }
+    
+        return dateStr.slice(8) == date.getDate();
+      }
     renderCalendarDropDown(){
        
         this.elem.classList.add('d-none')
         this.elem.insertAdjacentHTML('afterend',`    
-        <div class="calendar-dropdown">
+        <div class="calendar-dropdown dropdown-type-2">
             <div class="dropdown-wraper dropdown-wraper-date">
                 <input class="dropdown-section dropdown-section-date dropdown-input-${this._id}" type="text" placeholder="dd" autocomplete="off">
             </div>
-
+        
             <div class="dropdown-wraper dropdown-wraper-month">
                 <input class="dropdown-section dropdown-section-month dropdown-input-${this._id}" type="text" placeholder="mm" autocomplete="off">
             </div>
@@ -279,40 +294,104 @@ class CalendarDropdown{
 
       this.dateInput.addEventListener('change',(e)=>{
 
-        let date = this.dateInput.value 
-        let month = this.monthInput.value 
-        let year = this.yearInput.value 
+        let date = this.dateInput 
+        let month = this.monthInput 
+        let year = this.yearInput 
     
         if(date != "" && month != "" && year != "" ){
-                e.target.parentElement.parentElement.setAttribute("data-value",`${year}${("0"+month).slice(-2)}${('0'+date).slice(-2)}`)
-        }
-
+                this.value = `${year.dataset.year}-${("0"+month.dataset.month).slice(-2)}-${('0'+date.dataset.date).slice(-2)}`
+                this.valueText = `${date.dataset.value}/${(month.dataset.value)}/${(year.dataset.value)}`
+                this.fulldate = `${year.dataset.year}${("0"+month.dataset.month).slice(-2)}${('0'+date.dataset.date).slice(-2)}`
+       
+                if(this.isValidDate(this.value)){
+                    console.log('Valid')
+                    this.dateValid = true
+                }else{
+                    this.dateValid = false
+                }  
+            }
+        
       })
 
       this.monthInput.addEventListener('change',(e)=>{
 
-        let date = this.dateInput.value 
-        let month = this.monthInput.value 
-        let year = this.yearInput.value 
-    
-        if(date != "" && month != "" && year != "" ){
-                e.target.parentElement.parentElement.setAttribute("data-value",`${year}${("0"+month).slice(-2)}${('0'+date).slice(-2)}`)
+        let date = this.dateInput 
+        let month = this.monthInput 
+        let year = this.yearInput 
+
+        if(date.value != "" && month.value != "" && year.value != "" ){
+
+                this.value = `${year.dataset.year}-${("0"+month.dataset.month).slice(-2)}-${('0'+date.dataset.date).slice(-2)}`
+                this.valueText = `${date.value}/${(month.dataset.value)}/${(year.value)}`
+                this.fulldate = `${year.dataset.year}${("0"+month.dataset.month).slice(-2)}${('0'+date.dataset.date).slice(-2)}`
+
+                if(this.isValidDate(this.value)){
+                    console.log('Valid')
+                    this.dateValid = true
+
+                }else{
+                    console.log('invalid')
+                this.dateValid = false
+
+                }    
+            
         }
       })
 
 
       this.yearInput.addEventListener('change',(e)=>{
 
-        let date = this.dateInput.value 
-        let month = this.monthInput.value 
-        let year = this.yearInput.value 
+        let date = this.dateInput 
+        let month = this.monthInput 
+        let year = this.yearInput 
     
-        if(date != "" && month != "" && year != "" ){
-                e.target.parentElement.parentElement.setAttribute("data-value",`${year}${("0"+month).slice(-2)}${('0'+date).slice(-2)}`)
-        }
-      })
-     
+        if(date.value != "" && month.value != "" && year.value != "" ){
+           
+            this.value = `${year.dataset.year}-${("0"+month.dataset.month).slice(-2)}-${('0'+date.dataset.date).slice(-2)}`
+            this.valueText = `${date.value}/${(month.value)}/${(year.value)}`
+            this.fulldate = `${year.dataset.year}${("0"+month.dataset.month).slice(-2)}${('0'+date.dataset.date).slice(-2)}`
+            
+            if(this.isValidDate(this.value)){
+                console.log('Valid')
+                this.dateValid = true
 
+            }else{
+                console.log('invalid')
+                this.dateValid = false
+
+            }    
+
+     }
+      })
+
+      if(this.isMobileDevice()){
+        this.dateInput.addEventListener("focus",(e)=>{
+                    $("body").css('transform','translateY(-150px)')
+
+        })
+        this.monthInput.addEventListener("focus",(e)=>{
+                    $("body").css('transform','translateY(-150px)')
+
+        })
+        this.yearInput.addEventListener("focus",(e)=>{
+                    $("body").css('transform','translateY(-150px)')
+
+        })
+
+        this.dateInput.addEventListener("blur",(e)=>{
+                    $("body").css('transform','translateY(0px)')
+
+        })
+        this.monthInput.addEventListener("blur",(e)=>{
+                    $("body").css('transform','translateY(0px)')
+
+        })
+        this.yearInput.addEventListener("blur",(e)=>{
+                    $("body").css('transform','translateY(0px)')
+
+        })
+     
+    }
     //-------------------Date Event------------------------
     this.dateInput.addEventListener("focus",(e)=>{
       
@@ -322,57 +401,54 @@ class CalendarDropdown{
 
         this.isMobileDevice() ? this.dateInput.blur() : this.dateInput.select()
 
-       
-
         this.renderDate()
 
         let min = +this.option.dayMin
         let max = +this.option.dayMax
-    
-        this.dateInput.addEventListener('change',(e)=>{
 
-            let value = e.target.value
-
-            if(!isNaN(value) ){
-
-                if(value.length == 1 && value < 10  ){
-
-
-                    let valueDisplay = ("0"+value).slice(-2)
-                    
-                     this.dateInput.value = valueDisplay
-                     this.dateInput.setAttribute('value',valueDisplay)
-                     this.dateInput.setAttribute('data-date',valueDisplay)
-
-                }
-
-            }else{
-              value = ''
-            }
-
-        })
 
         this.dateInput.addEventListener('keyup',(e)=>{
 
-            let value = +e.target.value
+            let value = this.dateInput.value
 
-            if(!isNaN(e.target.value)  ){
-                if(e.target.value.length >= 2){
+            if(isNumber(value)){
+                if(value.length === 1 && e.key === "Enter"){
+                    value = ("0"+value).slice(-2)
+                }
+                if(value.length >= 2){
                     if( value >= min && value <= max ) {
-
-                       this.monthInput.focus()
-                       this.dateInput.setAttribute('data-date',e.target.value)
+                        
+                        console.log(value)
+                        this.dateInput.value = value
+                        this.dateInput.setAttribute('data-date',value)
+                        this.dateInput.setAttribute('data-value',value)
+                        
+                        this.monthInput.focus()
 
                     }
                     else{
-                        e.target.value = max
-                       this.dateInput.setAttribute('data-date',max)
+                       this.dateInput.value = max
+                        this.dateInput.setAttribute('data-date',max)
+                        this.dateInput.setAttribute('data-value',max)
+                        this.monthInput.focus()
 
                     }
                 }
             }
             else{
                 e.target.value = ''
+            }
+        })
+
+        this.dateInput.addEventListener("change",(e)=>{
+            let value = this.dateInput.value
+            if(value.length === 1){
+                value = ("0"+value).slice(-2)
+                this.dateInput.value = value
+                this.dateInput.setAttribute('data-date',value)
+                this.dateInput.setAttribute('data-value',value)
+                  
+                this.monthInput.focus()
             }
         })
 
@@ -389,59 +465,123 @@ class CalendarDropdown{
         this.monthInput.classList.add("input_focus")
         this.yearInput.classList.remove("input_focus")
 
-        this.isMobileDevice() ? this.monthInput.blur() : this.monthInput.select()
 
         this.renderMonth()
 
 
+        if( ! this.isMobileDevice() ){
+
         let min = +this.option.monthMin
         let max = +this.option.monthMax
         
+        let checkLang = this.checkLang('month')
 
-        this.monthInput.addEventListener('change',(e)=>{
-
-                if(!isNaN(e.target.value)){
+        if(this.option.month !== "number"){
+            if(this.monthInput.value !== ''){
+                console.log(this.monthInput.value)
+                let index = LANG2[checkLang].indexOf(this.monthInput.value)
                 
-                    if(e.target.value.length == 1 && e.target.value < 10 ){
-                    
+                this.monthInput.value = ('0'+index).slice(-2)
+                this.monthInput.setAttribute("value",('0'+index).slice(-2))
+                this.monthInput.setAttribute("data-value",('0'+index).slice(-2))
+                this.monthInput.setAttribute('data-month',('0'+index).slice(-2))
 
-                    let value = ("0"+e.target.value).slice(-2)
-                    
-                    this.monthInput.value = value
-                    this.monthInput.setAttribute('value',value)
-                    this.monthInput.setAttribute('data-month',value)
+            }
+        }
 
-                    }
+        this.monthInput.addEventListener('blur',(e)=>{
+            let value = this.monthInput.value
+  
+             if(this.option.month !== "number" && isNumber(this.monthInput.value)){
+
+                 this.monthInput.value = LANG2[checkLang][+value]
+                 this.monthInput.setAttribute("value",LANG2[checkLang][+value])
+                 this.monthInput.setAttribute("data-value",LANG2[checkLang][+value])
+
+                 this.monthInput.setAttribute('data-month',('0'+value).slice(-2))
+           
+
+                 this.monthInput.dispatchEvent(new Event('change'))
                 
-                }else{
-                  e.target.value = ''
+            }
+        })
+       
+        this.monthInput.addEventListener('keyup',(e)=>{
+
+                let value = this.monthInput.value
+
+                if(!isNumber(value) && !LANG2[checkLang].includes(value)){
+
+                    console.log('e',value)
+                    this.monthInput.value = ''
+                    this.monthInput.setAttribute('value','')
+                    this.monthInput.setAttribute('data-value','')
+                    this.monthInput.setAttribute('data-month','')
+
                 }
-            
-            })
-        
-            this.monthInput.addEventListener('keyup',(e)=>{
+                else if(isNumber(value)){
+                    if(value.length === 1 && e.key === "Enter"){
+                        console.log('1')
+                            value = ("0"+value).slice(-2)
+                    }
+                    if(value.length === 2 ){
+                        if( +value >= min && +value <= max ) {
+                            console.log('2')
+                            this.monthInput.setAttribute('data-month',e.target.value)
 
-                let value = +e.target.value
+                            if(this.option.month !== 'number'){
+                                console.log('21')
+                                this.monthInput.value = LANG2[checkLang][+this.monthInput.dataset.month]
+                                this.monthInput.setAttribute('value',LANG2[checkLang][+this.monthInput.dataset.month])
+                                this.monthInput.setAttribute('data-value',LANG2[checkLang][+this.monthInput.dataset.month])
+                            }else{
+                                console.log('22')
+                                this.monthInput.value = value
+                                this.monthInput.setAttribute('value',value)
+                                this.monthInput.setAttribute('data-value',value)
+                            }
 
-                if(!isNaN(e.target.value)  ){
-                    if(e.target.value.length >= 2){
-                        if( value >= min && value <= max ) {
-
-                           this.yearInput.focus()
-                           this.monthInput.setAttribute('data-month',e.target.value)
-
+                            this.yearInput.focus()
                         }
                         else{
-                            e.target.value = max
-                           this.monthInput.setAttribute('data-month',max)
+                            console.log('3')
+                            //if input is more than or less than limit maxmin option
+
+                            this.monthInput.value = max
+                            this.monthInput.setAttribute('value',max)
+                            this.monthInput.setAttribute('data-value',max)
+                            this.monthInput.setAttribute('data-month',max)
+
+                            if(this.option.month !== 'number'){
+                                this.monthInput.value = LANG2[checkLang][+this.monthInput.dataset.month]
+                                this.monthInput.setAttribute('value',LANG2[checkLang][+this.monthInput.dataset.month])
+                                this.monthInput.setAttribute('data-value',LANG2[checkLang][+this.monthInput.dataset.month])
+                                
+                            }
+                            this.yearInput.focus()
 
                         }
                     }
+                }else if(this.option.month !== 'number' && isNumber(this.monthInput.value)){
+                    console.log('3')
+                        this.monthInput.value = LANG2[checkLang][+value]
+                        this.monthInput.setAttribute("value",LANG2[checkLang][+value])
+                        this.monthInput.setAttribute("data-value",LANG2[checkLang][+value])
+
+                        this.monthInput.setAttribute('data-month',value)
+                        this.yearInput.focus()
+
+                    
                 }
-                else{
-                    e.target.value = ''
-                }
+             
             })
+
+       
+
+        this.monthInput.select()
+    }else{
+        this.monthInput.blur()
+    }
 
         $(".dropdown-body.dropdown-date").remove()
         $(".dropdown-body.dropdown-year").remove()
@@ -471,17 +611,26 @@ class CalendarDropdown{
                 if(e.target.value.length >= 4){
                     if( value >= min && value <= max ) {
 
-                        $(".dropdown-body.dropdown-year").remove()
-                         this.yearInput.blur()
+            
+                         this.yearInput.setAttribute('value',value)
+                         this.yearInput.setAttribute('data-value',value)
                          this.yearInput.setAttribute('data-year',value)
+
+                         $(".dropdown-body.dropdown-year").remove()
+                         this.yearInput.blur()
 
                     }
                     else{
                         e.target.value = max
+                        this.yearInput.setAttribute('value',max)
+                        this.yearInput.setAttribute('data-value',max)
                         this.yearInput.setAttribute('data-year',max)
+
                         $(".dropdown-body.dropdown-year").remove() 
                         this.yearInput.classList.remove('input_focus')
-                       this.yearInput.blur()
+                        this.yearInput.blur()
+                        this.yearInput.dispatchEvent(new Event('change'))
+
                     }
                 }
             }
@@ -495,6 +644,8 @@ class CalendarDropdown{
             $(".dropdown-body.dropdown-month").remove()
 
         })
+
+       
 }
 
 
@@ -524,7 +675,6 @@ class CalendarDropdown{
     slideTo(section,index){
         const slideshow = document.querySelector('.dropdown-'+section);
         const slides = document.querySelectorAll('.dropdown-items');
-        console.log(section,index)
         const targetOffset = (index-1) * slides[0].offsetHeight-30; //mark1 -30
         slideshow.scrollTop = targetOffset
     }
@@ -552,7 +702,7 @@ class CalendarDropdown{
             $(`.dropdown-date`).append(`<button disabled class="dropdown-items dropdown-item-date" data-date='${("0"+min).slice(-2)}'>Date</button>`)
 
             for ( let i = min; i <= max; i++ ){
-                $(`.dropdown-date`).append(`<button class="dropdown-items dropdown-item-date" id=${i}  data-date = '${("0"+i).slice(-2)}' }>${i}</button>`)
+                $(`.dropdown-date`).append(`<button tabindex='-1' class="dropdown-items dropdown-item-date" id=${i}  data-date = '${("0"+i).slice(-2)}' }>${i}</button>`)
             }
 
             $(`.dropdown-date`).append(`<button disabled class="dropdown-items dropdown-item-date" data-date='${("0"+max).slice(-2)}'>^</button>`)
@@ -561,19 +711,25 @@ class CalendarDropdown{
             $(".dropdown-item-date").click((e)=>{
                 let value = e.target.dataset.date
                 this.dateInput.value = value
+                this.dateInput.setAttribute('value',value)
+                this.dateInput.setAttribute('data-date',e.target.dataset.date)
+                this.dateInput.dispatchEvent(new Event('change'));
 
                 this.monthInput.focus()
             })
             
           
          
+            if( this.isMobileDevice() ){
             $(`.dropdown-date`).on('scroll',()=>{
-                let optionSelected = this.getCurrentSlide('date')
-                let value = optionSelected.dataset.date
-                this.dateInput.value = value !== undefined ? value : ''
-                this.dateInput.setAttribute('data-date',value)
+                    let optionSelected = this.getCurrentSlide('date')
+                    let value = optionSelected.dataset.date
+                    this.dateInput.value = value !== undefined ? value : ''
+                    this.dateInput.setAttribute('data-date',value)
+                    this.dateInput.dispatchEvent(new Event('change'));
 
-            })
+                })
+            }
      
         
         this.slideTo('date',current)
@@ -593,13 +749,18 @@ class CalendarDropdown{
         this.monthInput.dataset.min = min
         this.monthInput.dataset.max = max
 
-        console.log(this.checkLang('month'))
      
         $(`.dropdown-month`).append(`<button disabled class="dropdown-items dropdown-item-month">Month</button>`)
 
+        if(this.option.month === 'number'){
             for ( let i = min; i <= max; i++ ){
-                $(`.dropdown-month`).append(`<button class="dropdown-items dropdown-item-month"  data-month='${("0"+i).slice(-2)}'>${LANG2.m_th_full[i]}</button>`)
+                $(`.dropdown-month`).append(`<button tabindex='-1' class="dropdown-items dropdown-item-month" data-value="${i}"  data-month='${("0"+i).slice(-2)}'>${i}</button>`)
             }
+        }else if(this.option.month !== "number"){
+            for ( let i = min; i <= max; i++ ){
+                $(`.dropdown-month`).append(`<button tabindex='-1' class="dropdown-items dropdown-item-month" data-value="${LANG2.m_th_full[i]}"  data-month='${("0"+i).slice(-2)}'>${LANG2.m_th_full[i]}</button>`)
+            }
+        }
 
             $(`.dropdown-month`).append(`<button disabled class="dropdown-items dropdown-item-month">^</button>`)
 
@@ -611,17 +772,24 @@ class CalendarDropdown{
                 this.monthInput.setAttribute('data-month',e.target.dataset.month)
 
                 this.yearInput.focus()
+              
+                this.monthInput.dispatchEvent(new Event('change'));
+
 
             })
 
             
+            if( this.isMobileDevice() ){
             $(`.dropdown-month`).on('scroll',()=>{
-                let value = this.getCurrentSlide('month').dataset.month
-                this.monthInput.value = value !== undefined ? value : ''
 
-                this.monthInput.setAttribute('data-month',value)
+                    let value = this.getCurrentSlide('month').dataset.value
+                    this.monthInput.value = value !== undefined ? value : ''
 
-            })
+                    this.monthInput.setAttribute('data-month',value)
+                this.dateInput.dispatchEvent(new Event('change'));
+
+                })
+            }
      
         this.slideTo('month',current)
 
@@ -635,7 +803,7 @@ class CalendarDropdown{
 
         let min = +this.option.yearMin
         let max = +this.option.yearMax
-        let current = 1
+        let current = this.yearInput.dataset.year || 1
 
        this.yearInput.setAttribute("data-min",min)
        this.yearInput.setAttribute("data-max",max)
@@ -643,7 +811,7 @@ class CalendarDropdown{
                  $(`.dropdown-year`).append(`<button disabled class="dropdown-items dropdown-item-year">Year</button>`)
 
             for ( let i = max; i >= min; i-- ){
-                $(`.dropdown-year`).append(`<button class="dropdown-items dropdown-item-year"  data-year='${i}'>${i}</button>`)
+                $(`.dropdown-year`).append(`<button tabindex='-1' class="dropdown-items dropdown-item-year"  data-year='${i}'>${i}</button>`)
             }
 
                 $(`.dropdown-year`).append(`<button disabled class="dropdown-items dropdown-item-year">^</button>`)
@@ -660,18 +828,22 @@ class CalendarDropdown{
 
                 $(".dropdown-body.dropdown-year").remove()
                 this.yearInput.classList.remove("input_focus")
+                this.yearInput.dispatchEvent(new Event('change'));
+
             })
 
+            if( this.isMobileDevice() ){
             
-            $(`.dropdown-year`).on('scroll',()=>{
+                $(`.dropdown-year`).on('scroll',()=>{
 
-                let value = this.getCurrentSlide('year').dataset.year
-                this.yearInput.value = value !== undefined ? value : ''
-                this.yearInput.setAttribute('data-year',value)
+                    let value = this.getCurrentSlide('year').dataset.year
+                    this.yearInput.value = value !== undefined ? value : ''
+                    this.yearInput.setAttribute('data-year',value)
+                    this.dateInput.dispatchEvent(new Event('change'));
 
-            })
+                })
+            }
 
-            console.log(current)
             this.slideTo('year',current)
      
      }
@@ -703,9 +875,31 @@ class CalendarDropdown{
 
 
 //test
-let dd1 = document.querySelectorAll('.datepicker.dropdown').Calendar()
 
-/* setInterval(() => {
-  document.querySelector('#sp1').innerHTML = d.value
-  document.querySelector('#sp2').innerHTML = d2.value
-}, 100); */
+document.addEventListener("DOMContentLoaded",(e)=>{
+
+let dd1 = document.querySelectorAll('.datepicker.dropdown#dd1').Calendar({month:'number'})
+let dd2 = document.querySelectorAll('.datepicker.dropdown#dd2').Calendar({month:'full'})
+
+ setInterval(() => {
+    document.querySelector('#sp1').innerHTML = "value     : "+dd2.value
+    document.querySelector('#sp2').innerHTML = "valueText : "+dd2.valueText
+    document.querySelector('#sp3').innerHTML = "fulldate  : "+dd2.fulldate
+    document.querySelector('#sp4').innerHTML = "validate  : "+dd2.dateValid
+
+
+}, 100); 
+
+function isValidDate(dateStr) {
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime()) || dateStr.slice(5, 7) != date.getMonth() + 1 || dateStr.slice(0, 4) != date.getFullYear()) {
+      return false;
+    }
+
+    return dateStr.slice(8) == date.getDate();
+  }
+
+  console.log(isValidDate('2020-02-29'))
+
+
+})
