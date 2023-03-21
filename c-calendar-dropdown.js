@@ -2,7 +2,7 @@
 
     const default_dropdown_setting = {
 
-    }
+}
 
     jQuery.fn.Calendar = function(type,setting = default_dropdown_setting){
         if(type === 'dropdown'){
@@ -11,9 +11,10 @@
     }
 
     let dropdown_arr = 
-    ['dropdown-section dropdown-section-date','dropdown-section dropdown-section-month','dropdown-section dropdown-section-year',
-    'dropdown-body dropdown-date','dropdown-body dropdown-month','dropdown-body dropdown-year',
-    'dropdown-item dropdown-item-date' , 'dropdown-item dropdown-item-month','ddropdown-item dropdown-item-year'
+    [
+        'dropdown-section dropdown-section-date','dropdown-section dropdown-section-month','dropdown-section dropdown-section-year',
+        'dropdown-body dropdown-date','dropdown-body dropdown-month','dropdown-body dropdown-year',
+        'dropdown-item dropdown-item-date' , 'dropdown-item dropdown-item-month','ddropdown-item dropdown-item-year'
      ]
  
  
@@ -108,11 +109,6 @@
                 $(".dropdown-body.dropdown-year").remove()
 
             })
-
-
-          
-
-
      }
 
     function renderCalendarDropDown(elem){

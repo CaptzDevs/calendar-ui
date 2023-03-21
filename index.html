@@ -463,50 +463,224 @@
       align-items: flex-start;
       justify-content: center;
       flex-direction: column;
-      gap: 20px;
+      gap: 10px;
     }
     .calendar-dropdown{
-      width: 50%;
+      width: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
+      gap: 5px;
+      background: #ffffff;
+      color: #000;
+      border-radius: 5px;
     }
     .dropdown-section{
       width: 100%;
-      border-radius: 10px;
+      border-radius: 5px;
       text-align: right;
-      padding-right: 10px;
+      padding: 0px 10px;
+      border: 1px solid white !important; 
     }
+ /*    .dropdown-section-date{
+      width: 2em;
+      font-size: 3rem;
+    }
+    .dropdown-section-month{
+      width: 2em;
+      font-size: 3rem;
+    }
+
+    .dropdown-section-year{
+      width: 4em;
+      font-size: 3rem;
+    } */
+
+
     .dropdown-wraper{
+      width: 15%;
       position: relative;
+     /*  border: 1px solid white; */
+      border-radius: 5px;
     }
+
+    
+    .dropdown-type-1.calendar-dropdown{
+      background: #00000000 !important;
+    }
+    .dropdown-type-1 .dropdown-section{
+      background: #00000000;
+      border: none;
+      color: rgb(255, 255, 255);
+    }
+
+    
+    .dropdown-type-2.calendar-dropdown{
+      background: #ffffff !important;
+    }
+    .dropdown-type-2 .dropdown-section{
+      background: #00000000;
+      border: none;
+      color: black;
+    }
+
+    .dropdown-type-3.calendar-dropdown{
+      background: #00000000 !important;
+    }
+    .dropdown-type-3 .dropdown-section{
+      background: #00000000;
+      border: none !important;
+      color: rgb(255, 255, 255);
+    }
+    .dropdown-type-3 .dropdown-wraper{
+      width: fit-content;
+    }
+    .dropdown-type-3 .dropdown-section-date{
+      width: 2em;
+      font-size: 3rem;
+    }
+    .dropdown-type-3 .dropdown-section-month{
+      width: 2em;
+      font-size: 3rem;
+    }
+
+    .dropdown-type-3 .dropdown-section-year{
+      width: 4em;
+      font-size: 3rem;
+    }
+
     .dropdown-body{
-      width: 80%;
+      width: auto;
+      min-width: 150px;
       height: 180px;
       position: absolute;
       background: rgb(141, 141, 141);
-      top: 40px;
+      bottom: -190px;
       right: 10px;
       border-radius: 5px;
       overflow: auto;
-    
+      z-index: 10;
+      transition: 0s;
+      scroll-behavior: smooth;
+  /* the 'y' indicates vertical scrolling */
     }
    
     .dropdown-items{
       width: 100%;
       cursor: pointer;
       text-align: center !important;
-      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 40px;
+      flex: 0 0 100%;
+      scroll-snap-align: start;
+     /*  background: #606060; */
+      border: none;
+      outline: none;
+      user-select: none;
+      scroll-snap-stop: always;
+
     }
     
     .dropdown-items:hover{
       background: rgb(56, 56, 56);
     }
+    .calendar-dropdown input:focus{
+      outline: none;
+    }
+
+    .input_focus{
+      box-shadow: 5px 5px rgb(74, 74, 74);
+      -webkit-appearance: none;
+      -webkit-box-shadow: 5px 5px rgb(74, 74, 74);
+      box-shadow: 5px 5px rgb(74, 74, 74);
+    }
+
+    .input_error{
+      box-shadow: 5px 5px var(--red4);
+      -webkit-appearance: none;
+      -webkit-box-shadow: 5px 5px var(--red4);
+      box-shadow: 5px 5px var(--red4);
+      border: 1px solid var(--red4) !important;
+    }
+@media (max-width: 575.98px) { 
+
+
+    .dropdown-body{
+      width: 100% !important;
+      width: auto;
+      min-width: 100px;
+      height: 200px;
+      position: fixed;
+      background: rgb(141, 141, 141);
+      bottom: 0px;
+      right: 0px;
+      border-radius: 5px;
+      overflow: auto;
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      overflow-y: scroll;
+     scroll-snap-type: y mandatory;
+      font-size: 2rem;
+      /* the 'y' indicates vertical scrolling */
+    }
+
+    .dropdown-items{
+      width: 100%;
+      cursor: pointer;
+      text-align: center !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      flex: 0 0 30%;
+      scroll-snap-align: center;
+    }
+    .dropdown-items:hover{
+      background: none;
+    }
+  .date-header{
+    height: 60px;
+  }
+  #btnPreviousMonth , #btnNextMonth{
+    min-width: 100px;
+    height: 100%;
+    border: 1px solid white;
+  }
+ 
+}
+
+/* // Small devices (landscape phones, less than 768px) */
+@media (max-width: 767.98px) { 
+
+
+}
+
+/* // Medium devices (tablets, less than 992px) */
+@media (max-width: 991.98px) { 
+
+  
+}
+
+/* // Large devices (desktops, less than 1200px) */
+@media (max-width: 1199.98px) { 
+
+
+}
+
+/* // X-Large devices (large desktops, less than 1400px) */
+@media (max-width: 1399.98px) { 
+
+
+}
+   
 </style>
 <body>
 
         <main>
+          <div id="debug" class="w-100 p-5 text-white"></div>
           <div class="containner">
             <h2>Full Calendar</h2>
              <!--  <div class="form-group">
@@ -518,16 +692,17 @@
             
 
               <div class="form-group" >
-                <input class="datepicker" type="text" id="ctest1" name="date_pay"autocomplete="off">
+                <input class="datepicker calendar" type="text" id="ctest1" name="date_pay"autocomplete="off">
               </div>
 
               <div class="form-group" >
-                <input class="datepicker" type="text" id="ctest2" name="date_pay"autocomplete="off">
+                <input class="datepicker calendar" type="text" id="ctest2" name="date_pay"autocomplete="off">
               </div>
-              <span id="sp1"></span>
-              <span id="sp2"></span>
+              
+
 
           </div>
+
 
          <!--  <div class="containner">
 
@@ -544,14 +719,30 @@
           </div> -->
 
 
-<!-- 
+          <div class="containner">
+            <h2>Dropdown Calendar</h2>
+
               <div class="form-group" >
                 <label for="date_pay">Default</label>
-                <input class="datepicker" type="text" id="date_pay2" name="date_pay" data-fulldate="20221115" autocomplete="off">
+                <input class="datepicker dropdown" type="text" id="dd1" name="date_pay" data-fulldate="20221115" autocomplete="off">
 
-              </div> -->
+              </div>
 
-            
+              <div class="form-group" >
+                <label for="date_pay">Default</label>
+                <input class="datepicker dropdown" type="text" id="dd2" name="date_pay" data-fulldate="20221115" autocomplete="off">
+
+              </div>
+
+
+              <span class="text-white" id="sp1"></span>
+              <span class="text-white" id="sp2"></span>
+              <span class="text-white" id="sp3"></span>
+              <span class="text-white" id="sp4"></span>
+
+            </div>
+
+          
 
         </main>
 
@@ -559,10 +750,12 @@
         <script src="/Calendar/assets/plugin/fontawesome/all.min.js"></script>
 
         <!-- <script src="/Calendar/c-calendar.js"> </script> -->
+        <!--  <script src="/Calendar/c-calendar-dropdown.js"></script> -->
+
         <script src="/Calendar/calendar.js"> </script>
-        
-   <!--      <script src="/Calendar/c-calendar-dropdown.js"></script>
- -->
+        <script src="/Calendar/calendar-dropdown.js"></script>
+
+
     <script>
   
 
