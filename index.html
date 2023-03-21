@@ -477,10 +477,10 @@
     }
     .dropdown-section{
       width: 100%;
-      border-radius: 10px;
+      border-radius: 5px;
       text-align: right;
       padding: 0px 10px;
-
+      border: 1px solid white !important; 
     }
  /*    .dropdown-section-date{
       width: 2em;
@@ -500,25 +500,28 @@
     .dropdown-wraper{
       width: 15%;
       position: relative;
-      border: 1px solid white;
+     /*  border: 1px solid white; */
       border-radius: 5px;
     }
+
+    
     .dropdown-type-1.calendar-dropdown{
-      background: #ffffff !important;
+      background: #00000000 !important;
     }
     .dropdown-type-1 .dropdown-section{
       background: #00000000;
       border: none;
-      color: black;
+      color: rgb(255, 255, 255);
     }
 
+    
     .dropdown-type-2.calendar-dropdown{
-      background: #00000000 !important;
+      background: #ffffff !important;
     }
     .dropdown-type-2 .dropdown-section{
       background: #00000000;
       border: none;
-      color: rgb(255, 255, 255);
+      color: black;
     }
 
     .dropdown-type-3.calendar-dropdown{
@@ -587,13 +590,20 @@
       outline: none;
     }
 
-   /*  .input_focus{
+    .input_focus{
       box-shadow: 5px 5px rgb(74, 74, 74);
       -webkit-appearance: none;
       -webkit-box-shadow: 5px 5px rgb(74, 74, 74);
       box-shadow: 5px 5px rgb(74, 74, 74);
-    } */
+    }
 
+    .input_error{
+      box-shadow: 5px 5px var(--red4);
+      -webkit-appearance: none;
+      -webkit-box-shadow: 5px 5px var(--red4);
+      box-shadow: 5px 5px var(--red4);
+      border: 1px solid var(--red4) !important;
+    }
 @media (max-width: 575.98px) { 
 
 
