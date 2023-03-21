@@ -15,6 +15,8 @@
     - unuse parameter
     Add -------
     - change Log file
+    
+---------------------------------
 
 ## 03-21-2023-2
     Fix -------
@@ -22,7 +24,6 @@
     - check invalid value onpaste value in month input.
     Remove -------
     - remove unuse function and condition in onclose dropdown eventlistener.
-
 
 ---------------------------------
 
