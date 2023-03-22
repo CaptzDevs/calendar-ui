@@ -3,6 +3,7 @@
     - slideTo method in year input it's not working properly
     
 ---------------------------------
+## - 1.0.0-beta
 
 ## - 0.0.4
     Fix -------
