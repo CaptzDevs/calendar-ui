@@ -1,5 +1,9 @@
-//Calendar [DEV]
-//Version beta 1.0 
+//--------------------------------------
+
+//Calendar [BETA]
+//Version : 1.0.0-beta By Captz
+
+//--------------------------------------
 //error code 
 /* 
     code 1 error in date pannel

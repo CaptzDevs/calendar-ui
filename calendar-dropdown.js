@@ -1,4 +1,9 @@
+//--------------------------------------
 
+//Calendar [BETA]
+//Version : 1.0.0-beta By Captz
+
+//--------------------------------------
 
 let dropdown_arr = [
     'dropdown-section dropdown-section-date',
