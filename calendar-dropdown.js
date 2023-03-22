@@ -1,50 +1,4 @@
 
-/* 
-// -------CHANGE LOG----------
-// Add , Remove , Feature , Fix 
-
-//Bug 
-    - slideTo method in year input it's not working properly
-    
-=====================================================================
-
-03-21-2023-1
-    Fix ------- 
-    - dropdown date event , validate. 
-    - dropdown month in option.month = 'number' can render month number.
-
-    Add -------
-    - dropdown type style
-        -dropdown-type-1 -section
-        -dropdown-type-2 -combine
-        -dropdown-type-3 -big-section
-
-
----------------------------------
-
-03-21-2023-2
-    Fix -------
-    - close dropdown onclose 
-    - check invalid value onpaste value in month input.
-    Remove -------
-    - remove unuse function and condition in onclose dropdown eventlistener.
-
-
----------------------------------
-
-03-21-2023-3
-    Fix -------
-    - prevent input '0' in date input
-    - autofill year to max when enter value digit < 4  
-    - check date is valid if invalid output will be null
-    - convent onchange date , month , year inputs handler to checkDateValidation()
-    - select by dropdown and valueText is undefined
-    Remove -------
-    - unuse parameter
-    Add -------
-    - change Log file
-
-*/
 
 let dropdown_arr = [
     'dropdown-section dropdown-section-date',
@@ -285,6 +239,7 @@ class CalendarDropdown{
         let year = this.yearInput 
         let validateDate = `${year.dataset.year}-${("0"+month.dataset.month).slice(-2)}-${('0'+date.dataset.date).slice(-2)}`
         
+
         if(date.value != "" && month.value != "" && year.value != "" ){
             
             if(this.isValidDate(validateDate)){
@@ -534,9 +489,9 @@ class CalendarDropdown{
                             
                             if(this.option.month !== 'number'){
                                 console.log('21')
-                                this.monthInput.value = LANG2[checkLang][+this.monthInput.dataset.month]
-                                this.monthInput.setAttribute('value',LANG2[checkLang][+this.monthInput.dataset.month])
-                                this.monthInput.setAttribute('data-value',LANG2[checkLang][+this.monthInput.dataset.month])
+                                this.monthInput.value = LANG2[checkLang][+value]
+                                this.monthInput.setAttribute('value',LANG2[checkLang][+value])
+                                this.monthInput.setAttribute('data-value',LANG2[checkLang][+value])
                             }else{
                                 console.log('22')
                                 this.monthInput.value = value
@@ -544,7 +499,7 @@ class CalendarDropdown{
                                 this.monthInput.setAttribute('data-value',value)
                             }
                             
-                            this.monthInput.setAttribute('data-month',e.target.value)
+                            this.monthInput.setAttribute('data-month',value)
                             this.yearInput.focus()
                         }
                         else{

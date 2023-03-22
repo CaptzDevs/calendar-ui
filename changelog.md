@@ -1,10 +1,16 @@
 # Change LOG
 ### Bug 
-- slideTo method in year input it's not working properly
+    - slideTo method in year input it's not working properly
     
 ---------------------------------
 
-## 03-21-2023-3
+## 22-03-2023-1
+    Fix -------
+    - data-month display full month instead numbers in keyup event 
+
+--------------------------------
+
+## 21-03-2023-3
     Fix -------
         - prevent input '0' in date input
         - autofill year to max when enter value digit < 4  
@@ -18,7 +24,7 @@
     
 ---------------------------------
 
-## 03-21-2023-2
+## 21-03-2023-2
     Fix -------
         - close dropdown onclose 
         - check invalid value onpaste value in month input.
@@ -27,7 +33,7 @@
 
 ---------------------------------
 
-## 03-21-2023-1
+## 21-03-2023-1
     Fix ------- 
         - dropdown date event , validate. 
         - dropdown month in option.month = 'number' can render month number.
