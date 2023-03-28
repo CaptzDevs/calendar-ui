@@ -1,7 +1,7 @@
 //--------------------------------------
 
 //Calendar [BETA]
-//Version : 1.0.0-beta By Captz
+//Version : 1.1.0-beta By Captz
 
 //--------------------------------------
 //error code 
