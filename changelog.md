@@ -1,5 +1,6 @@
 # Change LOG
 ### Bug 
+    [dropdown]
     - slideTo method in year input it's not working properly
     
 ---------------------------------
