@@ -1,7 +1,7 @@
 //--------------------------------------
 
 //Calendar [BETA]
-//Version : 1.0.0-beta By Captz
+//Version : 1.1.0-beta By Captz
 
 //--------------------------------------
 
@@ -367,7 +367,7 @@ class CalendarDropdown{
             let value = this.dateInput.value
 
             if(isNumber(value)){
-                if(value.length === 1 && e.key === "Enter" ){
+                if(value.length === 1 && e.key === "Enter"  ){
                     value = ("0"+value).slice(-2)
                 }
                 if(value.length >= 2){
@@ -447,8 +447,18 @@ class CalendarDropdown{
         this.monthInput.addEventListener('blur',(e)=>{
             let value = this.monthInput.value
   
-             if(this.option.month !== "number" && isNumber(this.monthInput.value) && this.monthInput.value.length === 2){
+            if(isNumber(value) && value.length === 1){
                 console.log('b1')
+
+                value = ("0"+value).slice(-2)
+                this.monthInput.value = value
+                this.monthInput.setAttribute('value',value)
+                this.monthInput.setAttribute('data-value',value)
+                this.monthInput.setAttribute('data-month',value)
+            }
+            
+             if(this.option.month !== "number" && isNumber(this.monthInput.value) && this.monthInput.value.length === 2){
+                console.log('b2')
 
                  this.monthInput.value = LANG2[checkLang][+value]
                  this.monthInput.setAttribute("value",LANG2[checkLang][+value])
@@ -459,6 +469,7 @@ class CalendarDropdown{
                  this.monthInput.dispatchEvent(new Event('change'))
                 
             }
+          
         })
        
     
@@ -466,6 +477,7 @@ class CalendarDropdown{
 
                 let value = this.monthInput.value
 
+               
                 if(isNumber(value) && value.length > 2){
 
                     this.monthInput.value = ''
@@ -833,7 +845,7 @@ class CalendarDropdown{
 }
 
 
-    Element.prototype.CalendarD = function (option) {
+    Element.prototype.CalendarDropdown = function (option) {
         let d
         option = option ? option : defaultOption
         [this].forEach((item, i) => {
@@ -843,7 +855,7 @@ class CalendarDropdown{
 
     }
 
-    Object.prototype.Calendar = function(option) {
+    Object.prototype.CalendarDropdown = function(option) {
         let d
         option = option ? option : defaultOption
 
@@ -858,17 +870,17 @@ class CalendarDropdown{
 
 document.addEventListener("DOMContentLoaded",(e)=>{
 
-let dd1 = document.querySelectorAll('.datepicker.dropdown#dd1').Calendar({month:'number'})
-let dd2 = document.querySelectorAll('.datepicker.dropdown#dd2').Calendar({month:'full'})
+let dd1 = document.querySelectorAll('.datepicker.dropdown#dd1').CalendarDropdown({month:'number'})
+let dd2 = document.querySelectorAll('.datepicker.dropdown#dd2').CalendarDropdown({month:'full'})
 
- setInterval(() => {
+/*  setInterval(() => {
     document.querySelector('#sp1').innerHTML = "value     : "+dd2.value
     document.querySelector('#sp2').innerHTML = "valueText : "+dd2.valueText
     document.querySelector('#sp3').innerHTML = "fulldate  : "+dd2.fulldate
     document.querySelector('#sp4').innerHTML = "validate  : "+dd2.dateValid
 
 
-}, 20); 
+}, 20);  */
 
 function isValidDate(dateStr) {
     const date = new Date(dateStr);

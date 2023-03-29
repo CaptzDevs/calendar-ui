@@ -138,6 +138,25 @@
        
         animation: slideup .5s 0s forwards;
     }
+    .date-panel-static{
+        width: 410px;
+        height: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        background: rgb(238,174,202);
+        background: linear-gradient(196deg, rgb(200, 70, 126) 0%, rgb(63, 125, 195) 100%);
+        background: rgb(56, 56, 56);
+
+        z-index: 3;
+        border-radius: 10px;
+        padding: 10px;
+        color: rgb(255, 255, 255);
+        overflow: hidden;
+        position: relative;
+       
+    }
     @keyframes slideup {
       from {
         bottom: -100%;
@@ -447,7 +466,7 @@
         height: 100vh;
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
         flex-direction: column;
         padding: 20px;
         overflow: auto;
@@ -604,6 +623,14 @@
       box-shadow: 5px 5px var(--red4);
       border: 1px solid var(--red4) !important;
     }
+    .calendar-static{
+      position: relative;
+    }
+    .calendar-static .date-panel{
+      position: relative !important;
+    }
+
+
 @media (max-width: 575.98px) { 
 
 
@@ -682,6 +709,15 @@
         <main>
           <div id="debug" class="w-100 p-5 text-white"></div>
           <div class="containner">
+            <h2>Static Calendar</h2>
+
+            <div class="calendar-static"> </div>    
+            
+            </div>
+
+          <div class="containner">
+
+
             <h2>Full Calendar</h2>
              <!--  <div class="form-group">
                 <label for="date_pay" id="test">Default (AD)</label>
@@ -699,7 +735,8 @@
                 <input class="datepicker calendar" type="text" id="ctest2" name="date_pay"autocomplete="off">
               </div>
               
-
+             
+              
 
           </div>
 
@@ -718,6 +755,8 @@
             
           </div> -->
 
+      
+
 
           <div class="containner">
             <h2>Dropdown Calendar</h2>
@@ -733,6 +772,7 @@
                 <input class="datepicker dropdown" type="text" id="dd2" name="date_pay" data-fulldate="20221115" autocomplete="off">
 
               </div>
+
 
 
               <span class="text-white" id="sp1"></span>
@@ -753,6 +793,7 @@
         <!--  <script src="/Calendar/c-calendar-dropdown.js"></script> -->
 
         <script src="/Calendar/calendar.js"> </script>
+        <!-- <script src="/Calendar/calendar-static.js"> </script> -->
         <script src="/Calendar/calendar-dropdown.js"></script>
 
 
