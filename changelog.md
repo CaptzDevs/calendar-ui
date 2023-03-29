@@ -1,9 +1,26 @@
 # Change LOG
 ### Bug 
+    [calendar]
+    - selected date is always change when change month or year [1.1.0-beta] [FIXED 1.2.0-beta]
+
     [dropdown]
-    - slideTo method in year input it's not working properly
+    - slideTo method in year input it's not working properly [1.0.0-beta]
+
     
 ---------------------------------
+## - 1.2.0-beta
+    Add -------
+    [calendar]
+    - static calendar
+    - staic date
+    - static month
+    - static year
+
+    Remove ------
+    [calendar]
+    - can render date via script
+
+--------------------------------
 
 ## - 1.1.0-beta
     Add -------
@@ -25,7 +42,7 @@
     [calendar]
         - factorial function ???
         
---------------------------------------------------------
+--------------------------------
 ## - 1.0.0-beta 
 
 ## - 0.0.4

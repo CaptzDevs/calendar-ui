@@ -1,7 +1,7 @@
 //--------------------------------------
 
 //Calendar [BETA]
-//Version : 1.1.0-beta By Captz
+//Version : 1.2.0-beta By Captz
 
 //--------------------------------------
 //error code 
@@ -73,7 +73,7 @@ const LANG = {
 
 const defaultOptionCalendar = {
     type : "dropdown", //static , dropdown
-    section : "all" , // all, day, month, year
+    section : ['month','year'], // all, date, month, year
 
     format: "dd/mm/yyyy",
     default: "now",
@@ -234,14 +234,18 @@ class Calendar {
         return LANG[select_lang][value]
     }
 
-    extractFulldate(fulldate){
+    extractFulldate(fulldate,separation){
         
         let tranformedDate = {}
         fulldate = String(fulldate)
+
         if(fulldate.length == 8){
                 tranformedDate = {d:fulldate.slice(6), m:fulldate.slice(4,6),y:fulldate.slice(0,4)}
         }
-        
+        if(separation){
+            fulldate.split(separation)
+            tranformedDate = {d:fulldate[0], m:fulldate[1],y:fulldate[2]}
+        }
         return tranformedDate
 
     }
@@ -382,7 +386,7 @@ class Calendar {
             e.target.setAttribute("value", `${curentDateDisplay}/${curentMonthDisplay}/${curentYearDisplayCheckYear}`)
             /* e.target.setAttribute("data-value", `${curentYearDisplay}${curentMonth}${curentDate}`) */
             e.target.setAttribute("data-fulldate", `${curentYear}${curentMonth}${curentDate}`)
-            this.value = yearType === "AD" ? +this.elem.dataset.fulldate : +this.elem.dataset.fulldate+this.BEYear
+            this.value =  yearType === "AD" ? +this.elem.dataset.fulldate : +this.elem.dataset.fulldate+this.BEYear
 
             this.render(curentDate,curentMonth,curentYear)
 
@@ -670,6 +674,7 @@ class Calendar {
         let type = this.option.type
 
         this.elem.setAttribute("placeholder", formatter)
+
 
         if(this.option.autoValue) this.initDate()
        
@@ -967,7 +972,6 @@ class Calendar {
             let checkDefaultDate = defaultDate == "now" ? String(this.todayInt) : defaultDate
 
 
-            
             let fulldate = '' + ( this.elem.dataset.fulldate || checkDefaultDate)
             let [curentDate, curentMonth, curentYear] = [fulldate.slice(6, 8), fulldate.slice(4, 6), fulldate.slice(0, 4)]
 
@@ -988,13 +992,86 @@ class Calendar {
             } else if ((min_date[2] > +curentDate && +curentMonth >= min_month && +curentYear >= min_year)) {
 
                 this.render(min_date[2], min_date[1], min_date[0])
-              this.elem.setAttribute("data-fulldate", `${min_date[0]}${('0'+min_date[1]).slice(-2)}${('0'+min_date[2]).slice(-2)}`)
-
+                this.elem.setAttribute("data-fulldate", `${min_date[0]}${('0'+min_date[1]).slice(-2)}${('0'+min_date[2]).slice(-2)}`)
             }
+
+
+
+            //-----------------------SECTION MONTH-------------------------------
+
+            if(this.option.section.includes("month")){
+                $(`${this.panelClass} .month-panel`).addClass('show-month')
+                $(`${this.panelClass} .month-panel`).css('opacity', '100%')
+
+                this.renderMonth(3)
+                
+                $(`${this.panelClass} .month-item`).click((e) => {
+                    let fullDate = e.target.dataset.fulldate
+                  
+                    let month = fullDate.slice(1, 3)
+                    let year = $(`${this.panelClass}`).attr('data-year')
+                  
+                    
+                    $(`${this.panelClass} .month-item`).removeClass('_selected')
+                    e.target.classList.add('_selected')
+                    
+                    $(`${this.panelClass}`).attr('data-month', `${month}`)
+                    this.render(1, +month, +year )
+
+                })
+            }
+
+
+                //-----------------------SECTION YEAR-------------------------------
+            /*     if(this.option.section.includes('year')){
+                    $(`${this.panelClass} .year-panel`).addClass('show-month')
+                    $(`${this.panelClass} .year-panel`).css('opacity', '100%')
+    
+                    this.renderYear(DATE.getFullYear())
+                    
+                    $(`${this.panelClass} .year-item`).click((e) => {
+
+                       
+                        let year = this.option.yearType === 'AD' ? e.target.dataset.year : +e.target.dataset.year-543
+                        $(`${this.panelClass} .year-item`).removeClass('_selected')
+                        e.target.classList.add('_selected')
+                        
+                        $(`${this.panelClass}`).attr('data-year', `${year}`)
+
+
+                        this.render(1, 1, +year)
+    
+                    })
+                } */
+                if(this.option.section.includes('year') || (this.option.section.includes('year') && this.option.section.includes('month'))){
+                $(`${this.panelClass} .lbl_year`).click((ev) => {
+                    $(`${this.panelClass} .year-panel`).addClass('show-month')
+                    $(`${this.panelClass} .year-panel`).css('opacity', '100%')
+    
+                    this.renderYear(DATE.getFullYear())
+                    
+                    $(`${this.panelClass} .year-item`).click((e) => {
+
+                       
+                        let year = this.option.yearType === 'AD' ? e.target.dataset.year : +e.target.dataset.year-543
+                        $(`${this.panelClass} .year-item`).removeClass('_selected')
+                        e.target.classList.add('_selected')
+                        
+                        $(`${this.panelClass}`).attr('data-year', `${year}`)
+
+                        $(`${this.panelClass} .year-panel`).removeClass('show-month')
+
+                        this.render(1, 1, +year)
+    
+                    })
+                })
+
+                }
 
          
 
             // event for label
+        if(this.option.section.includes('all') || this.option.section.includes('date') ){
             $(`${this.panelClass} .lbl_year`).click((ev) => {
                 this.renderYear()
 
@@ -1094,7 +1171,7 @@ class Calendar {
                     })
                 })
             })
-
+      
 
             $(`${this.panelClass} .lbl_month`).click((e) => {
                 let this_date = e.target.parentElement.parentElement.dataset.date
@@ -1106,7 +1183,6 @@ class Calendar {
                 this.renderMonth(this_year)
 
                 $(`${this.panelClass} .month-item`).click((e) => {
-
 
                     let fullDate = e.target.dataset.fulldate
                     month = fullDate.slice(4, 6)
@@ -1191,7 +1267,7 @@ class Calendar {
                         } */
 
             })
-
+        }
 
             /* findOverflows(); */
 
@@ -1199,7 +1275,6 @@ class Calendar {
 
     openCalendar(e) {
       
-
         if ($(".date-panel").length === 0) {
             //e.target.previousElementSibling.parentElement.style.position = "relative" 
             let defaultDate = this.option.default
@@ -1705,9 +1780,10 @@ class Calendar {
         $(".date-panel").attr('data-year', `${this_year}`) */
         let fulldateText = `${this_year}${("0"+this_month).slice(-2)}${("0"+this_day).slice(-2)}`
 
-        this.elem.setAttribute('data-fulldate', fulldateText)
+        /* this.elem.setAttribute('data-fulldate', fulldateText) */
 
-        this.value = yearType === "AD" ? +fulldateText: +fulldateText+this.BEYear
+        //for auto select
+        /* this.value = yearType === "AD" ? +fulldateText: +fulldateText+this.BEYear */ 
 
         $(`${this.panelClass}`).attr('data-fulldate', fulldateText)
         $(`${this.panelClass}`).attr('data-date', `${("0"+this_day).slice(-2)}`)
@@ -1869,9 +1945,11 @@ class Calendar {
 
 
         $(`${this.panelClass} .date-item`).each((i, item) => {
-            let selectedData = this.extractFulldate($(`${this.panelClass}`).attr('data-fulldate'))
+             let selectedData = this.extractFulldate(isNaN(this.elem.dataset.fulldate) ? this.todayInt : this.elem.dataset.fulldate  ) 
+            /* let selectedData = this.extractFulldate(      $(`${this.panelClass}`).attr('data-fulldate')) */
 
-          if (item.dataset.fulldate === `${selectedData.y}${selectedData.m}${selectedData.d}`) {
+
+            if (item.dataset.fulldate === `${selectedData.y}${selectedData.m}${selectedData.d}`) {
                 item.classList.add('date-selected')
             } else {
                 item.classList.remove('date-selected')
@@ -1894,6 +1972,7 @@ class Calendar {
         let monthPanel = this.option.monthPanel
         let monthSelected = ''
         let this_month = +this.extractFulldate(this.elem.dataset.fulldate).m
+        
 
         $(`${this.panelClass} .month-body`).empty()
 
@@ -1925,7 +2004,7 @@ class Calendar {
 
                 $(`${this.panelClass} .month-body`).append(
                     `
-                  <div class="month-item ${monthSelected}" data-fulldate=${this_year+("0"+[i]).slice(-2)}>${full_month}</div>
+                  <div class="month-item${monthSelected}" data-fulldate=${this_year+("0"+[i]).slice(-2)}>${full_month}</div>
                   `
                 )
             }
@@ -1953,14 +2032,14 @@ class Calendar {
                 }
 
                 monthSelected = this_month === i ? ' _selected' : ''
-
                 $(`${this.panelClass} .month-body`).append(
                     `
-                    <div class="month-item ${monthSelected}" data-fulldate=${this_year+("0"+[i]).slice(-2)}>${full_month}</div>
+                    <div class="month-item${monthSelected}" data-fulldate=${this_year+("0"+[i]).slice(-2)}>${full_month}</div>
                     `
                 )
             }
         } else {
+
             for (let i = 1; i <= 12; i++) {
 
                 let full_month
@@ -1982,10 +2061,9 @@ class Calendar {
                     })
                 }
                 monthSelected = this_month === i ? ' _selected' : ''
-
                 $(`${this.panelClass} .month-body`).append(
                     `
-                    <div class="month-item ${monthSelected}" data-fulldate=${this_year+("0"+[i]).slice(-2)}>${full_month}</div>
+                    <div class="month-item${monthSelected}" data-fulldate=${this_year+("0"+[i]).slice(-2)}>${full_month}</div>
                     `
                 )
             }
@@ -2027,18 +2105,44 @@ class Calendar {
         }
     }
 
+    isValidDate(dateStr) {
+        dateStr = this.option.yearType === 'AD' ? dateStr : +dateStr-this.BEYear
+        dateStr = String(dateStr)
+        dateStr = `${dateStr.slice(0,4)}-${("0"+dateStr.slice(4,6)).slice(-2)}-${('0'+dateStr.slice(6,8)).slice(-2)}`
+
+        const date = new Date(dateStr);
+
+        if (isNaN(date.getTime()) || dateStr.slice(5, 7) != date.getMonth() + 1 || dateStr.slice(0, 4) != date.getFullYear()) {
+          return false;
+        }
+    
+        return dateStr.slice(8) == date.getDate();
+      }
+
      exportValue(option = 'dmy',separator = '' ){
         let date = this.extractFulldate(this.value)
+
+        let checkvalidDate = this.isValidDate(this.value)
+
+        if(!checkvalidDate){
+            return 'Invalid Date'
+        }else{
+
         let dateObject = {
+            'd':`${date.d}$`,
+            'm':`${date.m}`,
+            'y':`${date.y}`,
+
             'dmy':`${date.d}${separator}${date.m}${separator}${date.y}`,
             'dym':`${date.d}${separator}${date.y}${separator}${date.m}`,
             'mdy':`${date.m}${separator}${date.d}${separator}${date.y}`,
             'myd':`${date.m}${separator}${date.y}${separator}${date.d}`,
             'ymd':`${date.y}${separator}${date.m}${separator}${date.d}`,
             'ydm':`${date.y}${separator}${date.d}${separator}${date.m}`,
-            'valueText': this.option.type === 'static' ? "no valueText for calendar type : 'STATIC'" : this.elem.value
-        }
+            'valueText': this.option.type === 'static' ? "no valueText for calendar type : 'STATIC'" : checkvalidDate ? this.elem.value : 'Invalid Date'
+         }
         return dateObject[option]
+    }
     }
 }
 
@@ -2073,11 +2177,11 @@ let d3 = document.querySelectorAll('.calendar-static').Calendar({yearType:'BE',t
 
 
 
-
+console.log(d.elem)
 setInterval(() => {
   document.querySelector('#sp1').innerHTML = d.value
   document.querySelector('#sp2').innerHTML = d2.value
-  document.querySelector('#sp3').innerHTML = d3.exportValue('valueText')
+  document.querySelector('#sp3').innerHTML = d3.exportValue('ymd','-')
 
 }, 1000);
 
