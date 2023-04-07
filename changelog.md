@@ -2,11 +2,32 @@
 ### Bug 
     [calendar]
     - selected date is always change when change month or year [1.1.0-beta] [FIXED 1.2.0-beta]
-
+    - initdate is set date in exception date  [1.1.0-beta] [FIXED 1.2.1-beta]
+    
     [dropdown]
     - slideTo method in year input it's not working properly [1.0.0-beta]
 
+## - 1.2.0-beta.1
+    [calendar]
+
+    Fix -------
+    - value not change when select year and month in calendar type = static
+    - value not show the valid year in calendar type = static
+    - initDate() is set date in exception date 
+    - default date transform to AD is return NaN
+    - [ calendar static ] disable auoValue
+    - [ calendar static ] month date is change to 01 when select year in section ='my'
+    - [ calendar static ] remove year label for section = 'm'
+
+    Add -------
+    - New Event dateChange trigger when select date 
+    - Add string prototype to event.value of exportValue method noew can use event.value.exportValue(format,separation)
+    - Add 2digit export in exportValue() 
     
+
+ 
+
+
 ---------------------------------
 ## - 1.2.0-beta
     Add -------
