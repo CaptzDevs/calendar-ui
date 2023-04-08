@@ -1,14 +1,24 @@
 # Change LOG
 ### Bug 
-    [calendar]
-    - selected date is always change when change month or year [1.1.0-beta] [FIXED 1.2.0-beta]
-    - initdate is set date in exception date  [1.1.0-beta] [FIXED 1.2.1-beta]
-    
+    [Calendar]
+   
+
     [dropdown]
     - slideTo method in year input it's not working properly [1.0.0-beta]
 
+### Task 
+    
+
+## - 1.2.0-beta.2
+    Fix -------
+    - opacity of year panel see more clearly
+    - [ calendar static ] app crash when use option.yearType = 'BE' cause checkDisableDate()
+
+    Change -------
+    - split year and custom amount of year per panael in year panel 
+
+
 ## - 1.2.0-beta.1
-    [calendar]
 
     Fix -------
     - value not change when select year and month in calendar type = static
@@ -24,9 +34,6 @@
     - Add string prototype to event.value of exportValue method noew can use event.value.exportValue(format,separation)
     - Add 2digit export in exportValue() 
     
-
- 
-
 
 ---------------------------------
 ## - 1.2.0-beta

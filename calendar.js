@@ -1,7 +1,7 @@
 //--------------------------------------
 
 //Calendar [BETA]
-//Version : 1.2.0-beta.1 By Captz
+//Version : 1.2.0-beta.2 By Captz
 
 //--------------------------------------
 //error code 
@@ -1028,9 +1028,7 @@ class Calendar {
         
                     </div>
                     <div class="year-panel">
-                        <div class="year-body" id="year_body">
-                        </div>
-        
+                       
                     </div>
                     <div class="date-day">
                         ${dayHeader}
@@ -1049,7 +1047,8 @@ class Calendar {
 
             let [curentDate, curentMonth, curentYear] = [fulldate.slice(6, 8), fulldate.slice(4, 6), fulldate.slice(0, 4)]
  
-
+            if(this.option.section === 'all'){
+ 
             if(this.checkDisableDate(`${curentYear}${curentMonth}${curentDate}`)){
                 
                while(this.checkDisableDate(`${curentYear}${('0'+curentMonth).slice(-2)}${('0'+curentDate).slice(-2)}`)){
@@ -1078,6 +1077,7 @@ class Calendar {
               
                }
 
+            }
 
            if(this.option.autoValue){
             this.elem.setAttribute("data-fulldate", `${curentYear}${curentMonth}${curentDate}`)
@@ -1143,10 +1143,12 @@ class Calendar {
 
                 //-----------------------SECTION YEAR-------------------------------
                 if(this.option.section === 'y'){
+                    
                     $(`${this.panelClass} .year-panel`).addClass('show-month')
                     $(`${this.panelClass} .year-panel`).css('opacity', '100%')
     
                     this.renderYear(DATE.getFullYear())
+
                     $(`${this.panelClass} .year-item`).click((e) => {
                     
                         let year = this.option.yearType === 'AD' ? e.target.dataset.year : +e.target.dataset.year-543
@@ -1164,6 +1166,7 @@ class Calendar {
     
                     })
                 }
+
                 if(this.option.section === 'y' || this.option.section === 'my'){
 
                 $(`${this.panelClass} .lbl_year`).click((ev) => {
@@ -1471,8 +1474,6 @@ class Calendar {
         
                     </div>
                     <div class="year-panel">
-                        <div class="year-body" id="year_body">
-                        </div>
         
                     </div>
                     <div class="date-day">
@@ -2208,8 +2209,23 @@ class Calendar {
         }
 
     }
+   
 
+    slideToSelected(year) {
+        const slideshow = document.querySelector(`${this.panelClass} .year-panel`);
+        let slides 
+        try{
 
+            slides = document.querySelector(`${this.panelClass} .year-body .year-item[data-year='${year}']`).parentElement;
+
+        }catch{
+            return 0
+        }
+
+        const slideTop = slides.offsetTop;
+        slideshow.scrollTo(0,slideTop)
+    
+    }
 
     renderYear() {
         let d = new Date()
@@ -2223,6 +2239,7 @@ class Calendar {
         let max = String(this.option.max)
 
         let max_date = max.length > 0 ? [+max.slice(0, 4), +max.slice(4, 6), +max.slice(6, 8)] : 0
+
         let max_year = max_date[0] !== 0 ? max_date[0] : yearType === 'AD' ? 2100 : 2600
 
         let this_year = yearType === 'AD' ? min_date[0] : min_date[0] > 0 ? min_date[0] : d.getFullYear() + 543
@@ -2231,16 +2248,54 @@ class Calendar {
 
         let curentYear = yearType === 'AD' ? d.getFullYear() : d.getFullYear() + 543
         let yearSelected = ''
+
         $(`${this.panelClass} .year-body`).empty()
+        for (let j = 0 ; j < Math.floor((max_year-this_year)/15); j++){
+        
+       
+        }
+        let count = 0
+        let first = max_year
+        let yearPerPage = 15
 
         for (let i = max_year; i >= this_year; i--) {
             yearSelected = curentYear === i ? ' _selected' : ''
-            $(`${this.panelClass} .year-body`).append(
-                `
-              <div class="year-item${yearSelected}" data-year=${i}>${yearPanel === 'full' ? i : (''+i).slice(-2)}</div>
-              `
-            )
+
+            count++
+
+            if(count % yearPerPage == 0 ) {
+                $(`${this.panelClass} .year-panel`).append(`
+                    <div class="year-body"  data-max='${first}' data-min='${i}' > <label class='year-section-label'>${i} - ${first}<label> </div>`
+                )
+                first = i-1
+            }
+            
+
+            if(first-this_year < yearPerPage && count % yearPerPage == 1) {
+                $(`${this.panelClass} .year-panel`).append(`
+                    <div class="year-body"  data-max='${first}' data-min='${this_year}' > <label class='year-section-label'>${this_year} - ${first}<label> </div>
+                    `
+                    
+                )
+            }
+
+   
         }
+
+
+        for (let i = max_year; i >= this_year; i--) {
+            yearSelected = curentYear === i ? ' _selected' : ''
+
+            $(`${this.panelClass} .year-body`).each((id,item)=>{
+                if(item.dataset.max >= i && item.dataset.min <= i){
+
+                    $(item).append(` <div class="year-item${yearSelected}" data-year=${i}> ${yearPanel === 'full' ? i : (''+i).slice(-2)}</div>`)
+                }
+            })
+          
+        }
+        
+        this.slideToSelected(curentYear)
     }
 
     isValidDate(dateStr) {
@@ -2328,12 +2383,12 @@ class Calendar {
 
 
 //test
-let d = document.querySelectorAll('.datepicker.calendar#ctest1').Calendar({showDay:'full',yearType:'BE',autoValue:true})
-let d2 = document.querySelectorAll('.datepicker.calendar#ctest2').Calendar({showDay:'small',yearType:'AD',default:"25660320"})
+let d = document.querySelector('.datepicker.calendar#ctest1').Calendar({showDay:'full',yearType:'BE',autoValue:true})
+let d2 = document.querySelector('.datepicker.calendar#ctest2').Calendar({showDay:'small',yearType:'AD',default:"25660320"})
 
-let d3 = document.querySelectorAll('.calendar-static#static1').Calendar({yearType:'AD',type:'static',section:'all'})
-let d4 = document.querySelectorAll('.calendar-static#static2').Calendar({yearType:'AD',type:'static',section:'y'})
-let d5 = document.querySelectorAll('.calendar-static#static3').Calendar({yearType:'AD',type:'static',section:'y'})
+let d3 = document.querySelector('.calendar-static#static1').Calendar({yearType:'AD',type:'static',section:'all'})
+let d4 = document.querySelector('.calendar-static#static2').Calendar({yearType:'AD',type:'static',section:'y'})
+let d5 = document.querySelector('.calendar-static#static3').Calendar({/* min:25600101,max:25661231, */yearType:'BE',type:'static',section:'y'})
 
 
 d.elem.addEventListener('dateChange',(e)=>{
