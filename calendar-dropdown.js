@@ -1,7 +1,7 @@
 //--------------------------------------
 
 //Calendar [BETA]
-//Version : 1.2.0-beta.2 By Captz
+//Version : 1.2.0-beta.3 By Captz
 
 //--------------------------------------
 
@@ -180,7 +180,6 @@ class CalendarDropdown{
 
     init(){
         this.renderCalendarDropDown()
-        console.log(this.option)
 
         //Init class that not close when click on it
             dropdown_arr.push('dropdown-section dropdown-section-date dropdown-input-'+this._id+" input_focus")

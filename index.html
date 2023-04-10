@@ -55,6 +55,7 @@
         flex-direction: column; 
         position: relative;
         gap: 10px;
+
     }
 
     .date-icon{
@@ -401,9 +402,16 @@
       pointer-events: none;
       color: white;
     }
-    input{
+    input[type="text"]{
         width: 100%;
+        text-align: center;
     }
+    input[type="checkbox"]{
+      text-align: left;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      }
     input:disabled{
       background:none;
       border-bottom: 1px solid rgba(0, 0, 0, 0.173)
@@ -465,6 +473,7 @@
 
 
 </style>
+
 <style>
              *{
     margin: 0;
@@ -477,16 +486,24 @@
         body{
       background-color: rgb(43, 43, 43);
       overflow-x: hidden;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: center;
+      
       
     }
     main{
-        height: 100vh;
+      width: clamp(650px ,100%, 650px ) !important ;
         display: flex;
         align-items: center;
         justify-content: flex-start;
         flex-direction: column;
         padding: 20px;
         overflow: auto;
+    }
+    .customCalendarPanel{
+      width: clamp(800px ,100%, 800px ) !important ;
     }
     .containner{
       width: 100%;
@@ -647,7 +664,77 @@
       position: relative !important;
     }
 
+    .form-row{
+      width: 100%;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 20px;
+      border: 1px solid white;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    .form-row  .form-group{
+      width: 48%;
+    }
 
+    select{
+      width: 100%;
+    }
+
+    .form-row label{
+      font-size: 1.5rem;
+    }
+    .form-group span{
+      font-size:.75rem;
+      color: #c2c2c2;
+    }
+
+    #customZone{
+      margin-bottom:10px;
+      padding: 20px;
+    }
+    #customOptionZone ,#htmlZone{
+      position: relative;
+      color: white;
+
+    }
+    #htmlZone pre{
+      width: 100%;
+      background: #3c3c3c;
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    #customOptionZone pre{
+      width: 100%;
+      background: #3c3c3c;
+      border-radius: 10px;
+      padding: 50px;
+    }
+
+
+    .btn-copy{
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 5px 10px;
+      border-radius: 10px;
+      background: none;
+      border: 1px solid white;
+      color: white;
+    }
+    .btn-copy:hover{
+      background: #949494;
+    }
+  
+    pre::selection, br::selection{
+      background: none;
+    }
+
+    
 @media (max-width: 575.98px) { 
 
 
@@ -722,9 +809,26 @@
    
 </style>
 <body>
-
         <main>
-          <div id="debug" class="w-100 p-5 text-white"></div>
+          <h1 class="text-warning">Output</h1>
+        <section id="customZone" style="width: 100%;">
+          <div class="form-group">
+            <input class="calendar" type="text" id="custom" autocomplete="off">
+          </div>
+        </section>
+      
+        <span class="text-danger align-self-end">Note : Static and Dropdown use Difference Html</span>
+        <section id="htmlZone" style="width: 100%;">
+          <button class="btn-copy" id="html">Copy</button>
+          <pre></pre>
+        </section>
+
+        <section id="customOptionZone" style="width: 100%;">
+          <button class="btn-copy" id="code">Copy</button>
+          <pre></pre>
+        </section>
+
+
           <div class="containner">
             <h2>Static Calendar</h2>
 
@@ -761,9 +865,6 @@
               <div class="form-group" >
                 <input class="datepicker calendar" type="text" id="ctest2" name="date_pay"autocomplete="off">
               </div>
-              
-             
-              
 
           </div>
 
@@ -810,6 +911,183 @@
 
         </main>
 
+        <asid class="containner customCalendarPanel" style="border: none;">
+          <h2>Custom Calendar</h2>
+          <div class="form-row">
+          <div class="form-group" >
+            <label for="" title="Calendar Type">Type</label>
+            <span> Calendar Type </span>
+            <select name="" id="type">
+              <option value="static" >Static</option>
+              <option value="dropdown" selected>Dropdown</option>
+            </select>
+          </div>
+
+
+          <div class="form-group" >
+            <label for="">Section </label>
+            <span> Only Type = Static</span>
+            <select name="" id="section">
+              <option value="all" selected >All</option>
+              <option value="m" >Month</option>
+              <option value="my" >Month and Year</option>
+              <option value="y" >Year</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+
+          <div class="form-group" >
+            <label for="">Format</label>
+            <span>  How is date show </span>
+
+                <select name="" id="format">
+                  <option value="dd/mm/yyyy" selected>dd/mm/yyyy </option>
+                  <option value="dd/yyyy/mm" >dd/yyyy/mm </option>
+                  <option value="mm/dd/yyyy" >mm/dd/yyyy </option>
+                  <option value="mm/yyyy/dd" >mm/yyyy/dd </option>
+                  <option value="yyyy/mm/dd" >yyyy/mm/dd </option>
+                  <option value="yyyy/dd/mm" >yyyy/dd/mm </option>
+
+                </select>
+
+          </div>
+
+
+          <div class="form-group" >
+            <label for="">Language </label>
+            <span> Set Language for day and month</span>
+            <select name="" id="lang">
+              <option value="en" selected >EN</option>
+              <option value="th" >TH</option>
+            </select>
+          </div>
+
+          <div class="form-group" >
+            <label for="">yearType </label>
+            <span> Set year for AD or BE Format</span>
+            <select name="" id="yearType">
+              <option value="AD" selected >AD</option>
+              <option value="BE" >BE</option>
+            </select>
+          </div>
+       
+
+          <div class="form-group" >
+            <label for="">Show Day </label>
+            <span> Show day of week </span>
+            <select name="" id="showDay">
+              <option value="none" selected >None</option>
+              <option value="sm"  >Small</option>
+              <option value="full"  >Full</option>
+            </select>
+
+          </div>
+
+        </div>
+
+        <div class="form-row">
+
+        
+
+     
+
+        
+          
+          <div class="form-group" >
+            <label for="">monthPanel  </label>
+            <span> (Month is small or full word) </span>
+
+            <select name="" id="monthPanel">
+              <option value="small">Small</option>
+              <option value="full" selected>Full</option>
+            </select>
+          </div>
+
+      
+          <div class="form-group" >
+            <label for="">yearPanel</label>
+            <span> (small : 2 digit year and full for 4 digit year)</span>
+            <select name="" id="yearPanel">
+              <option value="small">Small</option>
+              <option value="full" selected>Full</option>
+            </select>
+          </div>
+
+
+          
+          <div class="form-group" >
+            <label for="">StartWith</label>
+            <span> Start date with this text </span>
+            <input type="text" name="" id="startWith" value="">
+          </div>
+
+
+          <div class="form-group" >
+            <label for="">Default Date</label>
+            <span>  (Format : yyyymmdd) </span>
+
+            <input type="text" name="" id="default" value="all">
+          </div>
+
+          <div class="form-group" >
+            <label for="">Separation</label>
+            <span> Separate date with this text </span>
+            <input type="text" name="" id="separation" value="/">
+          </div>
+
+
+          <div class="form-group" >
+            <label for="">Max Date</label>
+            <span>Max Date(Format : yyyymmdd)</span>
+            <input type="text" name="" id="max" value="21001231">
+          </div>
+
+          <div class="form-group" >
+            <label for="">Min Date </label>
+            <span>Min Date(Format : yyyymmdd)</span>
+
+            <input type="text" name="" id="min" value="20230101">
+          </div>
+        </div>
+
+
+        <div class="form-row">
+
+          <div class="form-group" >
+            <label for="">selectable</label>
+            <span>Uncheck For disable selecting date</span>
+              <input type="checkbox" name="" id="selectable" checked>
+          </div>
+
+          
+          <div class="form-group" >
+            <label for="">closeOnSelect </label>
+            <span>Uncheck for prevent close after selecting</span>
+              <input type="checkbox" name="" id="closeOnSelect" checked>
+          </div>
+
+       <!--    <div class="form-group" >
+            <label for="">autoAdjustMaxMin</label>
+            
+              <input type="checkbox" name="" id="autoAdjustMaxMin" checked>
+          </div> -->
+
+
+          <div class="form-group" >
+            <label for="">autoValue </label>
+            <span>Auto value to input</span>
+              <input type="checkbox" id="autoValue">
+          </div>
+
+        </div>
+
+    
+     
+
+      </asid>
+
         <script src="/Calendar/assets/plugin/jquery/jquery-3.6.0.min.js"></script>
         <script src="/Calendar/assets/plugin/fontawesome/all.min.js"></script>
 
@@ -823,6 +1101,105 @@
 
     <script>
   
+
+      let optionArr = [
+      'type', 'section', 'format', 
+      'default', 'separation', 'lang', 'yearType', 
+      'showDay', 'day', 'month', 'startWith', 'dayPanel', 
+      'monthPanel', 'yearPanel', 'max', 'min', 'selectable', 
+      'closeOnSelect', 'autoAdjustMaxMin', 'autoValue', 'exceptionDate', 
+      ]
+
+      let customOption = {}
+      let code = document.querySelector('#customOptionZone pre') 
+      let html = document.querySelector('#htmlZone pre') 
+
+      let dropdownHtml = 
+      `
+    <div class="form-group">
+      <input class="calendar" type="text" id="custom" autocomplete="off">
+    </div>
+      `
+
+      let staticHtml = 
+        `       
+    <div class="form-group">
+          <div class="calendar" id="custom"></div>  
+    </div>
+        `
+
+
+      $('#'+optionArr.join(',#')).each((i,item)=>{
+     
+        if(item.tagName === "INPUT" && item.getAttribute('type') === 'checkbox'){
+          customOption[item.id] = item.checked
+        }else{
+          customOption[item.id] = item.value
+        }
+        
+      })
+
+
+    let custom = document.querySelector('#custom').Calendar(customOption)
+
+    code.innerHTML = `let CalendarOption = ${JSON.stringify(customOption,null,8)} \n\n let CalendarUI = document.querySelector('#custom').Calendar(customOption)`
+    html.innerText = dropdownHtml
+
+
+     $('#'+optionArr.join(',#')).on('change',(e)=>{
+       let selectHtml = ''
+      if(e.target.tagName === "INPUT" && e.target.getAttribute('type') === 'checkbox'){
+          customOption[e.target.id] = e.target.checked
+        }else{
+          customOption[e.target.id] = e.target.value
+        }
+
+      
+      
+      $("#custom").parent().remove()
+
+      if(customOption.type === 'dropdown'){
+        $('#customZone').append(dropdownHtml)
+        selectHtml = dropdownHtml
+      }
+
+
+      if(customOption.type === 'static'){
+
+        $('#customZone').append(staticHtml)
+        selectHtml = staticHtml
+      
+      }
+          document.getElementById('custom').Calendar(customOption)
+          code.innerHTML = `let CalendarOption = ${JSON.stringify(customOption,null,8)} \n\n let CalendarUI = document.querySelector('#custom').Calendar(customOption)`
+
+          html.innerText = selectHtml
+
+      }) 
+
+        document.querySelector('.btn-copy#code').addEventListener('click',(e)=>{
+
+          let range = document.createRange();
+          range.selectNode(code);
+          window.getSelection().removeAllRanges();
+          window.getSelection().addRange(range);
+
+          document.execCommand('copy');
+        
+      })
+
+       document.querySelector('.btn-copy#html').addEventListener('click',(e)=>{
+
+          let range = document.createRange();
+          range.selectNode(html);
+          window.getSelection().removeAllRanges();
+          window.getSelection().addRange(range);
+
+          document.execCommand('copy');
+        
+      })
+
+
 
     </script>
      

@@ -1,7 +1,7 @@
 //--------------------------------------
 
 //Calendar [BETA]
-//Version : 1.2.0-beta.2 By Captz
+//Version : 1.2.0-beta.3 By Captz
 
 //--------------------------------------
 //error code 
@@ -73,7 +73,7 @@ const LANG = {
 
 const defaultOptionCalendar = {
     type : "dropdown", //static , dropdown
-    section : 'm', // all, date, month, year
+    section : 'all', // all, date, month, year
 
     format: "dd/mm/yyyy",
     default: "now",
@@ -81,10 +81,7 @@ const defaultOptionCalendar = {
     lang: "th",
     yearType: "BE",
     showDay: 'none', // full,small ,none
-    day: 'full',
-    month: 'full',
     startWith: '',
-    dayPanel: 'full',
     monthPanel: 'full',
     yearPanel: 'full',
 
@@ -118,27 +115,26 @@ let dateEvent = new CustomEvent('dateChange', {
 class Calendar {
 
     constructor(elem, option = {
-        type : String(),
-        section : String(),
-        format: String(),
-        default: String() ,
-        separation: String(),
-        lang: String(),
-        yearType: String(),
-        showDay: String(), // full,small ,none
+        type : String(),                //UI : ✅ 
+        section : String(),             //UI : ✅
+        format: String(),               //UI : ✅
+        default: String() ,             //UI : ✅
+        separation: String(),           //UI : ✅
+        lang: String(),                 //UI : ✅
+        yearType: String(),             //UI : ✅
+        showDay: String(),              //UI : ✅
         day: String(),
-        month: String(),
-        startWith: String(),
-        dayPanel: String(),
+        startWith: String(),            //UI : ✅
+        
         monthPanel: String(),
         yearPanel: String(),
 
-        min: Number(),
-        max: Number(),
-        selectable: Boolean(),
-        closeOnSelect: Boolean(),
-        autoAdjustMaxMin: Boolean(),
-        autoValue: Boolean(),
+        min: Number(),                  //UI : ✅
+        max: Number(),                  //UI : ✅
+        selectable: Boolean(),          //UI : ✅
+        closeOnSelect: Boolean(),       //UI : ✅
+        autoAdjustMaxMin: Boolean(),    //UI : ✅
+        autoValue: Boolean(),           //UI : ✅
 
         exceptionDate : Array()
 
@@ -158,11 +154,10 @@ class Calendar {
             yearType:               typeof option.yearType          !== 'undefined'  ? option.yearType : defaultOptionCalendar.yearType,
             showDay:                typeof option.showDay           !== 'undefined'  ? option.showDay : defaultOptionCalendar.showDay,
             day:                    typeof option.day               !== 'undefined'  ? option.day : defaultOptionCalendar.day,
-            month:                  typeof option.month             !== 'undefined'  ? option.month : defaultOptionCalendar.month,
             min:                    typeof option.min               !== 'undefined'  ? option.min : defaultOptionCalendar.min,
             max:                    typeof option.max               !== 'undefined'  ? option.max : defaultOptionCalendar.max,
             startWith:              typeof option.startWith         !== 'undefined'  ? option.startWith : defaultOptionCalendar.startWith,
-            dayPanel:               typeof option.dayPanel          !== 'undefined'  ? option.dayPanel : defaultOptionCalendar.dayPanel,
+
             monthPanel:             typeof option.monthPanel        !== 'undefined'  ? option.monthPanel : defaultOptionCalendar.monthPanel,
             yearPanel:              typeof option.yearPanel         !== 'undefined'  ? option.yearPanel : defaultOptionCalendar.yearPanel,
             selectable:             typeof option.selectable        !== 'undefined'  ? option.selectable : defaultOptionCalendar.selectable,
@@ -188,6 +183,7 @@ class Calendar {
 
         this.panelClass =  this.option.type === 'static' ?  `.date-panel-static[data-id='${this._id}']` : `.date-panel[data-id='${this._id}']`
        
+       /*  console.log(this.option) */
         this.init()
 
     }
@@ -288,10 +284,12 @@ class Calendar {
         day: "full",
         month: "full"
     }) {
-        type.day = type.day || this.option.day
-        type.month = type.month || this.option.month
+        type.month = type.month || this.option.monthPanel
 
-        let select_lang = `${section}_${lang}_${section === 'd' ? type.day : type.month}`
+        type.month =  type.month === "small" || type.month === 'sm' ? 'sm' : 'full'
+
+        let select_lang = `${section}_${lang}_${type.month}`
+        console.log(select_lang)
 
         return LANG[select_lang][value]
     }
@@ -524,8 +522,8 @@ class Calendar {
 
                y_display = yearType === "AD" ? y_display : +y_display+543
 
-               let showDay = this.option.showDay === 'none' ? '' :`${starter}${day_display}, `
-               let date_display = `${showDay}${d_display}${separation}${m_display}${separation}${y_display}`
+               let showDay = this.option.showDay === 'none' ? '' :`${day_display}, `
+               let date_display = `${starter}${showDay}${d_display}${separation}${m_display}${separation}${y_display}`
 
                //set dataset value and value to input     
                
@@ -1243,8 +1241,8 @@ class Calendar {
                     let y_display = full_date_display[3]
 
 
-                    let showDay = this.option.showDay === 'none' ? '' :`${starter}${day_display}, `
-                    let date_display = `${showDay}${d_display}${separation}${m_display}${separation}${y_display}`
+                    let showDay = this.option.showDay === 'none' ? '' :`${day_display}, `
+                    let date_display = `${starter}${showDay}${d_display}${separation}${m_display}${separation}${y_display}`
 
                     //set dataset value and value to input        
                     let parent = this.elem
@@ -1333,8 +1331,8 @@ class Calendar {
                     let checkYearType = this.option.yearType === 'AD' ? this_year : this_year - 543
 
 
-                    let showDay = this.option.showDay === 'none' ? '' :`${starter}${day_display}, `
-                    let date_display = `${showDay}${d_display}${separation}${m_display}${separation}${y_display}`
+                    let showDay = this.option.showDay === 'none' ? '' :`${day_display}, `
+                    let date_display = `${starter}${showDay}${d_display}${separation}${m_display}${separation}${y_display}`
 
                     //set dataset value and value to input        
                     let parent = this.elem
@@ -1556,8 +1554,8 @@ class Calendar {
                     let y_display = full_date_display[3]
 
 
-                    let showDay = this.option.showDay === 'none' ? '' :`${starter}${day_display}, `
-                    let date_display = `${showDay}${d_display}${separation}${m_display}${separation}${y_display}`
+                    let showDay = this.option.showDay === 'none' ? '' :`${day_display}, `
+                    let date_display = `${starter}${showDay}${d_display}${separation}${m_display}${separation}${y_display}`
 
                     //set dataset value and value to input        
 
@@ -1648,9 +1646,8 @@ class Calendar {
 
                     let checkYearType = this.option.yearType === 'AD' ? this_year : this_year - 543
 
-
-                    let showDay = this.option.showDay === 'none' ? '' :`${starter}${day_display}, `
-                    let date_display = `${showDay}${d_display}${separation}${m_display}${separation}${y_display}`
+                    let showDay = this.option.showDay === 'none' ? '' :`${day_display}, `
+                    let date_display = `${starter}${showDay}${d_display}${separation}${m_display}${separation}${y_display}`
 
                     //set dataset value and value to input        
                     let parent = this.elem
@@ -1806,8 +1803,7 @@ class Calendar {
 
         //set month lable and year label
         $(`${this.panelClass} .lbl_month`).text(this.set_lang(+this_month, 'm', lang, {
-            day: this.option.day,
-            month: this.option.month
+            month: this.option.monthPanel
         }))
 
         let displayYear = yearType === 'AD' ? this_year : this_year + 543
@@ -1964,8 +1960,8 @@ class Calendar {
                         //la
                         let checkYearType = yearType === "AD" ? y_display : +y_display + 543
     
-                        let showDay = this.option.showDay === 'none' ? '' :`${starter}${day_display}, `
-                        let date_display = `${showDay}${d_display}${separation}${m_display}${separation}${checkYearType}`
+                        let showDay = this.option.showDay === 'none' ? '' :`${day_display}, `
+                        let date_display = `${starter}${showDay}${d_display}${separation}${m_display}${separation}${y_display}`
     
                         //set dataset value and value to input        
     
@@ -2039,8 +2035,8 @@ class Calendar {
                     //la
                     let checkYearType = yearType === "AD" ? y_display : +y_display + 543
 
-                    let showDay = this.option.showDay === 'none' ? '' :`${starter}${day_display}, `
-                    let date_display = `${showDay}${d_display}${separation}${m_display}${separation}${checkYearType}`
+                    let showDay = this.option.showDay === 'none' ? '' :`${day_display}, `
+                    let date_display = `${starter}${showDay}${d_display}${separation}${m_display}${separation}${y_display}`
 
                     //set dataset value and value to input        
 
@@ -2112,12 +2108,12 @@ class Calendar {
         let monthPanel = this.option.monthPanel
         let monthSelected = ''
         let this_month = +this.extractFulldate(this.elem.dataset.fulldate).m
-        
+           
 
         $(`${this.panelClass} .month-body`).empty()
 
         if (this_year == min_date[0]) {
-
+            console.log('1')
             for (let i = +min_date[1]; i <= 12; i++) {
 
                 let full_month
@@ -2133,13 +2129,15 @@ class Calendar {
                         month: 'sm'
                     })
                 } else {
+
                     full_month = this.set_lang(i, 'm', lang, {
-                        day: this.option.day,
-                        month: this.option.month
+                        month: this.option.monthPanel
                     })
                 }
 
                 monthSelected = this_month === i ? ' _selected' : ''
+
+                console.log(full_month)
 
                 $(`${this.panelClass} .month-body`).append(
                     `
@@ -2148,6 +2146,7 @@ class Calendar {
                 )
             }
         } else if (this_year == max_date[0]) {
+            console.log('2')
 
             for (let i = 1; i <= max_month; i++) {
 
@@ -2165,8 +2164,7 @@ class Calendar {
                     })
                 } else {
                     full_month = this.set_lang(i, 'm', lang, {
-                        day: this.option.day,
-                        month: this.option.month
+                        month: this.option.monthPanel
                     })
                 }
 
@@ -2178,6 +2176,7 @@ class Calendar {
                 )
             }
         } else {
+            console.log('3')
 
             for (let i = 1; i <= 12; i++) {
 
@@ -2195,8 +2194,7 @@ class Calendar {
                     })
                 } else {
                     full_month = this.set_lang(i, 'm', lang, {
-                        day: this.option.day,
-                        month: this.option.month
+                        month: this.option.monthPanel
                     })
                 }
                 monthSelected = this_month === i ? ' _selected' : ''
@@ -2382,13 +2380,14 @@ class Calendar {
     }
 
 
-//test
-let d = document.querySelector('.datepicker.calendar#ctest1').Calendar({showDay:'full',yearType:'BE',autoValue:true})
+    //test
+ let d = document.querySelector('.datepicker.calendar#ctest1').Calendar({monthPanel:'full',showDay:'full',yearType:'BE',autoValue:true})
+     /*
 let d2 = document.querySelector('.datepicker.calendar#ctest2').Calendar({showDay:'small',yearType:'AD',default:"25660320"})
 
 let d3 = document.querySelector('.calendar-static#static1').Calendar({yearType:'AD',type:'static',section:'all'})
 let d4 = document.querySelector('.calendar-static#static2').Calendar({yearType:'AD',type:'static',section:'y'})
-let d5 = document.querySelector('.calendar-static#static3').Calendar({/* min:25600101,max:25661231, */yearType:'BE',type:'static',section:'y'})
+let d5 = document.querySelector('.calendar-static#static3').Calendar({yearType:'BE',type:'static',section:'y'})
 
 
 d.elem.addEventListener('dateChange',(e)=>{
@@ -2418,7 +2417,7 @@ d5.elem.addEventListener('dateChange',(e)=>{
 
 
 })
-
+ */
 
 
 

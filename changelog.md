@@ -1,13 +1,22 @@
 # Change LOG
 ### Bug 
     [Calendar]
-   
+    - selectable Conflict with closeOnSelect
 
     [dropdown]
     - slideTo method in year input it's not working properly [1.0.0-beta]
 
 ### Task 
-    
+    - Release v1.0.0
+
+## - 1.2.0-beta.3
+    FIX -------
+    - can use startWith option without using showDay option
+
+    REMOVE -------
+    - remove day option cause unuse Option
+    - remove month option cause duplicate with monthPanel Option
+    - remove dayPanel option cause unuse Option
 
 ## - 1.2.0-beta.2
     Fix -------
