@@ -1,13 +1,19 @@
 # Change LOG
 ### Bug 
     [Calendar]
-    - selectable Conflict with closeOnSelect
+
 
     [dropdown]
     - slideTo method in year input it's not working properly [1.0.0-beta]
 
 ### Task 
+    - Add Start with Day
     - Release v1.0.0
+
+## - 1.2.0-beta.4
+    FIX -------
+    - type date by keyboard not working cause no fulldate dataset
+    - selectable Conflict with closeOnSelect
 
 ## - 1.2.0-beta.3
     FIX -------

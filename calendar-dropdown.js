@@ -1,7 +1,7 @@
 //--------------------------------------
 
 //Calendar [BETA]
-//Version : 1.2.0-beta.3 By Captz
+//Version : 1.2.0-beta.4 By Captz
 
 //--------------------------------------
 
@@ -890,7 +890,7 @@ function isValidDate(dateStr) {
     return dateStr.slice(8) == date.getDate();
   }
 
-  console.log(isValidDate('2020-02-29'))
+ /*  console.log(isValidDate('2020-02-29')) */
 
 
 })

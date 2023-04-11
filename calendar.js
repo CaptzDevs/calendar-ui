@@ -1,7 +1,7 @@
 //--------------------------------------
 
 //Calendar [BETA]
-//Version : 1.2.0-beta.3 By Captz
+//Version : 1.2.0-beta.4 By Captz
 
 //--------------------------------------
 //error code 
@@ -76,7 +76,7 @@ const defaultOptionCalendar = {
     section : 'all', // all, date, month, year
 
     format: "dd/mm/yyyy",
-    default: "now",
+    default: "today",
     separation: "/",
     lang: "th",
     yearType: "BE",
@@ -87,12 +87,14 @@ const defaultOptionCalendar = {
 
     max: 21001231,
     min: 20000101,
-   /*  max: 25700101,
+    dayStartWith: 0,
+    /*  max: 25700101,
     min: 20001112, */
     selectable: true,
     closeOnSelect: true,
     autoAdjustMaxMin: true,
     autoValue: false,
+    
     exceptionDate : [],
     
 
@@ -123,7 +125,6 @@ class Calendar {
         lang: String(),                 //UI : ✅
         yearType: String(),             //UI : ✅
         showDay: String(),              //UI : ✅
-        day: String(),
         startWith: String(),            //UI : ✅
         
         monthPanel: String(),
@@ -131,6 +132,8 @@ class Calendar {
 
         min: Number(),                  //UI : ✅
         max: Number(),                  //UI : ✅
+        dayStartWith: Number(),         //UI : ✅
+
         selectable: Boolean(),          //UI : ✅
         closeOnSelect: Boolean(),       //UI : ✅
         autoAdjustMaxMin: Boolean(),    //UI : ✅
@@ -153,10 +156,12 @@ class Calendar {
             lang:                   typeof option.lang              !== 'undefined'  ? option.lang : defaultOptionCalendar.lang,
             yearType:               typeof option.yearType          !== 'undefined'  ? option.yearType : defaultOptionCalendar.yearType,
             showDay:                typeof option.showDay           !== 'undefined'  ? option.showDay : defaultOptionCalendar.showDay,
-            day:                    typeof option.day               !== 'undefined'  ? option.day : defaultOptionCalendar.day,
+            startWith:              typeof option.startWith         !== 'undefined'  ? option.startWith : defaultOptionCalendar.startWith,
+            
             min:                    typeof option.min               !== 'undefined'  ? option.min : defaultOptionCalendar.min,
             max:                    typeof option.max               !== 'undefined'  ? option.max : defaultOptionCalendar.max,
-            startWith:              typeof option.startWith         !== 'undefined'  ? option.startWith : defaultOptionCalendar.startWith,
+            dayStartWith:           typeof option.dayStartWith      !== 'undefined'  ? option.dayStartWith : defaultOptionCalendar.dayStartWith,
+
 
             monthPanel:             typeof option.monthPanel        !== 'undefined'  ? option.monthPanel : defaultOptionCalendar.monthPanel,
             yearPanel:              typeof option.yearPanel         !== 'undefined'  ? option.yearPanel : defaultOptionCalendar.yearPanel,
@@ -289,7 +294,6 @@ class Calendar {
         type.month =  type.month === "small" || type.month === 'sm' ? 'sm' : 'full'
 
         let select_lang = `${section}_${lang}_${type.month}`
-        console.log(select_lang)
 
         return LANG[select_lang][value]
     }
@@ -496,6 +500,7 @@ class Calendar {
 
     autoDate(e){
         if(e.target.value != ''){
+
         let check_format = this.checkDateIsValidFormat(e.target.value) 
         let yearType = this.option.yearType
         let max = String(this.option.max)
@@ -510,59 +515,60 @@ class Calendar {
 
         /* e.target.previousElementSibling.setAttribute('value',e.target.value) */
 
-       if(check_format[0]){
-            let full_date_display = this.selectDateFormat(check_format[1].d,check_format[1].m,check_format[1].y)[0]
-            let separation = this.option.separation
-            let starter = this.option.startWith
+            if(check_format[0]){
 
-               let day_display = full_date_display[0]
-               let d_display = full_date_display[1]
-               let m_display = full_date_display[2]
-               let y_display = full_date_display[3]
+                let full_date_display = this.selectDateFormat(check_format[1].d,check_format[1].m,check_format[1].y)[0]
+                let separation = this.option.separation
+                let starter = this.option.startWith
 
-               y_display = yearType === "AD" ? y_display : +y_display+543
+                let day_display = full_date_display[0]
+                let d_display = full_date_display[1]
+                let m_display = full_date_display[2]
+                let y_display = full_date_display[3]
 
-               let showDay = this.option.showDay === 'none' ? '' :`${day_display}, `
-               let date_display = `${starter}${showDay}${d_display}${separation}${m_display}${separation}${y_display}`
+                y_display = yearType === "AD" ? y_display : +y_display+543
 
-               //set dataset value and value to input     
-               
-               let selectedDate = +`${y_display}${m_display}${d_display}`
-               let checkSelectDate = yearType === 'AD' ? selectedDate : selectedDate-this.BEYear
+                let showDay = this.option.showDay === 'none' ? '' :`${day_display}, `
+                let date_display = `${starter}${showDay}${d_display}${separation}${m_display}${separation}${y_display}`
 
-            if(this.checkDisableDate(checkSelectDate)){
-                this.initDate()
-                this.value = yearType === "AD" ? +this.elem.dataset.fulldate : +this.elem.dataset.fulldate+this.BEYear
+                //set dataset value and value to input     
+                
+                let selectedDate = +`${y_display}${m_display}${d_display}`
+                let checkSelectDate = yearType === 'AD' ? selectedDate : selectedDate-this.BEYear
 
-            }else if(!this.checkDisableDate(checkSelectDate)){
+                if(this.checkDisableDate(checkSelectDate)){
+                    this.initDate()
+                    this.value = yearType === "AD" ? +this.elem.dataset.fulldate : +this.elem.dataset.fulldate+this.BEYear
+
+                }else if(!this.checkDisableDate(checkSelectDate)){
 
 
-                e.target.value = date_display
-                e.target.setAttribute("value" ,date_display)
+                    e.target.value = date_display
+                    e.target.setAttribute("value" ,date_display)
 
-                /* e.target.setAttribute('data-value',`${y_display}${("0"+check_format[1].m).slice(-2)}${check_format[1].d}`)  */
-                e.target.setAttribute('data-fulldate',`${check_format[1].y}${("0"+check_format[1].m).slice(-2)}${check_format[1].d}`)
+                    /* e.target.setAttribute('data-value',`${y_display}${("0"+check_format[1].m).slice(-2)}${check_format[1].d}`)  */
+                    e.target.setAttribute('data-fulldate',`${check_format[1].y}${("0"+check_format[1].m).slice(-2)}${check_format[1].d}`)
 
-                $(".date-panel").attr('data-fulldate',`${check_format[1].y}${("0"+check_format[1].m).slice(-2)}${check_format[1].d}`)
-                $(".date-panel").attr('data-date',`${check_format[1].d}`)
+                    $(".date-panel").attr('data-fulldate',`${check_format[1].y}${("0"+check_format[1].m).slice(-2)}${check_format[1].d}`)
+                    $(".date-panel").attr('data-date',`${check_format[1].d}`)
 
-                 this.render(+check_format[1].d,+check_format[1].m,+check_format[1].y)   
+                    this.render(+check_format[1].d,+check_format[1].m,+check_format[1].y)   
 
-                this.value = yearType === "AD" ? +this.elem.dataset.fulldate : +this.elem.dataset.fulldate+this.BEYear
+                    this.value = yearType === "AD" ? +this.elem.dataset.fulldate : +this.elem.dataset.fulldate+this.BEYear
 
-               /*   e.target.setAttribute("readonly","readonly") */
-            }else{
-                    let tmax = this.extractFulldate(this.option.max)
-                    let tmin = this.extractFulldate(this.option.min)
+                /*   e.target.setAttribute("readonly","readonly") */
+                }else{
+                        let tmax = this.extractFulldate(this.option.max)
+                        let tmin = this.extractFulldate(this.option.min)
 
-                    this.elem.value = 'input must between : '+`${tmax.d}/${tmax.m}/${tmax.y} and ${tmin.d}/${tmin.m}/${tmin.y}`
-                    console.error(`the input is outbound of min and max limit ${tmin.d}/${tmin.m}/${tmin.y} and ${tmax.d}/${tmax.m}/${tmax.y}`)
+                        this.elem.value = 'input must between : '+`${tmax.d}/${tmax.m}/${tmax.y} and ${tmin.d}/${tmin.m}/${tmin.y}`
+                        console.error(`the input is outbound of min and max limit ${tmin.d}/${tmin.m}/${tmin.y} and ${tmax.d}/${tmax.m}/${tmax.y}`)
 
-                    setTimeout(() => {
-                        this.initDate()
-                    }, 3000);
+                        setTimeout(() => {
+                            this.initDate()
+                        }, 3000);
 
-                }
+                    }
             }
         }
     }
@@ -571,7 +577,7 @@ class Calendar {
          //-----------------------------
 
 
-         let checkDefaultDate = this.option.default == "now" ? String(this.todayInt) : this.option.default
+         let checkDefaultDate = this.option.default == "today" ? String(this.todayInt) : this.option.default
 
          let fulldate = '' + ( this.elem.dataset.fulldate || checkDefaultDate)
          if(option === 'today') fulldate = String(this.todayInt)
@@ -690,7 +696,8 @@ class Calendar {
 
 
    
-        this.option.default = this.option.yearType === "AD" && !isNaN(+this.option.default) ? +this.option.default-this.BEYear  : this.todayInt
+        /* this.option.default = this.option.yearType === "AD" && !isNaN(+this.option.default) ? +this.option.default-this.BEYear  : this.todayInt */
+        this.option.default = this.option.yearType === "AD" && !isNaN(+this.option.default) ? +this.option.default  : this.todayInt
 
 
 
@@ -780,10 +787,9 @@ class Calendar {
         this.elem.addEventListener('keydown', (e) => {
                 /* this.elem.nextElementSibling.click() */
 
-                let fullDate = e.target.dataset.fulldate
+                let fullDate = e.target.dataset.fulldate || String(this.todayInt)
                 let date = 0
                 let yearType = this.option.yearType
-
 
                 let [year_s, month_s, date_s] = [fullDate.slice(0, 4), fullDate.slice(4, 6), fullDate.slice(6, 8)]
 
@@ -814,7 +820,6 @@ class Calendar {
                 let d = new Date();
                 //right  
                 if (e.keyCode === 39) {
-
                     let fulldate = e.target.dataset.fulldate
                     let [this_date, this_month, this_year] = [+fulldate.slice(6, 8), +fulldate.slice(4, 6), +fulldate.slice(0, 4)]
                     let checkYearType = yearType == "AD" ? +this_year : +this_year + 543
@@ -823,7 +828,6 @@ class Calendar {
                         let current = d.configDate(1, "add")
                         this.changeDateByArrow(e, current)
                     }
-
                 }
                 //left 
                 if (e.keyCode === 37) {
@@ -838,22 +842,19 @@ class Calendar {
                         let current = d.configDate(1, "remove")
                         this.changeDateByArrow(e, current)
                     }
-
                 }
                 //up
                 if (e.keyCode === 38) {
-
                     let current = d.configDate(7, "remove")
                     this.changeDateByArrow(e, current)
                 }
                 //down
                 if (e.keyCode === 40) {
-
                     let current = d.configDate(7, "add")
-
                     this.changeDateByArrow(e, current)
                 }
 
+                //auto daye by enter
                 if (e.key === 'Enter' && e.target.value == '') {
                     e.target.value = `${('0'+DATE.getDate()).slice(-2) }${this.option.separation}${('0'+(DATE.getMonth()+1)).slice(-2)}${this.option.separation}${this.option.yearType === 'AD' ? DATE.getFullYear() : DATE.getFullYear()+543}`
                     this.autoDate(e)
@@ -934,10 +935,9 @@ class Calendar {
             this.elem.addEventListener("click", (e) => {
                
                 if(e.detail === 2){
-                    /* e.target.setSelectionRange(0,2) */
+                    e.target.setSelectionRange(0,e.target.value.length)
                 }
                 if(e.target.value === ''){
-                    
                     this.elem.addEventListener('keydown', (e) => {
                         if(e.key === 'Enter'){
                             this.autoDate(e)
@@ -1038,7 +1038,7 @@ class Calendar {
                 </div>
             `)
 
-            let checkDefaultDate = this.option.default == "now" ? String(this.todayInt) : this.option.default
+            let checkDefaultDate = this.option.default == "today" ? String(this.todayInt) : this.option.default
 
             let fulldate = '' + ( this.elem.dataset.fulldate || checkDefaultDate)
 
@@ -1410,6 +1410,7 @@ class Calendar {
             //e.target.previousElementSibling.parentElement.style.position = "relative" 
             let defaultDate = this.option.default
 
+ 
             let max = String(this.option.max)
             let max_date = max.length > 0 ? [+max.slice(0, 4), +max.slice(4, 6), +max.slice(6, 8)] : 0
             let max_day = max_date[0] != 0 ? max_date[2] : 28
@@ -1426,6 +1427,22 @@ class Calendar {
 
             let dayHeader = ''
 
+            for(let [i,item] of LANG[`d_${lang}_sm`].entries()){
+                console.log(i)
+                
+            }
+
+            let c = 0
+            let i = this.option.dayStartWith 
+            while(c < 7){
+                if(i > 6){
+                    i = 0
+                }
+                dayHeader += `<div class="date-day-item">${ LANG[`d_${lang}_sm`][i]}</div>`
+                i++
+                c++
+            }
+       /*  
             if (lang === 'th') {
                 dayHeader = `
                     <div class="date-day-item">อา.</div>
@@ -1448,6 +1465,8 @@ class Calendar {
                     <div class="date-day-item">Sat</div>
                               `
             }
+ */
+
             let checkElem =  this.option.type === 'static' ? this.elem : 'body'
             $('body')[0].insertAdjacentHTML('beforeend', `
                 <div class="date-panel" data-id='${this._id}'>
@@ -1484,7 +1503,8 @@ class Calendar {
                 </div>
             `)
 
-            let checkDefaultDate = defaultDate == "now" ? String(this.todayInt) : defaultDate
+            let checkDefaultDate = defaultDate == "today" ? String(this.todayInt) : defaultDate
+
 
             let fulldate = '' + ( this.elem.dataset.fulldate || checkDefaultDate)
             let [curentDate, curentMonth, curentYear] = [fulldate.slice(6, 8), fulldate.slice(4, 6), fulldate.slice(0, 4)]
@@ -1742,6 +1762,7 @@ class Calendar {
         let yearPanel = this.option.yearPanel
 
         let disableSelect = ''
+
         if (!selectable) {
             disableSelect = 'disableSelect'
         }
@@ -1750,6 +1771,11 @@ class Calendar {
             if (!closeOnSelect) {
                 panel_arr.push('date-item date-selected')
             }
+
+            if (!closeOnSelect && !selectable) {
+                panel_arr.push('date-item')
+            }
+
 
             if (!panel_arr.includes(e.target.className)) {
                     $(".date-panel").remove()
@@ -1793,13 +1819,18 @@ class Calendar {
 
         //get first day of the month and first day of the year
         let fdm = new Date(this_year, this_month - 1, 1).getDay(); //first day of month
-
         let fdnm = new Date(this_year, this_month, 1).getDay(); //first day of next month
+        let firstDayOfNextMonth = new Date(this_year, this_month, 1).getDay(); //first day of next month
+
 
         let date_number = new Date(this_year, this_month, 0).getDate() // amount of date in 
-        let date_number_before = new Date(this_year, this_month - 1, 0).getDate() // amount of date in 
+        let date_number_before = new Date(this_year, this_month - 1, 0).getDate() // amount of date in previous month
 
         let last_date_of_month = new Date(this_year, this_month, 0).getDate();
+        let last_day_of_month = new Date(this_year, this_month, 0).getDay();
+
+
+        fdm -= this.option.dayStartWith
 
         //set month lable and year label
         $(`${this.panelClass} .lbl_month`).text(this.set_lang(+this_month, 'm', lang, {
@@ -1808,9 +1839,9 @@ class Calendar {
 
         let displayYear = yearType === 'AD' ? this_year : this_year + 543
 
-
         $(`${this.panelClass} .lbl_year`).text(yearPanel === 'full' ? displayYear : ('' + displayYear).slice(-2))
 
+        
         //render section -------------------------------------
         /*   let elem_length = 0;
     
@@ -1876,9 +1907,8 @@ class Calendar {
         }
 
         //render next month date 
-
+        console.log(fdnm)
         if (fdnm > 0) {
-
             for (let i = 1; i <= 7 - fdnm; i++) {
                 $(`${this.panelClass} .date-body`).append(`<div class="date-item date-empty">${i}</div>`)
 
@@ -2381,7 +2411,7 @@ class Calendar {
 
 
     //test
- let d = document.querySelector('.datepicker.calendar#ctest1').Calendar({monthPanel:'full',showDay:'full',yearType:'BE',autoValue:true})
+/*  let d = document.querySelector('.datepicker.calendar#ctest1').Calendar({monthPanel:'full',showDay:'full',yearType:'BE',autoValue:true}) */
      /*
 let d2 = document.querySelector('.datepicker.calendar#ctest2').Calendar({showDay:'small',yearType:'AD',default:"25660320"})
 
@@ -2418,6 +2448,8 @@ d5.elem.addEventListener('dateChange',(e)=>{
 
 })
  */
+
+
 
 
 

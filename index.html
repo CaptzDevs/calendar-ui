@@ -406,6 +406,10 @@
         width: 100%;
         text-align: center;
     }
+    input[type="number"]{
+        width: 100%;
+        text-align: center;
+    }
     input[type="checkbox"]{
       text-align: left;
       width: 40px;
@@ -810,7 +814,7 @@
 </style>
 <body>
         <main>
-          <h1 class="text-warning">Output</h1>
+          <h1 class="text-white">Full Calendar</h1>
         <section id="customZone" style="width: 100%;">
           <div class="form-group">
             <input class="calendar" type="text" id="custom" autocomplete="off">
@@ -828,8 +832,7 @@
           <pre></pre>
         </section>
 
-
-          <div class="containner">
+       <!--    <div class="containner">
             <h2>Static Calendar</h2>
 
             <div class="calendar-static" id="static1"> </div>  
@@ -844,16 +847,13 @@
             <span class="text-white" id="sp4"></span>
             <span class="text-white" id="sp5"></span>
 
-            </div>
+            </div> -->
 
-          <div class="containner">
+        <!--   <div class="containner">
 
 
             <h2>Full Calendar</h2>
-             <!--  <div class="form-group">
-                <label for="date_pay" id="test">Default (AD)</label>
-                <input class="datepicker" type="text" id="date_pay1" name="date_pay" autocomplete="off">
-              </div> -->
+          
 
 
             
@@ -866,24 +866,8 @@
                 <input class="datepicker calendar" type="text" id="ctest2" name="date_pay"autocomplete="off">
               </div>
 
-          </div>
-
-
-         <!--  <div class="containner">
-
-            <h2>Dropdown Calendar</h2>
-              <div class="form-group">
-                <label for="date_pay" id="test">Default (AD)</label>
-
-                  <input class="datepicker dropdown" type="text" id="datepicker_dropdown1" name="datepicker_dropdown" autocomplete="off">
-
-              </div>
-
-
-            
           </div> -->
 
-      
 
 
           <div class="containner">
@@ -1028,14 +1012,10 @@
             <label for="">Default Date</label>
             <span>  (Format : yyyymmdd) </span>
 
-            <input type="text" name="" id="default" value="all">
+            <input type="text" name="" id="default" value="today">
           </div>
 
-          <div class="form-group" >
-            <label for="">Separation</label>
-            <span> Separate date with this text </span>
-            <input type="text" name="" id="separation" value="/">
-          </div>
+       
 
 
           <div class="form-group" >
@@ -1048,10 +1028,26 @@
             <label for="">Min Date </label>
             <span>Min Date(Format : yyyymmdd)</span>
 
-            <input type="text" name="" id="min" value="20230101">
+            <input type="text" name="" id="min" value="20000101">
           </div>
+
+          <div class="form-group" >
+            <label for="">Separation</label>
+            <span> Separate date with this text </span>
+            <input type="text" name="" id="separation" value="/">
+          </div>
+
+          <!-- <div class="form-group" >
+            <label for="">startDayWith</label>
+            <span> start day in week with </span>
+            <input type="number" name="" id="startDayWith" max="6" min="0" value="0">
+          </div>
+ -->
+
+
         </div>
 
+        
 
         <div class="form-row">
 
@@ -1103,11 +1099,11 @@
   
 
       let optionArr = [
-      'type', 'section', 'format', 
-      'default', 'separation', 'lang', 'yearType', 
-      'showDay', 'day', 'month', 'startWith', 'dayPanel', 
-      'monthPanel', 'yearPanel', 'max', 'min', 'selectable', 
-      'closeOnSelect', 'autoAdjustMaxMin', 'autoValue', 'exceptionDate', 
+        'type', 'section', 'format', 
+        'default', 'separation', 'lang', 'yearType', 
+        'showDay', 'day', 'month', 'startWith', 'dayPanel', 
+        'monthPanel', 'yearPanel','startDayWith', 'max', 'min', 'selectable', 
+        'closeOnSelect', 'autoAdjustMaxMin', 'autoValue', 'exceptionDate', 
       ]
 
       let customOption = {}
