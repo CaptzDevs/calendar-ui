@@ -1,7 +1,7 @@
 //--------------------------------------
 
 //Calendar [BETA]
-//Version : 1.2.0-beta.4 By Captz
+//Version : 1.2.0-beta.5 By Captz
 
 //--------------------------------------
 //error code 
@@ -1427,10 +1427,6 @@ class Calendar {
 
             let dayHeader = ''
 
-            for(let [i,item] of LANG[`d_${lang}_sm`].entries()){
-                console.log(i)
-                
-            }
 
             let c = 0
             let i = this.option.dayStartWith 
@@ -2066,7 +2062,7 @@ class Calendar {
                     let checkYearType = yearType === "AD" ? y_display : +y_display + 543
 
                     let showDay = this.option.showDay === 'none' ? '' :`${day_display}, `
-                    let date_display = `${starter}${showDay}${d_display}${separation}${m_display}${separation}${y_display}`
+                    let date_display = `${starter}${showDay}${d_display}${separation}${m_display}${separation}${checkYearType}`
 
                     //set dataset value and value to input        
 
@@ -2075,7 +2071,6 @@ class Calendar {
                     parent.value = date_display
 
                     parent.setAttribute("value", date_display)
-
                     /* parent.setAttribute("data-value", `${checkYearType}${m}${d}`) */
 
                     parent.dataset.fulldate = `${y}${m}${d}`

@@ -7,13 +7,22 @@
     - slideTo method in year input it's not working properly [1.0.0-beta]
 
 ### Task 
-    - Add Start with Day
     - Release v1.0.0
+    - make html are same both Full calendar and Static Calendar
+    - Add Start with Day
+
+## - 1.2.0-beta.5
+    Fix -------
+    - [ calendar static ]  showing invalid month for month option full,small in mobile 
+    - check year type when select date
 
 ## - 1.2.0-beta.4
     FIX -------
     - type date by keyboard not working cause no fulldate dataset
     - selectable Conflict with closeOnSelect
+
+    Change -------
+    - Day label now is render by array
 
 ## - 1.2.0-beta.3
     FIX -------

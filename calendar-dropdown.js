@@ -1,7 +1,7 @@
 //--------------------------------------
 
 //Calendar [BETA]
-//Version : 1.2.0-beta.4 By Captz
+//Version : 1.2.0-beta.5 By Captz
 
 //--------------------------------------
 
@@ -196,6 +196,7 @@ class CalendarDropdown{
      
         //Init Event onclose
         addEventListener('click',(e)=>{
+            
                 if(!dropdown_arr.includes(e.target.className)){
                     $(".dropdown-body.dropdown-date").remove()
                     $(".dropdown-body.dropdown-month").remove()
@@ -204,7 +205,6 @@ class CalendarDropdown{
         })
 
         addEventListener('touchend',(e)=>{
-            console.log(e.target.className)
             if(!dropdown_arr.includes(e.target.className)){
                 $(".dropdown-body.dropdown-date").remove()
                 $(".dropdown-body.dropdown-month").remove()
@@ -317,7 +317,7 @@ class CalendarDropdown{
       })
 
 
-      if(this.isMobileDevice()){
+     /*  if(this.isMobileDevice()){
         this.dateInput.addEventListener("focus",(e)=>{
                     $("body").css('transform','translateY(-150px)')
 
@@ -344,11 +344,11 @@ class CalendarDropdown{
 
         })
      
-    }
+    } */
 
     //-------------------Date Event------------------------
     this.dateInput.addEventListener("focus",(e)=>{
-      
+  
         this.dateInput.classList.add("input_focus")
         this.monthInput.classList.remove("input_focus")
         this.yearInput.classList.remove("input_focus")
@@ -465,7 +465,7 @@ class CalendarDropdown{
                  this.monthInput.setAttribute('data-month',('0'+value).slice(-2))
            
 
-                 this.monthInput.dispatchEvent(new Event('change'))
+                this.monthInput.dispatchEvent(new Event('change'))
                 
             }
           
@@ -699,6 +699,7 @@ class CalendarDropdown{
 
 
             $(".dropdown-item-date").click((e)=>{
+
                 let value = e.target.dataset.date
                 this.dateInput.value = value
                 this.dateInput.setAttribute('value',value)
@@ -709,6 +710,8 @@ class CalendarDropdown{
                 this.monthInput.focus()
             })
             
+
+       
           
          
             if( this.isMobileDevice() ){
@@ -774,11 +777,11 @@ class CalendarDropdown{
         if( this.isMobileDevice() ){
             $(`.dropdown-month`).on('scroll',()=>{
 
-                    let value = this.getCurrentSlide('month').dataset.value
-                    this.monthInput.value = value !== undefined ? value : ''
+                    let value = this.getCurrentSlide('month').dataset
+                    this.monthInput.value = value.value !== undefined ? value.value : ''
 
-                    this.monthInput.setAttribute('data-month',value)
-                this.dateInput.dispatchEvent(new Event('change'));
+                    this.monthInput.setAttribute('data-month',value.month) 
+                    this.dateInput.dispatchEvent(new Event('change'));
 
                 })
         }
