@@ -2,21 +2,39 @@
 ### Bug 
     [Calendar]
 
-
-    [dropdown]
-    - slideTo method in year input it's not working properly [1.0.0-beta]
-
 ### Task 
     - Release v1.0.0
     - make html are same both Full calendar and Static Calendar
     - Add Start with Day
+    - Change all sm option to small
+
+
+## ----------------
+## RELEASE 1.0.0
+## ----------------
+
+## - 1.2.0-beta.6
+
+    Fix -------
+    - cover all fucntion 
+    - [ calendar dropdown ] cover all class with fuction
+    - [ calendar dropdown ] change LANG2 to LANG 
+    - [ calendar dropdown ] slideTo method in year input it's not working properly
+    - [ calendar dropdown ] hard code for lang option
+
+    Add ------
+    - [ calendar dropdown ] add date,month ,year event change in dropdown
+
+
 
 ## - 1.2.0-beta.5
+
     Fix -------
     - [ calendar static ]  showing invalid month for month option full,small in mobile 
     - check year type when select date
 
 ## - 1.2.0-beta.4
+
     FIX -------
     - type date by keyboard not working cause no fulldate dataset
     - selectable Conflict with closeOnSelect
@@ -25,6 +43,7 @@
     - Day label now is render by array
 
 ## - 1.2.0-beta.3
+
     FIX -------
     - can use startWith option without using showDay option
 
@@ -34,6 +53,7 @@
     - remove dayPanel option cause unuse Option
 
 ## - 1.2.0-beta.2
+
     Fix -------
     - opacity of year panel see more clearly
     - [ calendar static ] app crash when use option.yearType = 'BE' cause checkDisableDate()

@@ -11,6 +11,12 @@
 */
 /* console.log = function() {} */
 
+
+
+const _CALENDAR_UI = ()=>{
+
+    console.log = function() {};
+
 const LANG = {
     th: {
         d: {
@@ -72,7 +78,7 @@ const LANG = {
 }
 
 const defaultOptionCalendar = {
-    type : "dropdown", //static , dropdown
+    type : "full", //static , full
     section : 'all', // all, date, month, year
 
     format: "dd/mm/yyyy",
@@ -174,10 +180,9 @@ class Calendar {
 
         } 
         this.staticElem = this.option.type === 'static' ? this.elem : null
-     
         this.BEYear = 543*10**4
         this.todayInt = +`${DATE.getFullYear()}${('0'+(DATE.getMonth()+1)).slice(-2)}${('0'+DATE.getDate()).slice(-2)}`
-        this.value =  this.option.autoValue ? this.option.yearType === "AD" ? this.todayInt : +this.todayInt+543*10**4 : undefined
+        this.value =  this.option.autoValue ? this.option.yearType === "AD" ? this.todayInt : +this.todayInt+this.BEYear  : undefined
         this.exceptionDate = this.option.exceptionDate //[ 20221212,20230415]
         this.exceptionDate2 = [{start : 20230301,end :20230305},{start : 20230321,end :20230325},{start : 20230327,end :20230425}]
         this.exceptionDateAll  = []
@@ -685,6 +690,17 @@ class Calendar {
     //* MAIN Method
  
     init() {
+        
+        if(this.option.type !== 'static'){
+            let newFormat = this.option.format.split('/')
+
+           /*  var dateMask = IMask(this.elem, {
+                mask: `00${this.option.separation}}00${this.option.separation}0000`,
+                lazy: false,  // make placeholder always visible
+                placeholderChar: '_'     // defaults to '_'
+            }) */
+    
+        }
 
         let checkYearType = this.option.yearType === 'AD' ? 0 : 543*10**4
 
@@ -717,6 +733,24 @@ class Calendar {
         })
         */
 
+        // init Event for Calendar
+
+        let classP = this
+
+        // [ev:kd] Keydown Event
+        this.elem.addEventListener('dateChange',(e)=>{
+            dateEvent.value = String(this.value)
+            String.prototype.exportValue = function(option,separation,type){
+                return classP.exportValue(option,separation,type)
+            }
+
+            /* dateEvent.value.exportValue = function(option,separation){
+                return exportValue(option,separation)
+            } */
+
+        
+
+        })
         // Setup Static Calendar
 
         if(this.option.type === 'static') this.openStaticCalendar() 
@@ -730,7 +764,11 @@ class Calendar {
 
             this.elem.setAttribute("placeholder", formatter)
 
-            if(this.option.autoValue) this.initDate()
+            if(this.option.autoValue) {
+                this.initDate()
+                this.elem.dispatchEvent(dateEvent)
+            }
+
             if(type !== "static") this.elem.insertAdjacentHTML('afterend', `<div class="date-icon" ><i class="fa-duotone fa-calendar"></i></div>`);
 
             //check if today date is lower or greater max min date 
@@ -767,23 +805,7 @@ class Calendar {
         let min_year = min_date[0] != 0 ? min_date[0] : this.option.yearType === 'AD' ? 2100 : 2600
     
 
-        let classP = this
-
-        // [ev:kd] Keydown Event
-        this.elem.addEventListener('dateChange',(e)=>{
-            dateEvent.value = String(this.value)
-
-            String.prototype.exportValue = function(option,separation,type){
-                return classP.exportValue(option,separation,type)
-            }
-
-            /* dateEvent.value.exportValue = function(option,separation){
-                return exportValue(option,separation)
-            } */
-
-        
-
-        })
+    
         this.elem.addEventListener('keydown', (e) => {
                 /* this.elem.nextElementSibling.click() */
 
@@ -2339,6 +2361,7 @@ class Calendar {
         let date = this.extractFulldate(this.value)
         let checkvalidDate = this.isValidDate(this.value)
 
+        console.log(this.value)
 
         if(type === 'AD'){
             date.y = +date.y-543 
@@ -2353,6 +2376,7 @@ class Calendar {
 
 
         let dateObject = {
+
             'd':`${date.d}`,
             'm':`${date.m}`,
             'y':`${date.y}`,
@@ -2369,15 +2393,16 @@ class Calendar {
 
             'dmy':`${date.d}${separator}${date.m}${separator}${date.y}`,
             'dym':`${date.d}${separator}${date.y}${separator}${date.m}`,
+
             'mdy':`${date.m}${separator}${date.d}${separator}${date.y}`,
             'myd':`${date.m}${separator}${date.y}${separator}${date.d}`,
+
             'ymd':`${date.y}${separator}${date.m}${separator}${date.d}`,
             'ydm':`${date.y}${separator}${date.d}${separator}${date.m}`,
 
-            '':`${date.y}${separator}${date.d}${separator}${date.m}`,
-
             'valueText': this.option.type === 'static' ? "no valueText for calendar type : 'STATIC'" : checkvalidDate ? this.elem.value : 'Invalid Date'
          }
+         
         return dateObject[option]
     }
     }
@@ -2461,4 +2486,6 @@ d5.elem.addEventListener('dateChange',(e)=>{
 
 }, 100); */
 
+}
 
+_CALENDAR_UI()
