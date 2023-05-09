@@ -1,14 +1,4 @@
 # Change LOG
-### Bug 
-    [Calendar]
-
-### Task 
-    - Release v1.0.0
-    - make html are same both Full calendar and Static Calendar
-    - Add Start with Day
-    - Change all sm option to small
-
-
 ## ----------------
 ## RELEASE 1.0.0@1.2.0-beta.6
 ## ----------------

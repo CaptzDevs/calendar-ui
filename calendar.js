@@ -1,7 +1,7 @@
 //--------------------------------------
 
-//Calendar [BETA]
-//Version : 1.2.0-beta.5 By Captz
+//Calendar [RELEASE]
+//Version : v1.0.0 By Captz
 
 //--------------------------------------
 //error code 
